@@ -31,12 +31,14 @@
                      {:states {"East Street" [:yellow] "West Street" [:yellow]} :duration 1000}
                      {:states {"East Street" [:red] "West Street" [:red]} :duration 1000}])
 
-(def streets {"North Street" {"Main lane" {:light #{:green :yellow}
-                                           :opposing-traffic #{{"South Street" "West Street"}}}}
+(def streets {"North Street" {"Main lane" {"South Street" {:light #{:green :yellow}}
+                                           "West Street"  {:light #{:green :yellow}}
+                                           "East Street"  {:light #{:green :yellow}
+                                                           :opposing-traffic #{{"South Street" #{"North Street" "East Street"}}}}}}
               "South Street" {"Main lane" {:light #{:green :yellow}
-                                           :opposing-traffic #{{"North Street" "East Street"}}}}
+                                           :opposing-traffic #{{"North Street" #{"East Street"}}}}}
               "East Street"  {"Main lane" {:light #{:green :yellow}
-                                           :opposing-traffic #{{"West Street" "North Street"}}}}
+                                           :opposing-traffic #{{"West Street" #{"North Street"}}}}}
               "West Street"  {"Main lane" {:light #{:green :yellow}
-                                           :opposing-traffic #{{"East Street" "South Street"}}}}})
+                                           :opposing-traffic #{{"East Street" #{"South Street"}}}}}})
 
