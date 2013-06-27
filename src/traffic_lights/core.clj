@@ -31,21 +31,3 @@
                      {:states {"East Street" [:yellow] "West Street" [:yellow]} :duration 1000}
                      {:states {"East Street" [:red] "West Street" [:red]} :duration 1000}])
 
-(def traffic-schema
-  {"North Street" {"Main lane" {"South Street" {"Main lane" {:light #{:green :yellow}}}
-                                "West Street"  {"Main lane" {:light #{:green :yellow}}}
-                                "East Street"  {"Main lane" {:light #{:green :yellow}
-                                                             :opposing-traffic #{{"South Street" #{"North Street" "East Street"}}}}}}}
-   "South Street" {"Main lane" {"North Street" {"Main lane" {:light #{:green :yellow}}}
-                                "East Street"  {"Main lane" {:light #{:green :yellow}}}
-                                "West Street"  {"Main lane" {:light #{:green :yellow}
-                                                             :opposing-traffic #{{"North Street" #{"South Street" "West Street"}}}}}}}
-   "East Street"  {"Main lane" {"West Street"  {"Main lane" {:light #{:green :yellow}}}
-                                "North Street" {"Main lane" {:light #{:green :yellow}}}
-                                "South Street" {"Main lane" {:light #{:green :yellow}
-                                                             :opposing-traffic #{{"West Street" #{"East Street" "South Street"}}}}}}}
-   "West Street"  {"Main lane" {"East Street"  {"Main lane" {:light #{:green :yellow}}}
-                                "South Street" {"Main lane" {:light #{:green :yellow}}}
-                                "North Street" {"Main lane" {:light #{:green :yellow}
-                                                             :opposing-traffic #{{"East Street" #{"West Street" "North Street"}}}}}}}})
-
