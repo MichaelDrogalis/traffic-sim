@@ -1,0 +1,7 @@
+[{:states {"North Street" [:green] "South Street" [:green]} :duration 8000}
+ {:states {"North Street" [:yellow] "South Street" [:yellow]} :duration 1000}
+ {:states {"North Street" [:red] "South Street" [:red]} :duration 1000}
+ {:states {"East Street" [:green] "West Street" [:green]} :duration 8000}
+ {:states {"East Street" [:yellow] "West Street" [:yellow]} :duration 1000}
+ {:states {"East Street" [:red] "West Street" [:red]} :duration 1000}]
+

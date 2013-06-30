@@ -12,10 +12,10 @@
 (fact (construct-light-face "North Street" [:red :yellow :green] [:blue])
       => (throws clojure.lang.ExceptionInfo))
 
-(fact (construct-light {"North Street" {:states [:red :yellow :green] :init [:red]}
-                        "South Street" {:states [:red :yellow :green] :init [:red]}
-                        "East Street"  {:states [:red :yellow :green] :init [:red]}
-                        "West Street"  {:states [:red :yellow :green] :init [:red]}})
+(fact (construct-light #{{:street "North Street" :states [:red :yellow :green] :init [:red]}
+                         {:street "South Street" :states [:red :yellow :green] :init [:red]}
+                         {:street "East Street"  :states [:red :yellow :green] :init [:red]}
+                         {:street "West Street"  :states [:red :yellow :green] :init [:red]}})
       => {"North Street" {:red true :yellow false :green false}
           "South Street" {:red true :yellow false :green false}
           "East Street"  {:red true :yellow false :green false}

@@ -14,20 +14,7 @@
     (legal-init-state? states init-vals)))
 
 (defn construct-light [schema]
-  (reduce (fn [result [street {:keys [states init]}]]
+  (reduce (fn [result {:keys [street states init]}]
             (conj result (construct-light-face street states init)))
           {} schema))
-
-
-(def light-schema {"North Street" {:states [:red :yellow :green] :init [:red]}
-                   "South Street" {:states [:red :yellow :green] :init [:red]}
-                   "East Street"  {:states [:red :yellow :green] :init [:red]}
-                   "West Street"  {:states [:red :yellow :green] :init [:red]}})
-
-(def light-schedule [{:states {"North Street" [:green] "South Street" [:green]} :duration 8000}
-                     {:states {"North Street" [:yellow] "South Street" [:yellow]} :duration 1000}
-                     {:states {"North Street" [:red] "South Street" [:red]} :duration 1000}
-                     {:states {"East Street" [:green] "West Street" [:green]} :duration 8000}
-                     {:states {"East Street" [:yellow] "West Street" [:yellow]} :duration 1000}
-                     {:states {"East Street" [:red] "West Street" [:red]} :duration 1000}])
 

@@ -1,0 +1,5 @@
+#{{:street "North Street" :states [:red :yellow :green] :init [:red]}
+  {:street "South Street" :states [:red :yellow :green] :init [:red]}
+  {:street "East Street"  :states [:red :yellow :green] :init [:red]}
+  {:street "West Street"  :states [:red :yellow :green] :init [:red]}}
+
