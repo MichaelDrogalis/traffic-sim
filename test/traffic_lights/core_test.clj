@@ -9,11 +9,11 @@
 (fact (has-face? {:light/face :a}) => true)
 (fact (has-face? {}) => false)
 
-(fact (has-states {:light/states [:red]}) => true)
-(fact (has-states {}) => false)
+(fact (has-states? {:light/states [:red]}) => true)
+(fact (has-states? {}) => false)
 
-(fact (has-init {:light/init [:red]}) => true)
-(fact (has-init {}) => false)
+(fact (has-init? {:light/init [:red]}) => true)
+(fact (has-init? {}) => false)
 
 (fact (face-type-valid? :a) => true)
 (fact (face-type-valid? []) => false)
@@ -32,3 +32,19 @@
 
 (fact (non-empty-init? [:red]) => true)
 (fact (non-empty-init? []) => false)
+
+(fact (only-keywords? [:red :yellow]) => true)
+(fact (only-keywords? ["red"]) => false)
+(fact (only-keywords? [:red 'yellow]) => false)
+
+(fact (process-face
+       {:light/states [:red :yellow :green]
+        :light/init [:red]}) => (throws clojure.lang.ExceptionInfo))
+
+(fact (process-face
+       {:light/face :a
+        :light/init [:red]}) => (throws clojure.lang.ExceptionInfo))
+
+(fact (process-face
+       {:light/face :a
+        :light/states [:red :yellow :green]}) => (throws clojure.lang.ExceptionInfo))

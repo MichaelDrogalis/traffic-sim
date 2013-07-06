@@ -7,10 +7,10 @@
 (defn has-face? [light]
   (contains? light :light/face))
 
-(defn has-states [light]
+(defn has-states? [light]
   (contains? light :light/states))
 
-(defn has-init [light]
+(defn has-init? [light]
   (contains? light :light/init))
 
 (defn face-type-valid? [face]
@@ -27,3 +27,19 @@
 
 (defn non-empty-init? [init]
   (> (count init) 0))
+
+(defn only-keywords? [coll]
+  (every? (partial = clojure.lang.Keyword) (map type coll)))
+
+(defn states-only-keywords? [states]
+  (only-keywords? states))
+
+(defn init-only-keywords? [init]
+  (only-keywords? init))
+
+(defn process-face [face]
+  )
+
+(with-precondition! #'process-face :face-prescence has-face?)
+(with-precondition! #'process-face :state-presence has-states?)
+(with-precondition! #'process-face :init-presence has-init?)
