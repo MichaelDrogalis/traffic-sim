@@ -1,5 +1,13 @@
-#{{:street "North Street" :states [:red :yellow :green] :init [:red]}
-  {:street "South Street" :states [:red :yellow :green] :init [:red]}
-  {:street "East Street"  :states [:red :yellow :green] :init [:red]}
-  {:street "West Street"  :states [:red :yellow :green] :init [:red]}}
+[{:light/face :a
+  :light/states [:red :yellow :green]
+  :light/init [:red]}
+ {:light/face :b
+  :light/states [:red :yellow :green]
+  :light/init [:red]}
+ {:light/face :c
+  :light/states [:red :yellow :green]
+  :light/init [:red]}
+ {:light/face :d
+  :light/states [:red :yellow :green]
+  :light/init [:red]}]
 
