@@ -6,18 +6,29 @@
 (fact (legal-init-state? [:red :yellow :green] [:purple]) => false)
 (fact (legal-init-state? [:red :yellow :green :left-green] [:green :left-green]) => true)
 
-(fact (construct-light-face "North Street" [:red :yellow :green] [:red])
-      => {"North Street" {:red true :yellow false :green false}})
+(fact (has-face? {:light/face :a}) => true)
+(fact (has-face? {}) => false)
 
-(fact (construct-light-face "North Street" [:red :yellow :green] [:blue])
-      => (throws clojure.lang.ExceptionInfo))
+(fact (has-states {:light/states [:red]}) => true)
+(fact (has-states {}) => false)
 
-(fact (construct-light #{{:street "North Street" :states [:red :yellow :green] :init [:red]}
-                         {:street "South Street" :states [:red :yellow :green] :init [:red]}
-                         {:street "East Street"  :states [:red :yellow :green] :init [:red]}
-                         {:street "West Street"  :states [:red :yellow :green] :init [:red]}})
-      => {"North Street" {:red true :yellow false :green false}
-          "South Street" {:red true :yellow false :green false}
-          "East Street"  {:red true :yellow false :green false}
-          "West Street"  {:red true :yellow false :green false}})
+(fact (has-init {:light/init [:red]}) => true)
+(fact (has-init {}) => false)
 
+(fact (face-type-valid? :a) => true)
+(fact (face-type-valid? []) => false)
+(fact (face-type-valid? "a") => false)
+
+(fact (states-type-valid? [:red]) => true)
+(fact (states-type-valid? "red") => false)
+(fact (states-type-valid? {}) => false)
+
+(fact (init-type-valid? [:red]) => true)
+(fact (init-type-valid? "red") => false)
+(fact (init-type-valid? {}) => false)
+
+(fact (non-empty-states? [:red]) => true)
+(fact (non-empty-states? []) => false)
+
+(fact (non-empty-init? [:red]) => true)
+(fact (non-empty-init? []) => false)
