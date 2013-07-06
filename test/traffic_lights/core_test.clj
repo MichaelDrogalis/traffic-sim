@@ -37,14 +37,6 @@
 (fact (only-keywords? ["red"]) => false)
 (fact (only-keywords? [:red 'yellow]) => false)
 
-(fact (process-face
-       {:light/states [:red :yellow :green]
-        :light/init [:red]}) => (throws clojure.lang.ExceptionInfo))
-
-(fact (process-face
-       {:light/face :a
-        :light/init [:red]}) => (throws clojure.lang.ExceptionInfo))
-
-(fact (process-face
-       {:light/face :a
-        :light/states [:red :yellow :green]}) => (throws clojure.lang.ExceptionInfo))
+(fact (process-face {:light/face :a
+                     :light/states [:red :yellow :green]
+                     :light/init [:red]}))
