@@ -40,3 +40,4 @@
 (fact (process-face {:light/face :a
                      :light/states [:red :yellow :green]
                      :light/init [:red]}))
+

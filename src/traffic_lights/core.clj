@@ -1,6 +1,8 @@
 (ns traffic-lights.core
   (:require [dire.core :refer [with-precondition!]]))
 
+(defn process-face [face])
+
 (defn legal-init-state? [states init-vals]
   (every? (fn [x] (some #{x} states)) init-vals))
 
@@ -37,20 +39,17 @@
 (defn init-only-keywords? [init]
   (only-keywords? init))
 
-(defn process-face [face]
-  )
-
 (with-precondition! #'process-face :face-prescence has-face?)
 (with-precondition! #'process-face :state-presence has-states?)
 (with-precondition! #'process-face :init-presence has-init?)
 
-(with-precondition! #'process-face :face-type #(-> % :light/face face-type-valid?))
-(with-precondition! #'process-face :states-type #(-> % :light/states states-type-valid?))
-(with-precondition! #'process-face :init-type #(-> % :light/init init-type-valid?))
+(with-precondition! #'process-face :face-type   (comp face-type-valid? :light/face))
+(with-precondition! #'process-face :states-type (comp states-type-valid? :light/states))
+(with-precondition! #'process-face :init-type   (comp init-type-valid? :light/init))
 
-(with-precondition! #'process-face :non-empty-states #(-> % :light/states non-empty-states?))
-(with-precondition! #'process-face :non-empty-init #(-> % :light/init non-empty-init?))
+(with-precondition! #'process-face :non-empty-states (comp non-empty-states? :light/states))
+(with-precondition! #'process-face :non-empty-init   (comp non-empty-init? :light/init))
 
-(with-precondition! #'process-face :state-keywords #(-> % :light/states states-only-keywords?))
-(with-precondition! #'process-face :init-keywords #(-> % :light/init init-only-keywords?))
+(with-precondition! #'process-face :state-keywords (comp states-only-keywords? :light/states))
+(with-precondition! #'process-face :init-keywords  (comp init-only-keywords? :light/init))
 
