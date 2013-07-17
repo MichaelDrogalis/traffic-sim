@@ -66,7 +66,7 @@
  {:src.lane/ident :standard/d
   :dst.lane/ident :standard/C
   :light/proceed [:green :yellow]}
- {:src.lane/ident :standard/c
+ {:src.lane/ident :standard/d
   :dst.lane/ident :standard/A
   :light/proceed [:green :yellow]
   :traffic/yield-to [{:src.lane/ident :standard/c
