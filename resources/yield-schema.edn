@@ -1,0 +1,31 @@
+[{:intersection/of ["10th Street" "Chestnut Street"]
+  :src/street/name "10th Street"
+  :src/street/tag "south"
+  :src/lane/name "straight"
+  :dst/street/name "Chestnut Street"
+  :dst/street/tag "west"
+  :dst/lane/name "straight"
+  
+  :yield/src/street/name "10th Street"
+  :yield/src/street/tag "north"
+  :yield/src/lane/name "straight"
+  :yield/dst/street/name "10th Street"
+  :yield/dst/street/tag "south"
+  :yield/dst/lane/name "straight"}
+
+ :traffic/yield-to [{
+
+                     :src/street/name "10th Street"
+                     :src/street/tag "north"
+                     :src/lane/name "straight"
+                     :dst/street/name "10th Street"
+                     :dst/street/tag "south"
+                     :dst/lane/name "straight"
+
+                     }
+                    {:src/street/name "10th Street"
+                     :src/street/tag "north"
+                     :src/lane/name "straight"
+                     :dst/street/name "Chestnut Street"
+                     :dst/street/tag "west"
+                     :dst/lane/name "straight"}]]

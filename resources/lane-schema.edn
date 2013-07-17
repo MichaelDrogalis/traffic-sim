@@ -1,0 +1,23 @@
+[{:lane/ident :standard/a
+  :lane/type  :ingress
+  :lane/paths [:standard/B :standard/C :standard/D]}
+ {:lane/ident :standard/A
+  :lane/type  :egress}
+
+ {:lane/ident :standard/b
+  :lane/type  :ingress
+  :lane/paths [:standard/A :standard/C :standard/D]}
+ {:lane/ident :standard/B
+  :lane/type  :egress}
+
+ {:lane/ident :standard/c
+  :lane/type  :ingress
+  :lane/paths [:standard/A :standard/B :standard/D]}
+ {:lane/ident :standard/C
+  :lane/type  :egress}
+
+ {:lane/ident :standard/d
+  :lane/type  :ingress
+  :lane/paths [:standard/A :standard/B :standard/C]}
+ {:lane/ident :standard/D
+  :lane/type  :egress}]

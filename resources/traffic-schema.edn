@@ -1,89 +1,83 @@
-#{{:origin/street "North Street"
-   :origin/lane "Main lane"
-   :destination/street "South Street"
-   :light/proceed #{:green :yellow}}
-  {:origin/street "North Street"
-   :origin/lane "Main lane"
-   :destination/street "West Street"
-   :light/proceed #{:green :yellow}}
-  {:origin/street "North Street"
-   :origin/lane "Main lane"
-   :destination/street "West Street"
-   :light/proceed #{:red}
-   :traffic/yield-to #{{:traffic/street "East Street"
-                        :traffic/lane "Main lane"
-                        :traffic/destination #{"West Street"}}}}
-  {:origin/street "North Street"
-   :origin/lane "Main lane"
-   :destination/street "East Street"
-   :light/proceed #{:green :yellow}
-   :traffic/yield-to #{{:traffic/street "South Street"
-                        :traffic/lane "Main lane"
-                        :traffic/destination #{"North Street" "East Street"}}}}
-  {:origin/street "South Street"
-   :origin/lane "Main lane"
-   :destination/street "North Street"
-   :light/proceed #{:green :yellow}}
-  {:origin/street "South Street"
-   :origin/lane "Main lane"
-   :destination/street "West Street"
-   :light/proceed #{:green :yellow}
-   :traffic/yield-to #{{:traffic/street "North Street"
-                        :traffic/lane "Main lane"
-                        :traffic/destination #{"West Street"}}}}
-  {:origin/street "South Street"
-   :origin/lane "Main lane"
-   :destination/street "East Street"
-   :light/proceed #{:green :yellow}}
-  {:origin/street "South Street"
-   :origin/lane "Main lane"
-   :destination/street "East Street"
-   :light/proceed #{:red}
-   :traffic/yield-to #{{:traffic/street "West Street"
-                        :traffic/lane "Main lane"
-                        :traffic/destination #{"East Street"}}}}
-  {:origin/street "West Street"
-   :origin/lane "Main lane"
-   :destination/street "East Street"
-   :light/proceed #{:green :yellow}}
-  {:origin/street "West Street"
-   :origin/lane "Main lane"
-   :destination/street "South Street"
-   :light/proceed #{:green :yellow}}
-  {:origin/street "West Street"
-   :origin/lane "Main lane"
-   :destination/street "South Street"
-   :light/proceed #{:red}
-   :traffic/yield-to #{{:traffic/street "North Street"
-                        :traffic/lane "Main lane"
-                        :traffic/destination #{"South Street"}}}}
-  {:origin/street "West Street"
-   :origin/lane "Main lane"
-   :destination/street "North Street"
-   :light/proceed #{:green :yellow}
-   :traffic/yield-to #{{:traffic/street "East Street"
-                        :traffic/lane "Main lane"
-                        :traffic/destination #{"North Street"}}}}
-  {:origin/street "East Street"
-   :origin/lane "Main lane"
-   :destination/street "West Street"
-   :light/proceed #{:green :yellow}}
-  {:origin/street "East Street"
-   :origin/lane "Main lane"
-   :destination/street "North Street"
-   :light/proceed #{:green :yellow}}
-  {:origin/street "East Street"
-   :origin/lane "Main lane"
-   :destination/street "North Street"
-   :light/proceed #{:red}
-   :traffic/yield-to #{{:traffic/street "South Street"
-                        :traffic/lane "Main lane"
-                        :traffic/destination #{"North Street"}}}}  
-  {:origin/street "East Street"
-   :origin/lane "Main lane"
-   :destination/street "South Street"
-   :light/proceed #{:green :yellow}
-   :traffic/yield-to #{{:traffic/street "West Street"
-                        :traffic/lane "Main lane"
-                        :traffic/destination #{"South Street"}}}}}
+;;;     | b | B  |
+;;; ----          -----
+;;; C             d
+;;; ___           _____
+;;; c             D
+;;; ----          -----
+;;;     | A | a  |
 
+[{:src.lane/ident :standard/a
+  :dst.lane/ident :standard/B
+  :light/proceed [:green :yellow]}
+ {:src.lane/ident :standard/a
+  :dst.lane/ident :standard/C
+  :light/proceed [:green :yellow]
+  :traffic/yield-to [{:src.lane/ident :standard/b
+                      :dst.lane/ident :standard/A}
+                     {:src.lane/ident :standard/b
+                      :dst.lane/ident :standard/C}]}
+ {:src.lane/indent :standard/a
+  :dst.lane/indent :standard/D
+  :light/proceed [:green :yellow]}
+ {:src.lane/ident :standard/a
+  :dst.lane/ident :standard/D
+  :light/proceed [:red]
+  :traffic/yield-to [{:src.lane/ident :standard/c
+                      :dst.lane/ident :standard/D}]}
+
+ {:src.lane/indent :standard/b  
+  :dst.lane/indent :standard/A
+  :light/proceed [:green :yellow]}
+ {:src.lane/ident :standard/b
+  :dst/lane/ident :standard/D
+  :light/proceed [:green :yellow]
+  :traffic/yield-to [{:src.lane/ident :standard/a
+                      :dst.lane/ident :standard/B}
+                     {:src.lane/ident :standard/a
+                      :dst.lane/ident :standard/D}]}
+ {:src.lane/ident :standard/b
+  :dst.lane/ident :standard/C
+  :light/proceed [:green :yellow]}
+ {:src.lane/ident :standard/b
+  :dst.lane/ident :standard/C
+  :light/proceed [:red]
+  :traffic/yield-to [{:src.lane/ident :standard/d
+                      :dst.lane/ident :standard/C}]}
+
+ {:src.lane/ident :standard/c
+  :dst.lane/ident :standard/D
+  :light/proceed [:green :yellow]}
+ {:src.lane/ident :standard/c
+  :dst.lane/ident :standard/B
+  :light/proceed [:green :yellow]
+  :traffic/yield-to [{:src.lane/ident :standard/d
+                      :dst.lane/ident :standard/C}
+                     {:src.lane/ident :standard/d
+                      :dst.lane/ident :standard/B}]}
+ {:src.lane/ident :standard/c
+  :dst.lane/ident :standard/A
+  :light/proceed [:green :yellow]}
+ {:src.lane/ident :standard/c
+  :dst.lane/ident :standard/A
+  :light/proceed [:red]
+  :traffic/yield-to [{:src.lane/ident :standard/b
+                      :dst.lane/ident :standard/A}]}
+ 
+ {:src.lane/ident :standard/d
+  :dst.lane/ident :standard/C
+  :light/proceed [:green :yellow]}
+ {:src.lane/ident :standard/c
+  :dst.lane/ident :standard/A
+  :light/proceed [:green :yellow]
+  :traffic/yield-to [{:src.lane/ident :standard/c
+                      :dst.lane/ident :standard/D}
+                     {:src.lane/ident :standard/c
+                      :dst.lane/ident :standard/A}]}
+ {:src.lane/ident :standard/d
+  :dst.lane/ident :standard/B
+  :light/proceed [:green :yellow]}
+ {:src.lane/ident :standard/d
+  :dst.lane/ident :standard/B
+  :light/proceed [:red]
+  :traffic/yield-to [{:src.lane/ident :standard/a
+                      :dst.lane/ident :standard/B}]}]

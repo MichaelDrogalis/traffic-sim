@@ -1,0 +1,32 @@
+[{:install-intersection ["10th Street" "Chestnut Street"]
+  :lane-schema :standard
+  :light-schema :light.face}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :steet/tag "south"
+  :street.lanes/ingress [{:lane  :standard/a
+                          :light :light.face/w}]
+  :street.lanes/egress  [{:lane  :standard/A}]}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :street/tag "north"
+  :street.lanes/ingress [{:lane  :standard/b
+                          :light :light.face/x}]
+  :street.lanes/egress  [{:lane  :standard/B}]}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "Chestnut Street"
+  :street/tag "west"
+  :street.lanes/ingress [{:lane :standard/c
+                          :light :light.face/y}]
+  :street.lanes/egress  [{:lane :standard/C}]}
+ 
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "Chestnut Street"
+  :street/tag "east"
+  :street.lanes/ingress [{:lane :standard/d
+                          :light :light.face/z}]
+  :street.lanes/egress  [{:lane :standard/D}]}]
+
