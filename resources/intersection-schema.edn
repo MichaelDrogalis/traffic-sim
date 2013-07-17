@@ -1,8 +1,4 @@
-[{:install-intersection ["10th Street" "Chestnut Street"]
-  :lane-schema :standard
-  :light-schema :light.face}
-
- {:intersection/of ["10th Street" "Chestnut Street"]
+[{:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :steet/tag "south"
   :street.lanes/ingress [{:lane  :standard/a
