@@ -1,4 +1,6 @@
-[{:lane/ident :standard/a
+[{:lane.install/indent :standard}
+
+ {:lane/ident :standard/a
   :lane/type  :ingress
   :lane/paths [:standard/B :standard/C :standard/D]}
  {:lane/ident :standard/A

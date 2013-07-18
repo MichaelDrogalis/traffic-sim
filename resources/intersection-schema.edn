@@ -1,7 +1,13 @@
-[{:intersection/of ["10th Street" "Chestnut Street"]
+[{:intersection.install/ident  ["10th Street" "Chestnut Street"]
+  :intersection.install/rules  :my-rules
+  :intersection.install/lanes  :standard
+  :intersection.install/lights :my-lights}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :steet/tag "south"
   :street.lanes/ingress [{:lane  :standard/a
+                          :name  :straight
                           :light :light.face/w}]
   :street.lanes/egress  [{:lane  :standard/A}]}
 
@@ -9,20 +15,23 @@
   :street/name "10th Street"
   :street/tag "north"
   :street.lanes/ingress [{:lane  :standard/b
+                          :name  :straight
                           :light :light.face/x}]
   :street.lanes/egress  [{:lane  :standard/B}]}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
   :street/tag "west"
-  :street.lanes/ingress [{:lane :standard/c
+  :street.lanes/ingress [{:lane  :standard/c
+                          :name  :straight
                           :light :light.face/y}]
-  :street.lanes/egress  [{:lane :standard/C}]}
+  :street.lanes/egress  [{:lane  :standard/C}]}
  
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
   :street/tag "east"
-  :street.lanes/ingress [{:lane :standard/d
+  :street.lanes/ingress [{:lane  :standard/d
+                          :name  :straight
                           :light :light.face/z}]
-  :street.lanes/egress  [{:lane :standard/D}]}]
+  :street.lanes/egress  [{:lane  :standard/D}]}]
 
