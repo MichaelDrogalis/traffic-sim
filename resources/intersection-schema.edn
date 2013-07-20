@@ -14,6 +14,32 @@
   :light-set/schedule :shamrock-schedule
   :light-set/substitute {?w :standard ?x :standard ?y :standard ?z :standard}}
 
+ {:lane.template/indent :four-way-symmetric}
+
+ {:lane/ident ?a
+  :lane/type  :ingress
+  :lane/paths [?B ?C ?D]}
+ {:lane/ident ?A
+  :lane/type  :egress}
+
+ {:lane/ident ?b
+  :lane/type  :ingress
+  :lane/paths [?A ?C ?D]}
+ {:lane/ident ?B
+  :lane/type  :egress}
+
+ {:lane/ident ?c
+  :lane/type  :ingress
+  :lane/paths [?A ?B ?D]}
+ {:lane/ident ?C
+  :lane/type  :egress}
+
+ {:lane/ident ?d
+  :lane/type  :ingress
+  :lane/paths [?A ?B ?C]}
+ {:lane/ident ?D
+  :lane/type  :egress}
+
  {:rule/ident :straight
   :src ?origin
   :dst ?straight
