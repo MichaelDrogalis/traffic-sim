@@ -1,37 +1,127 @@
-[{:intersection.install/ident  ["10th Street" "Chestnut Street"]
-  :intersection.install/rules  :my-rules
-  :intersection.install/lanes  :standard
-  :intersection.install/lights :my-lights}
+[{:light/ident :standard
+  :light/states [:red :yellow :green]
+  :light/init [:red]}
 
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
-  :steet/tag "south"
-  :street.lanes/ingress [{:lane  :standard/a
-                          :name  :straight
-                          :light :light.face/w}]
-  :street.lanes/egress  [{:lane  :standard/A}]}
+ {:light.schedule/ident :shamrock-schedule
+  :light-set/schedule [{:states {?w [:green] ?y [:green]} :duration 8000}
+                       {:states {?w [:yellow] ?y [:yellow]} :duration 1000}
+                       {:states {?w [:red] ?y [:red]} :duration 1000}
+                       {:states {?x [:green] ?z [:green]} :duration 8000}
+                       {:states {?x [:yellow] ?z [:yellow]} :duration 1000}
+                       {:states {?x [:red] ?z [:red]} :duration 1000}]}
+ 
+ {:light-set/ident :standard-light-set
+  :light-set/schedule :shamrock-schedule
+  :light-set/substitute {?w :standard ?x :standard ?y :standard ?z :standard}}
+
+ {:rule/ident :straight
+  :src ?origin
+  :dst ?straight
+  :light [:green]}
+
+ {:rule/ident :left
+  :src ?origin
+  :dst ?left
+  :light [:green :yellow]
+  :yield [{?opposing ?left} {?opposing ?origin-egress}]}
+
+ {:rule/ident :right
+  :src ?origin
+  :dst ?right
+  :light [:green :yellow]}
+
+ {:rule/ident :right-on-red
+  :src ?origin
+  :dst ?right
+  :light [:red]
+  :yield [{?left ?right}]}
+
+ {:rule-set/ident :shamrock
+  :rule-set/vars [?origin ?origin-egress ?left ?right ?straight ?opposing]}
+
+ {:rule-set/register :straight
+  :rule/substitute {?origin ?origin ?straight ?straight}}
+
+ {:rule-set/register :left
+  :rule/substitute {?origin ?origin ?left ?left ?opposing ?opposing
+                    ?origin-egress ?origin-egress}}
+
+ {:rule-set/register :right
+  :rule/substitute {?origin ?origin ?right ?right}}
+
+ {:rule-set/register :right-on-red
+  :rule/substitute {?origin ?origin ?right ?right ?left ?left}}
+
+ {:intersection/ident ["10th Street" "Chestnut Street"]
+  :intersection.install/lane-template :four-way-symmetric
+  :intersection.install/lights :standard-light-set}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "north"
-  :street.lanes/ingress [{:lane  :standard/b
-                          :name  :straight
-                          :light :light.face/x}]
-  :street.lanes/egress  [{:lane  :standard/B}]}
+  :street.lane.install/ingress ?a
+  :street.lane.install/light ?w
+  :street.lane.install/rules :shamrock
+  :street.lane.install/name "in"
+  :street.lane.install/substitute {?origin ?a ?origin-egress ?A
+                                   ?left ?b ?right ?d
+                                   ?straight ?c ?opposing ?C}}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "Chestnut Street"
-  :street/tag "west"
-  :street.lanes/ingress [{:lane  :standard/c
-                          :name  :straight
-                          :light :light.face/y}]
-  :street.lanes/egress  [{:lane  :standard/C}]}
+  :street/name "10th Street"
+  :street/tag "north"
+  :street.lane.install/egress ?A
+  :street.lane.install/name "out"}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :street/tag "east"
+  :street.lane.install/ingress ?b
+  :street.lane.install/light ?x
+  :street.lane.install/rules :shamrock
+  :street.lane.install/name "in"
+  :street.lane.install/substitute {?origin ?b ?origin-egress ?B
+                                   ?left ?c ?right ?a
+                                   ?straight ?d ?opposing ?D}}
  
  {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "Chestnut Street"
+  :street/name "10th Street"
   :street/tag "east"
-  :street.lanes/ingress [{:lane  :standard/d
-                          :name  :straight
-                          :light :light.face/z}]
-  :street.lanes/egress  [{:lane  :standard/D}]}]
+  :street.lane.install/egress ?B
+  :street.lane.install/name "out"}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :street/tag "south"
+  :street.lane.install/ingress ?c
+  :street.lane.install/light ?y
+  :street.lane.install/rules :shamrock
+  :street.lane.install/name "in"
+  :street.lane.install/substitute {?origin ?c ?origin-egress ?C
+                                   ?left ?d ?right ?b
+                                   ?straight ?a ?opposing ?A}}
+ 
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :street/tag "south"
+  :street.lane.install/egress ?C
+  :street.lane.install/name "out"}
+
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :street/tag "west"
+  :street.lane.install/ingress ?d
+  :street.lane.install/light ?z
+  :street.lane.install/rules :shamrock
+  :street.lane.install/name "in"
+  :street.lane.install/substitute {?origin ?d ?origin-egress ?D
+                                   ?left ?a ?right ?c
+                                   ?straight ?b ?opposing ?B}}
+ 
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :street/tag "west"
+  :street.lane.install/egress ?D
+  :street.lane.install/name "out"}]
 

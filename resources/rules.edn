@@ -12,11 +12,13 @@
                    :var/c :var/C :var/d :var/D]}
  
  {:rule.register/indent :four-way/trio
+  :rule/doc "Straight from lane a to B."
   :src.lane/var :var/a
   :dst.lane/var :var/B
   :light/proceed [:green :yellow]}
 
  {:rule/ident :four-way/left
+  :rule/doc ""
   :src.lane/var :var/a
   :dst.lane/var :var/C
   :light/proceed [:green :yellow]

@@ -1,13 +1,13 @@
-[{:light/face :a
+[{:light/ident ?a
   :light/states [:red :yellow :green]
   :light/init [:red]}
- {:light/face :b
+ {:light/ident ?b
   :light/states [:red :yellow :green]
   :light/init [:red]}
- {:light/face :c
+ {:light/ident ?c
   :light/states [:red :yellow :green]
   :light/init [:red]}
- {:light/face :d
+ {:light/ident ?d
   :light/states [:red :yellow :green]
   :light/init [:red]}]
 

@@ -1,25 +1,25 @@
-[{:lane.install/indent :standard}
+[{:lane.template/indent :four-way-symmetric}
 
- {:lane/ident :standard/a
+ {:lane/ident ?a
   :lane/type  :ingress
-  :lane/paths [:standard/B :standard/C :standard/D]}
- {:lane/ident :standard/A
+  :lane/paths [?B ?C ?D]}
+ {:lane/ident ?A
   :lane/type  :egress}
 
- {:lane/ident :standard/b
+ {:lane/ident ?b
   :lane/type  :ingress
-  :lane/paths [:standard/A :standard/C :standard/D]}
- {:lane/ident :standard/B
+  :lane/paths [?A ?C ?D]}
+ {:lane/ident ?B
   :lane/type  :egress}
 
- {:lane/ident :standard/c
+ {:lane/ident ?c
   :lane/type  :ingress
-  :lane/paths [:standard/A :standard/B :standard/D]}
- {:lane/ident :standard/C
+  :lane/paths [?A ?B ?D]}
+ {:lane/ident ?C
   :lane/type  :egress}
 
- {:lane/ident :standard/d
+ {:lane/ident ?d
   :lane/type  :ingress
-  :lane/paths [:standard/A :standard/B :standard/C]}
- {:lane/ident :standard/D
+  :lane/paths [?A ?B ?C]}
+ {:lane/ident ?D
   :lane/type  :egress}]
