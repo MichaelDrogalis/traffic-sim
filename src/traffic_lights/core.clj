@@ -1,33 +1,50 @@
-(ns traffic-lights.core)
+(ns traffic-lights.core
+  (:require [clojure.pprint :refer [pprint]]))
 
-(def light {:light/ident :standard
-            :light/states [:red :yellow :green]
-            :light/init [:red]})
+(def intersection-schema
+  (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
 
-(def schedule
-  '{:light.schedule/ident :shamrock-schedule
-    :light-set/schedule [{:states {?w [:green] ?y [:green]} :duration 8000}
-                         {:states {?w [:yellow] ?y [:yellow]} :duration 1000}
-                         {:states {?w [:red] ?y [:red]} :duration 1000}
-                         {:states {?x [:green] ?z [:green]} :duration 8000}
-                         {:states {?x [:yellow] ?z [:yellow]} :duration 1000}
-                         {:states {?x [:red] ?z [:red]} :duration 1000}]})
- 
-(def light-set
-  '{:light-set/ident :standard-light-set
-    :light-set/schedule :shamrock-schedule
-    :light-set/substitute {?w :standard ?x :standard ?y :standard ?z :standard}})
+(defn catalog [schema kw]
+  (filter (fn [x] (contains? x kw)) schema))
 
-(def light-catalog {:standard light})
+(defn build-light-catalog [schema]
+  (catalog schema :light/ident))
 
-(defn construct-light [light-spec]
+(defn build-schedule-catalog [schema]
+  (catalog schema :schedule/ident))
+
+(defn build-light-set-catalog [schema]
+  (catalog schema :light-set/ident))
+
+(defn find-light [light-catalog ident]
+  (first (filter (fn [x] (= (:light/ident x) ident)) light-catalog)))
+
+(defn find-schedule [schedule-catalog ident]
+  (first (filter (fn [x] (= (:schedule/ident x) ident)) schedule-catalog)))
+
+(defn substitute-lights [light-catalog light-set]
   (apply merge
          (map (fn [[face light-ident]]
-                {face (:light/init (light-catalog light-ident))})
-              (:light-set/substitute light-spec))))
+                {face (find-light light-catalog light-ident)})
+              (:light-set/substitute light-set))))
 
-(reductions
- (fn [lights {:keys [states]}]
-   (merge lights states))
- (construct-light light-set) (:light-set/schedule schedule))
+(defn substitute-schedule [schedule-catalog light-set]
+  (find-schedule schedule-catalog (:light-set/schedule light-set)))
+
+(defn construct-light [light-catalog schedule-catalog light-set]
+  (let [lights (substitute-lights light-catalog light-set)
+        schedule (substitute-schedule schedule-catalog light-set)]
+    (assoc light-set :light-set/substitute lights :light-set/schedule schedule)))
+
+(let [lc (build-light-catalog intersection-schema)
+      sc (build-schedule-catalog intersection-schema)
+      ls (build-light-set-catalog intersection-schema)]
+  (doseq [x ls]
+    (pprint (construct-light lc sc x))))
+
+(comment
+  (reductions
+          (fn [lights {:keys [states]}]
+            (merge lights states))
+          (construct-light light-set) (:light-set/schedule schedule)))
 

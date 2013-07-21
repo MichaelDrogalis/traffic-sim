@@ -2,7 +2,7 @@
   :light/states [:red :yellow :green]
   :light/init [:red]}
 
- {:light.schedule/ident :shamrock-schedule
+ {:schedule/ident :shamrock-schedule
   :light-set/schedule [{:states {?w [:green] ?y [:green]} :duration 8000}
                        {:states {?w [:yellow] ?y [:yellow]} :duration 1000}
                        {:states {?w [:red] ?y [:red]} :duration 1000}
