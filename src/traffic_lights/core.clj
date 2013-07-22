@@ -1,75 +1,43 @@
 (ns traffic-lights.core
-  (:require [clojure.pprint :refer [pprint]]))
+  (:require [clojure.algo.generic.functor :refer [fmap]]
+            [clojure.pprint :refer [pprint]]))
 
 (def intersection-schema
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
 
-(defn catalog [schema kw]
-  (filter (fn [x] (contains? x kw)) schema))
+(defn ensure-uniqueness [catalog]
+  (fmap first catalog))
+
+(defn build-catalog [schema kw]
+  (ensure-uniqueness (group-by kw (filter #(contains? % kw) schema))))
 
 (defn build-light-catalog [schema]
-  (catalog schema :light/ident))
+  (build-catalog schema :light-face/ident))
 
 (defn build-schedule-catalog [schema]
-  (catalog schema :schedule/ident))
+  (build-catalog schema :schedule/ident))
 
-(defn build-light-set-catalog [schema]
-  (catalog schema :light-set/ident))
+(defn build-combo-catalog [schema]
+  (build-catalog schema :light-combo/ident))
 
-(defn build-light-map [lights]
-  (apply merge (map (fn [[v light]] {v (:light/init light)}) lights)))
+(def light-catalog (build-light-catalog intersection-schema))
 
-(defn find-light [light-catalog ident]
-  (first (filter (fn [x] (= (:light/ident x) ident)) light-catalog)))
+(def schedule-catalog (build-schedule-catalog intersection-schema))
 
-(defn find-schedule [schedule-catalog ident]
-  (first (filter (fn [x] (= (:schedule/ident x) ident)) schedule-catalog)))
+(def combo-catalog (build-combo-catalog intersection-schema))
 
-(defn substitute-lights-in-light-set [light-catalog light-set]
-  (apply merge
-         (map (fn [[face light-ident]]
-                {face (find-light light-catalog light-ident)})
-              (:light-set/substitute light-set))))
+(defn combo-resting-state [substitions light-catalog]
+  (fmap #(:light-face/init (light-catalog %)) substitions))
 
-(defn substitute-schedule-in-light-set [schedule-catalog light-set]
-  (find-schedule schedule-catalog (:light-set/schedule light-set)))
+(defn combo-schedule [schedule schedule-catalog]
+  (:schedule/sequence (schedule-catalog schedule)))
 
-(defn substitute-lights-in-schedule [schedule substitutions]
-  (map (fn [{:keys [states] :as step}]
-         (assoc step :states
-                (merge (map (fn [[variable lights]]
-                              {:var-origin variable :sub {(substitutions variable) lights}})
-                            states))))
-       schedule))
+;;; Begin experimentation.
 
-(defn construct-light [light-catalog schedule-catalog light-set]
-  (let [lights (substitute-lights-in-light-set light-catalog light-set)
-        schedule (substitute-schedule-in-light-set schedule-catalog light-set)
-        schedule (substitute-lights-in-schedule (:light-set/schedule schedule) lights)]
-    (assoc light-set :light-set/substitute lights :light-set/schedule schedule)))
+(def combo (:standard-light-combo combo-catalog))
 
-(defn compile-lights []
-  (let [lc (build-light-catalog intersection-schema)
-        sc (build-schedule-catalog intersection-schema)
-        ls (build-light-set-catalog intersection-schema)]
-    (map
-     (fn [x]
-       (let [light-gen (construct-light lc sc x)
-             light-map (build-light-map (:light-set/substitute light-gen))]
-         {:light-gen light-gen :light-map light-map}))
-     ls)))
+(def initial-lights (combo-resting-state (:light-combo/substitute combo) light-catalog))
 
-(def my-light-spec (first (compile-lights)))
+(def schedule (combo-schedule (:light-combo/schedule combo) schedule-catalog))
 
-(def my-light-schedule (:light-gen my-light-spec))
-
-(def my-light-agent (agent (:light-map my-light-spec)))
-
-(doseq [{:keys [states duration]} (-> my-light-schedule :light-set/schedule)]
-  (send my-light-agent
-        (fn [my-light]
-          (apply merge my-light (map (fn [{:keys [var-origin sub]}]
-                              {var-origin (first (vals sub))})
-                            states))))
-  (Thread/sleep duration))
-
+(def traffic-light (agent initial-lights))
