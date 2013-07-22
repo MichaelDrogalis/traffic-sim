@@ -4,11 +4,11 @@
 
  {:schedule/ident :shamrock-schedule
   :schedule/sequence [{:states {?w [:green] ?y [:green]} :duration 8000}
-                       {:states {?w [:yellow] ?y [:yellow]} :duration 1000}
-                       {:states {?w [:red] ?y [:red]} :duration 1000}
-                       {:states {?x [:green] ?z [:green]} :duration 8000}
-                       {:states {?x [:yellow] ?z [:yellow]} :duration 1000}
-                       {:states {?x [:red] ?z [:red]} :duration 1000}]}
+                      {:states {?w [:yellow] ?y [:yellow]} :duration 1000}
+                      {:states {?w [:red] ?y [:red]} :duration 1000}
+                      {:states {?x [:green] ?z [:green]} :duration 8000}
+                      {:states {?x [:yellow] ?z [:yellow]} :duration 1000}
+                      {:states {?x [:red] ?z [:red]} :duration 1000}]}
  
  {:light-combo/ident :standard-light-combo
   :light-combo/schedule :shamrock-schedule
