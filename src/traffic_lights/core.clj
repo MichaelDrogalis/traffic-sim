@@ -32,6 +32,12 @@
 (defn combo-schedule [schedule schedule-catalog]
   (:schedule/sequence (schedule-catalog schedule)))
 
+(defn turn-combo-on [combo schedule]
+  (doseq [step schedule]
+    (let [{:keys [states duration]} step]
+      (send combo (fn [light] (apply merge light states)))
+      (Thread/sleep duration))))
+
 ;;; Begin experimentation.
 
 (def combo (:standard-light-combo combo-catalog))
@@ -41,3 +47,4 @@
 (def schedule (combo-schedule (:light-combo/schedule combo) schedule-catalog))
 
 (def traffic-light (agent initial-lights))
+
