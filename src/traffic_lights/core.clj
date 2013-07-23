@@ -1,5 +1,6 @@
 (ns traffic-lights.core
   (:require [clojure.algo.generic.functor :refer [fmap]]
+            [clojure.tools.logging :refer [info]]
             [clojure.pprint :refer [pprint]]))
 
 (def intersection-schema
@@ -47,4 +48,16 @@
 (def schedule (combo-schedule (:light-combo/schedule combo) schedule-catalog))
 
 (def traffic-light (agent initial-lights))
+
+(add-watch traffic-light :printer
+             (fn [_ _ _ light]
+               (info light)))
+
+(defn turn-on-light [light schedule]
+  (doseq [{:keys [states duration] :as step} schedule]
+    (send light (fn [x] (merge x states)))
+    (Thread/sleep duration)))
+
+(defn -main [& args]
+  (turn-on-light traffic-light schedule))
 
