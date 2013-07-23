@@ -27,9 +27,6 @@
                       {:states {?x [:green] ?z [:green]} :duration 8000}
                       {:states {?x [:yellow] ?z [:yellow]} :duration 3000}
                       {:states {?x [:red] ?z [:red]} :duration 3000}]}
- 
- {:light-combo/ident :standard-light-combo
-  :light-combo/schedule :shamrock-schedule}
 
  {:rule/ident :straight
   :src ?origin
@@ -72,7 +69,7 @@
 
  {:intersection/ident ["10th Street" "Chestnut Street"]
   :intersection.install/rules :shamrock
-  :intersection.install/lights :standard-light-set}
+  :intersection.install/schedule :shamrock-schedule}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
