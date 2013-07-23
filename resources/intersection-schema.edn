@@ -16,7 +16,7 @@
 
  {:lane/ident :shamrock
   :lane/type  :ingress
-  :lane/paths [?A ?B ?C]}
+  :lane/paths [?left ?straight ?right]}
   
  {:lane/ident :one-way-out
   :lane/type  :egress}
@@ -71,7 +71,7 @@
   :street/name "10th Street"
   :street/tag "north"
   :street.lane.install/ingress ?a
-  :street.lane.install/bind {?A ?B ?B ?C ?C ?D}
+  :street.lane.install/bind {?left ?B ?straight ?C ?right ?D}
   :street.lane.install/light ?w
   :street.lane.install/rules :shamrock
   :street.lane.install/name "in"
@@ -89,7 +89,7 @@
   :street/name "10th Street"
   :street/tag "east"
   :street.lane.install/ingress ?b
-  :street.lane.install/bind {?A ?C ?B ?D ?C ?A}
+  :street.lane.install/bind {?left ?C ?straight ?D ?right ?A}
   :street.lane.install/light ?x
   :street.lane.install/rules :shamrock
   :street.lane.install/name "in"
@@ -107,7 +107,7 @@
   :street/name "10th Street"
   :street/tag "south"
   :street.lane.install/ingress ?c
-  :street.lane.install/bind {?A ?D ?B ?A ?C ?B}
+  :street.lane.install/bind {?left ?D ?straight ?A ?right ?B}
   :street.lane.install/light ?y
   :street.lane.install/rules :shamrock
   :street.lane.install/name "in"
@@ -126,7 +126,7 @@
   :street/name "10th Street"
   :street/tag "west"
   :street.lane.install/ingress ?d
-  :street.lane.install/bind {?A ?A ?B ?B ?C ?C}
+  :street.lane.install/bind {?left ?A ?straight ?B ?right ?C}
   :street.lane.install/light ?z
   :street.lane.install/rules :shamrock
   :street.lane.install/name "in"
