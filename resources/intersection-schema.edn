@@ -50,17 +50,21 @@
  {:rule-set/ident :shamrock
   :rule-set/vars [?origin ?origin-egress ?left ?right ?straight ?opposing]}
 
- {:rule-set/register :straight
+ {:rule-set/model :shamrock
+  :rule-set/register :straight
   :rule/substitute {?origin ?origin ?straight ?straight}}
 
- {:rule-set/register :left
+ {:rule-set/model :shamrock
+  :rule-set/register :left
   :rule/substitute {?origin ?origin ?left ?left ?opposing ?opposing
                     ?origin-egress ?origin-egress}}
 
- {:rule-set/register :right
+ {:rule-set/model :shamrock
+  :rule-set/register :right
   :rule/substitute {?origin ?origin ?right ?right}}
 
- {:rule-set/register :right-on-red
+ {:rule-set/model :shamrock
+  :rule-set/register :right-on-red
   :rule/substitute {?origin ?origin ?right ?right ?left ?left}}
 
  {:intersection/ident ["10th Street" "Chestnut Street"]
