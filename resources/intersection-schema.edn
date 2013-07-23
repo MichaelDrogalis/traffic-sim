@@ -23,7 +23,7 @@
 
  {:lane.template/indent :four-way-symmetric
   :lane.template/substitute {?a :shamrock ?b :shamrock ?c :shamrock ?d :shamrock
-                             ?A :one-way-out ?B :one-way-out ?C :one-way-out ?D :one-way-out}
+                             ?A :one-way-out ?B :one-way-out ?C :one-way-out ?D :one-way-out}}
 
  {:rule/ident :straight
   :src ?origin
