@@ -33,24 +33,21 @@
 
  {:rule/ident :straight
   :src ?origin
-  :dst ?straight
-  :light [:green]}
+  :dst ?straight}
 
  {:rule/ident :left
   :src ?origin
   :dst ?left
-  :light [:green :yellow]
   :yield [{?opposing ?left} {?opposing ?origin-egress}]}
 
  {:rule/ident :right
   :src ?origin
-  :dst ?right
-  :light [:green :yellow]}
+  :dst ?right}
 
  {:rule/ident :right-on-red
   :src ?origin
   :dst ?right
-  :light [:red]
+  :halted? true
   :yield [{?left ?right}]}
 
  {:rule-set/ident :shamrock
