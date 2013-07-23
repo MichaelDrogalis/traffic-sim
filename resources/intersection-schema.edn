@@ -14,17 +14,6 @@
   :light-combo/schedule :shamrock-schedule
   :light-combo/substitute {?w :standard ?x :standard ?y :standard ?z :standard}}
 
- {:lane/ident :shamrock
-  :lane/type  :ingress
-  :lane/paths [?left ?straight ?right]}
-  
- {:lane/ident :one-way-out
-  :lane/type  :egress}
-
- {:lane.template/indent :four-way-symmetric
-  :lane.template/substitute {?a :shamrock ?b :shamrock ?c :shamrock ?d :shamrock
-                             ?A :one-way-out ?B :one-way-out ?C :one-way-out ?D :one-way-out}}
-
  {:rule/ident :straight
   :src ?origin
   :dst ?straight
@@ -74,8 +63,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "north"
-  :street.lane.install/ingress ?a
-  :street.lane.install/bind {?left ?B ?straight ?C ?right ?D}
+  :street.lane.install/type :ingress
   :street.lane.install/light ?w
   :street.lane.install/rules :shamrock
   :street.lane.install/name "in"
@@ -86,14 +74,13 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "north"
-  :street.lane.install/egress ?A
+  :street.lane.install/type :egress
   :street.lane.install/name "out"}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "east"
-  :street.lane.install/ingress ?b
-  :street.lane.install/bind {?left ?C ?straight ?D ?right ?A}
+  :street.lane.install/type :ingress
   :street.lane.install/light ?x
   :street.lane.install/rules :shamrock
   :street.lane.install/name "in"
@@ -104,14 +91,13 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "east"
-  :street.lane.install/egress ?B
+  :street.lane.install/type :egress
   :street.lane.install/name "out"}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "south"
-  :street.lane.install/ingress ?c
-  :street.lane.install/bind {?left ?D ?straight ?A ?right ?B}
+  :street.lane.install/type :ingress
   :street.lane.install/light ?y
   :street.lane.install/rules :shamrock
   :street.lane.install/name "in"
@@ -122,15 +108,13 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "south"
-  :street.lane.install/egress ?C
+  :street.lane.install/type :egress
   :street.lane.install/name "out"}
-
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "west"
-  :street.lane.install/ingress ?d
-  :street.lane.install/bind {?left ?A ?straight ?B ?right ?C}
+  :street.lane.install/type :ingress
   :street.lane.install/light ?z
   :street.lane.install/rules :shamrock
   :street.lane.install/name "in"
@@ -141,6 +125,6 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "west"
-  :street.lane.install/egress ?D
+  :street.lane.install/type :egress
   :street.lane.install/name "out"}]
 
