@@ -57,7 +57,7 @@
   :rule/substitute {?origin ?origin ?right ?right ?left ?left}}
 
  {:intersection/ident ["10th Street" "Chestnut Street"]
-  :intersection.install/lane-template :four-way-symmetric
+  :intersection.install/rules :shamrock
   :intersection.install/lights :standard-light-set}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
