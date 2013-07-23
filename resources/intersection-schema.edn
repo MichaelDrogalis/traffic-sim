@@ -1,8 +1,10 @@
 [{:light-face/ident :standard
-  :light-face/states [:red :yellow :green]
+  :light-face/halt [:red]
+  :light-face/proceed [:yellow :green]
   :light-face/init [:red]}
 
  {:schedule/ident :shamrock-schedule
+  :schedule/substitute {?w :standard ?x :standard ?y :standard ?z :standard}
   :schedule/sequence [{:states {?w [:green] ?y [:green]} :duration 8000}
                       {:states {?w [:yellow] ?y [:yellow]} :duration 3000}
                       {:states {?w [:red] ?y [:red]} :duration 3000}
@@ -11,8 +13,7 @@
                       {:states {?x [:red] ?z [:red]} :duration 3000}]}
  
  {:light-combo/ident :standard-light-combo
-  :light-combo/schedule :shamrock-schedule
-  :light-combo/substitute {?w :standard ?x :standard ?y :standard ?z :standard}}
+  :light-combo/schedule :shamrock-schedule}
 
  {:rule/ident :straight
   :src ?origin
