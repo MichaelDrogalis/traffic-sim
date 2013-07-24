@@ -31,7 +31,6 @@
  {:rule/ident :right-on-red
   :src ?origin
   :dst ?right
-  :halted? true
   :yield [{?left ?right}]
   :light [:red]}
 
