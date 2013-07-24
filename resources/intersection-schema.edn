@@ -34,25 +34,25 @@
   :yield [{?left ?right}]
   :light [:red]}
 
- {:rule-set/ident :shamrock
-  :rule-set/vars [?origin ?origin-egress ?left ?right ?straight ?opposing]}
+ {:lane.rules/ident :shamrock
+  :lane.rules/vars [?origin ?origin-egress ?left ?right ?straight ?opposing]}
 
- {:rule-set/model :shamrock
-  :rule-set/register :straight
-  :rule/substitute {?origin ?origin ?straight ?straight}}
+ {:lane.rules/of :shamrock
+  :lane.rules/register :straight
+  :lane.rules/substitute {?origin ?origin ?straight ?straight}}
 
- {:rule-set/model :shamrock
-  :rule-set/register :left
-  :rule/substitute {?origin ?origin ?left ?left ?opposing ?opposing
-                    ?origin-egress ?origin-egress}}
+ {:lane.rules/of :shamrock
+  :lane.rules/register :left
+  :lane.rules/substitute {?origin ?origin ?left ?left ?opposing ?opposing
+                          ?origin-egress ?origin-egress}}
 
- {:rule-set/model :shamrock
-  :rule-set/register :right
-  :rule/substitute {?origin ?origin ?right ?right}}
+ {:lane.rules/of :shamrock
+  :lane.rules/register :right
+  :lane.rules/substitute {?origin ?origin ?right ?right}}
 
- {:rule-set/model :shamrock
-  :rule-set/register :right-on-red
-  :rule/substitute {?origin ?origin ?right ?right ?left ?left}}
+ {:lane.rules/of :shamrock
+  :lane.rules/register :right-on-red
+  :lane.rules/substitute {?origin ?origin ?right ?right ?left ?left}}
 
  {:intersection/ident ["10th Street" "Chestnut Street"]
   :intersection.install/rules :shamrock
