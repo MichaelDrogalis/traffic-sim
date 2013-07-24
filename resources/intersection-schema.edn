@@ -14,22 +14,26 @@
 
  {:rule/ident :straight
   :src ?origin
-  :dst ?straight}
+  :dst ?straight
+  :light [:green :yellow]}
 
  {:rule/ident :left
   :src ?origin
   :dst ?left
-  :yield [{?opposing ?left} {?opposing ?origin-egress}]}
+  :yield [{?opposing ?left} {?opposing ?origin-egress}]
+  :light [:green :yellow]}
 
  {:rule/ident :right
   :src ?origin
-  :dst ?right}
+  :dst ?right
+  :light [:green :yellow]}
 
  {:rule/ident :right-on-red
   :src ?origin
   :dst ?right
   :halted? true
-  :yield [{?left ?right}]}
+  :yield [{?left ?right}]
+  :light [:red]}
 
  {:rule-set/ident :shamrock
   :rule-set/vars [?origin ?origin-egress ?left ?right ?straight ?opposing]}
