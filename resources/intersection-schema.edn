@@ -43,8 +43,7 @@
 
  {:lane.rules/of :shamrock
   :lane.rules/register :left
-  :lane.rules/substitute {?origin ?origin ?left ?left ?opposing ?opposing
-                          ?origin-egress ?origin-egress}}
+  :lane.rules/substitute {?origin ?origin ?left ?left ?opposing ?opposing ?origin-egress ?origin-egress}}
 
  {:lane.rules/of :shamrock
   :lane.rules/register :right
