@@ -77,7 +77,7 @@
   :street.lane.install/ident ?A}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
+  :street/name "Chestnut Street"
   :street/tag "east"
   :street.lane.install/name "in"
   :street.lane.install/type :ingress
@@ -89,7 +89,7 @@
                                    ?straight ?d ?opposing ?D}}
  
  {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
+  :street/name "Chestnut Street"
   :street/tag "east"
   :street.lane.install/name "out"
   :street.lane.install/type :egress
@@ -115,7 +115,7 @@
   :street.lane.install/ident ?C}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
+  :street/name "Chestnut Street"
   :street/tag "west"
   :street.lane.install/name "in"
   :street.lane.install/type :ingress
@@ -127,7 +127,7 @@
                                    ?straight ?b ?opposing ?B}}
  
  {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
+  :street/name "Chestnut Street"
   :street/tag "west"
   :street.lane.install/name "out"
   :street.lane.install/type :egress
