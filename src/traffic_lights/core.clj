@@ -18,6 +18,9 @@
 (defn build-non-unique-catalog [schema kw]
   (group-by-key schema kw))
 
+(defn build-composite-key-catalog [schema id-kw kws]
+  (group-by #(select-keys % kws) (filter #(contains? % id-kw) schema)))
+
 (def light-catalog (build-catalog schema :light-face/ident))
 
 (def schedule-catalog (build-catalog schema :schedule/ident))
@@ -28,7 +31,22 @@
 
 (def rule-substitution-catalog (build-non-unique-catalog schema :lane.rules/of))
 
-(def street-catalog (build-non-unique-catalog schema :intersection/of))
+(def street-catalog
+  (ensure-uniqueness (build-composite-key-catalog
+                      schema :intersection/of
+                      [:intersection/of
+                       :street/name
+                       :street/tag 
+                       :street.lane.install/name])))
+
+(def intx-catalog (build-non-unique-catalog schema :intersection/of))
+
+(defn street-lane-id-index [intx]
+  (group-by :street.lane.install/ident
+            (map #(select-keys %
+                               [:street.lane.install/ident :intersection/of
+                                :street/name :street/tag :street.lane.install/name])
+                 (intx-catalog intx))))
 
 (defn build-light-for-schedule [schedule light-catalog]
   (fmap #(:light-face/init (light-catalog %)) (:schedule/substitute schedule)))
@@ -46,15 +64,37 @@
       (Thread/sleep duration))))
 
 ;;;;
+(def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
+                        :street/name "10th Street"
+                        :street/tag "south"
+                        :street.lane.install/name "in"}
+                  :dst {:intersection/of ["10th Street" "Chestnut Street"]
+                        :street/name "10th Street"
+                        :street/tag "north"
+                        :street.lane.install/name "out"}
+                  :id  (java.util.UUID/randomUUID)}))
+
 (def schedule (schedule-catalog :shamrock-schedule))
 
 (def traffic-light (agent (build-light-for-schedule schedule light-catalog)))
 
-(def queues {{:intersection ["10th Street" "Chestnut Street"]
-              :street "10th Street"
-              :tag "south"
-              :lane "in"}
+(def queues {{:intersection/of ["10th Street" "Chestnut Street"]
+              :street/name "10th Street"
+              :street/tag "south"
+              :street.lane.install/name "in"}
              (agent [])})
+
+(def straight-rule (:straight rule-catalog))
+
+(def src (:src @mike))
+(def dst (:dst @mike))
+
+(def vars (street-lane-id-index (:intersection/of src)))
+
+(def street-mapping (:street.lane.install/substitute (street-catalog src)))
+
+(def semantic-var->4t (fmap #(vars %) street-mapping))
+
 ;;;
 
 (defn light-okay? [light src]
@@ -97,16 +137,6 @@
          (watch-car-ahead-of-me tail me))))))
 
 ;;; Begin experimentation.
-
-(def mike (agent {:src {:intersection ["10th Street" "Chestnut Street"]
-                        :street "10th Street"
-                        :tag "south"
-                        :lane "in"}
-                  :dst {:intersection ["10th Street" "Chestnut Street"]
-                        :street "10th Street"
-                        :tag "north"
-                        :lane "out"}
-                  :id  (java.util.UUID/randomUUID)}))
 
 (add-watch traffic-light :printer
            (fn [_ _ _ light]

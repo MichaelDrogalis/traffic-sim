@@ -13,45 +13,46 @@
                       {:states {?x [:red] ?z [:red]} :duration 3000}]}
 
  {:rule/ident :straight
-  :src ?origin
-  :dst ?straight
+  :src ?origini
+  :dst ?straighte
   :light [:green :yellow]}
 
  {:rule/ident :left
-  :src ?origin
-  :dst ?left
-  :yield [{?opposing ?left} {?opposing ?origin-egress}]
+  :src ?origini
+  :dst ?lefte
+  :yield [{?straighti ?lefte} {?straighti ?origine}]
   :light [:green :yellow]}
 
  {:rule/ident :right
-  :src ?origin
-  :dst ?right
+  :src ?origini
+  :dst ?righte
   :light [:green :yellow]}
 
  {:rule/ident :right-on-red
-  :src ?origin
-  :dst ?right
-  :yield [{?left ?right}]
+  :src ?origini
+  :dst ?righte
+  :yield [{?lefti ?righte}]
   :light [:red]}
 
  {:lane.rules/ident :shamrock
-  :lane.rules/vars [?origin ?origin-egress ?left ?right ?straight ?opposing]}
+  :lane.rules/vars [?origini ?origine ?lefti ?lefte ?righte ?straighte ?straighti]}
 
  {:lane.rules/of :shamrock
   :lane.rules/register :straight
-  :lane.rules/substitute {?origin ?origin ?straight ?straight}}
+  :lane.rules/substitute {?origini ?origini ?straighte ?straighte}}
 
  {:lane.rules/of :shamrock
   :lane.rules/register :left
-  :lane.rules/substitute {?origin ?origin ?left ?left ?opposing ?opposing ?origin-egress ?origin-egress}}
+  :lane.rules/substitute {?origini ?origini ?lefte ?lefte
+                          ?straighti ?straighti ?origine ?origine}}
 
  {:lane.rules/of :shamrock
   :lane.rules/register :right
-  :lane.rules/substitute {?origin ?origin ?right ?right}}
+  :lane.rules/substitute {?origini ?origini ?righte ?righte}}
 
  {:lane.rules/of :shamrock
   :lane.rules/register :right-on-red
-  :lane.rules/substitute {?origin ?origin ?right ?right ?left ?left}}
+  :lane.rules/substitute {?origini ?origini ?righte ?righte ?lefte ?lefte}}
 
  {:intersection/ident ["10th Street" "Chestnut Street"]
   :intersection.install/rules :shamrock
@@ -65,9 +66,9 @@
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?a
   :street.lane.install/light ?w
-  :street.lane.install/substitute {?origin ?a ?origin-egress ?A
-                                   ?left ?b ?right ?d
-                                   ?straight ?c ?opposing ?C}}
+  :street.lane.install/substitute {?origini ?a ?origine ?A
+                                   ?lefte ?B ?righte ?D
+                                   ?straighte ?C ?straighti ?c}}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
@@ -84,9 +85,9 @@
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?b
   :street.lane.install/light ?x
-  :street.lane.install/substitute {?origin ?b ?origin-egress ?B
-                                   ?left ?c ?right ?a
-                                   ?straight ?d ?opposing ?D}}
+  :street.lane.install/substitute {?origini ?b ?origine ?B
+                                   ?lefte ?C ?righte ?A
+                                   ?straighte ?D ?straighti ?d}}
  
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
@@ -103,10 +104,10 @@
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?c
   :street.lane.install/light ?y
-  :street.lane.install/substitute {?origin ?c ?origin-egress ?C
-                                   ?left ?d ?right ?b
-                                   ?straight ?a ?opposing ?A}}
- 
+  :street.lane.install/substitute {?origini ?c ?origine ?C
+                                   ?lefte ?D ?righte ?B
+                                   ?straighte ?A ?straighti ?a}}
+
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "south"
@@ -122,9 +123,9 @@
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?d
   :street.lane.install/light ?z
-  :street.lane.install/substitute {?origin ?d ?origin-egress ?D
-                                   ?left ?a ?right ?c
-                                   ?straight ?b ?opposing ?B}}
+  :street.lane.install/substitute {?origini ?d ?origine ?D
+                                   ?lefte ?A ?righte ?C
+                                   ?straighte ?B ?straighti ?b}}
  
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
