@@ -14,14 +14,14 @@
                       ]}
 
  {:rule/ident :straight
-  :src ?i
-  :dst ?e
+  :src ?origini
+  :dst ?straighte
   :light [:green :yellow]}
 
  {:rule/ident :left
   :src ?origini
   :dst ?lefte
-  :yield [[?straighti ?lefte] [?straighti ?origine]]
+  :yield [[?straighti]]
   :light [:green :yellow]}
 
  {:rule/ident :right
@@ -40,7 +40,7 @@
 
  {:lane.rules/of :shamrock
   :lane.rules/register :straight
-  :lane.rules/substitute {?i ?origini ?e ?straighte}}
+  :lane.rules/substitute {?origini ?origini ?straighte ?straighte}}
 
  {:lane.rules/of :shamrock
   :lane.rules/register :left

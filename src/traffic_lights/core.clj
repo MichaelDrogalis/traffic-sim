@@ -105,7 +105,7 @@
        (-> rule
            (assoc :src (first (sub-map (:src rule))))
            (assoc :dst (first (sub-map (:dst rule))))
-           (assoc :yield (map (fn [[src dst]] [(sub-map src) (sub-map dst)]) (:yield rule))))))
+           (assoc :yield (map (fn [[src dst]] [(first (sub-map src)) (first (sub-map dst))]) (:yield rule))))))
    evaled-rule-binders))
 
 (defn evaluate-rule-binders [binders semantic-map]
@@ -122,8 +122,24 @@
           (subset? light (into #{} (:light rule)))))
    evaled-rules))
 
+(defn lane-is-empty? [src]
+  (empty? @(queues-index src)))
+
 (defn yield-lanes-clear? [rules]
-  true)
+  (map
+   (fn [rule]
+     (let [{:keys [dst yield]} rule]
+       (every?
+        true?
+        (map
+         (fn [[in & out]]
+           (let [in-4t (dissoc in :street.lane.install/ident)]
+             (if out
+               (let [head-car (first (deref (queues-index in-4t)))]
+                 (not= (:dst head-car) dst))
+               (lane-is-empty? in-4t))))
+         yield))))
+   rules))
 
 (defn safe-to-drive-through? [src dst light]
   (let [vars (street-lane-id-index (:intersection/of src))
@@ -151,9 +167,6 @@
       (drive-through-intersection me)
       (complicated-bit))))
 
-(defn lane-is-empty? [src]
-  (empty? @(queues-index src)))
-
 (defn last-driver-in-lane [src]
   (last @(queues-index src)))
 
@@ -161,9 +174,8 @@
   (add-watch target me
              (fn [_ _ _ car]
                (when-not (= (:src @car) (:src me))
-                 (do
-                   (remove-watch car me)
-                   (attempt-to-drive-through))))))
+                 (do (remove-watch car me)
+                     (attempt-to-drive-through))))))
 
 (defn put-me-in-queue [me]
   (let [queue (queues-index (:src @me))]
