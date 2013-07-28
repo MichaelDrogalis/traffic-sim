@@ -1,6 +1,7 @@
 (ns traffic-lights.core
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.tools.logging :refer [info]]
+            [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]))
 
 (def schema
@@ -69,8 +70,8 @@
                         :street/tag "south"
                         :street.lane.install/name "in"}
                   :dst {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "10th Street"
-                        :street/tag "north"
+                        :street/name "Chestnut Street"
+                        :street/tag "east"
                         :street.lane.install/name "out"}
                   :id  (java.util.UUID/randomUUID)}))
 
@@ -84,11 +85,11 @@
               :street.lane.install/name "in"}
              (agent [])})
 
-(def straight-rule (:straight rule-catalog))
-
 (def src (:src @mike))
 
 (def dst (:dst @mike))
+
+(def light-to-watch (:street.lane.install/light (street-catalog src)))
 
 (def vars (street-lane-id-index (:intersection/of src)))
 
@@ -112,7 +113,7 @@
      (assoc binder :lane.rules/substitute (fmap #(rule-set-with-subs %) (:lane.rules/substitute binder))))
    registered-rules))
 
-(pprint
+(def rules-with-subs
  (map
   (fn [binder]
     (let [rule (rule-catalog (:lane.rules/register binder))
@@ -123,7 +124,13 @@
           (assoc :yield (map (fn [[src dst]] [(sub-map src) (sub-map dst)]) (:yield rule))))))
   rule-binders-with-subs))
 
-
+(def encounter-rules
+ (filter
+  (fn [rule]
+    (and (= (dissoc (first (:src rule)) :street.lane.install/ident) src)
+         (= (dissoc (first (:dst rule)) :street.lane.install/ident) dst)
+         (subset? (@traffic-light light-to-watch) (into #{} (:light rule)))))
+  rules-with-subs))
 
 ;;;
 
