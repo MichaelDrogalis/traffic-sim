@@ -46,6 +46,8 @@
 
 (def intx-index (build-catalog schema :intersection/ident))
 
+(def intx-area-index (fmap (fn [_] (ref [])) intx-index))
+
 (defn street-lane-id-index [intx]
   (group-by :street.lane.install/ident
             (map #(select-keys %
@@ -134,8 +136,10 @@
     (and (not (empty? relevant-rules))
          (yield-lanes-clear? relevant-rules))))
 
-(defn drive-through-intersection []
-  (prn "Vrooom!"))
+(defn drive-through-intersection [me]
+  (alter (intx-area-index (:intersection/of (:src @me))) conj me)
+  (Thread/sleep 2000)
+  (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial = me))))
 
 (defn complicated-bit [])
 
@@ -144,7 +148,7 @@
         light-ident (:street.lane.install/light (street-catalog src))
         light ((deref (traffic-light-index (:intersection/of src))) light-ident)]
     (if (safe-to-drive-through? src dst light)
-      (drive-through-intersection)
+      (drive-through-intersection me)
       (complicated-bit))))
 
 (defn lane-is-empty? [src]
