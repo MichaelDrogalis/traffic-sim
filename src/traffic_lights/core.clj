@@ -111,10 +111,10 @@
 (defn evaluate-rule-binders [binders]
   (map (fn [binder]
          (assoc binder :lane.rules/substitute
-                (fmap #(rule-set-with-subs %) (:lane.rules/substitute binder))))
+                (fmap #(evaluate-rule-set %) (:lane.rules/substitute binder))))
        binders))
 
-(defn rules-with-subs [evaled-rule-binders]
+(defn evaluate-rules [evaled-rule-binders]
  (map
   (fn [binder]
     (let [rule (rule-catalog (:lane.rules/register binder))
@@ -135,22 +135,18 @@
 
 ;;;
 
-(defn safe-to-drive-through? [])
-
-(defn light-okay? [light src]
-  (prn light)
-  (prn src))
-
-(defn no-one-to-yield-to? [src dst])
+(defn safe-to-drive-through? [src dst light]
+  (let [binders (registered-rules rule-substitution-catalog street-catalog src)
+        evaled-rules (evaluate-rules binders)]
+    (not (empty? (applicable-rules evaled-rules src dst light)))))
 
 (defn drive-through-intersection [])
 
 (defn complicated-bit [])
 
 (defn attempt-to-drive-through [me]
-  (let [light traffic-light
-        {:keys [src dst]} @me]
-    (if (safe-to-drive-through?)
+  (let [light traffic-light {:keys [src dst]} @me]
+    (if (safe-to-drive-through? src dst ((traffic-light-index intx-catalog light-catalog) src))
       (drive-through-intersection)
       (complicated-bit))))
 
