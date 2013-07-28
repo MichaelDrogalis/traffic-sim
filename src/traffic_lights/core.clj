@@ -76,17 +76,6 @@
           (Thread/sleep duration)))
     (recur)))
 
-;;;;
-(def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "10th Street"
-                        :street/tag "south"
-                        :street.lane.install/name "in"}
-                  :dst {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "10th Street"
-                        :street/tag "north"
-                        :street.lane.install/name "out"}
-                  :id  (java.util.UUID/randomUUID)}))
-
 (defn semantic-var->4t [vars unevaled-street-map]
   (fmap #(vars %) unevaled-street-map))
 
@@ -153,11 +142,13 @@
          (yield-lanes-clear? relevant-rules))))
 
 (defn drive-through-intersection [me]
+  (alter (queues-index (:src @me)) (partial filter (partial = me)))
   (alter (intx-area-index (:intersection/of (:src @me))) conj me)
   (Thread/sleep 2000)
-  (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial = me))))
+  (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial = me)))
+  (alter (queues-index (:src @me)) dissoc :src))
 
-(defn complicated-bit [])
+(defn complicated-bit [me])
 
 (defn attempt-to-drive-through [me]
   (let [{:keys [src dst]} @me
@@ -165,7 +156,7 @@
         light ((deref (traffic-light-index (:intersection/of src))) light-ident)]
     (if (safe-to-drive-through? src dst light)
       (drive-through-intersection me)
-      (complicated-bit))))
+      (complicated-bit me))))
 
 (defn last-driver-in-lane [src]
   (last @(queues-index src)))
@@ -182,21 +173,53 @@
     (alter queue conj me)))
 
 (defn drive-to-ingress-lane [me]
-  (future
-    (dosync
-     (if (lane-is-empty? (:src @me))
+  (dosync
+   (if (lane-is-empty? (:src @me))
+     (do (put-me-in-queue me)
+         (attempt-to-drive-through me))
+     (let [tail (last-driver-in-lane (:src @me))]
        (do (put-me-in-queue me)
-           (attempt-to-drive-through me))
-       (let [tail (last-driver-in-lane (:src @me))]
-         (watch-car-ahead-of-me tail me))))))
+           (watch-car-ahead-of-me tail me))))))
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
     (add-watch light :printer (fn [_ _ _ state] (info state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
+(defn verbose-queues! []
+  (doseq [[k q] queues-index]
+    (add-watch q :printer
+               (fn [_ _ _ cars]
+                 (info "Queue of " k ": " cars)))))
+
+(def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
+                        :street/name "10th Street"
+                        :street/tag "south"
+                        :street.lane.install/name "in"}
+                  :dst {:intersection/of ["10th Street" "Chestnut Street"]
+                        :street/name "10th Street"
+                        :street/tag "north"
+                        :street.lane.install/name "out"}
+                  :id  (java.util.UUID/randomUUID)}))
+
+(def dorrene (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
+                           :street/name "10th Street"
+                           :street/tag "south"
+                           :street.lane.install/name "in"}
+                     :dst {:intersection/of ["10th Street" "Chestnut Street"]
+                           :street/name "10th Street"
+                           :street/tag "north"
+                           :street.lane.install/name "out"}
+                     :id  (java.util.UUID/randomUUID)}))
+
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
-  (Thread/sleep 100)
-  (drive-to-ingress-lane mike))
+  (verbose-queues!)
+  (println "Mike is" (:id @mike))
+  (println "Dorrene is" (:id @dorrene))
+  (drive-to-ingress-lane mike)
+  (drive-to-ingress-lane dorrene))
+
+(pprint @(nth (vals queues-index) 4))
+
 
