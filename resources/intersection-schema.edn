@@ -20,7 +20,7 @@
  {:rule/ident :left
   :src ?origini
   :dst ?lefte
-  :yield [{?straighti ?lefte} {?straighti ?origine}]
+  :yield [[?straighti ?lefte] [?straighti ?origine]]
   :light [:green :yellow]}
 
  {:rule/ident :right
@@ -31,7 +31,7 @@
  {:rule/ident :right-on-red
   :src ?origini
   :dst ?righte
-  :yield [{?lefti ?righte}]
+  :yield [[?lefti ?righte]]
   :light [:red]}
 
  {:lane.rules/ident :shamrock
@@ -52,10 +52,9 @@
 
  {:lane.rules/of :shamrock
   :lane.rules/register :right-on-red
-  :lane.rules/substitute {?origini ?origini ?righte ?righte ?lefte ?lefte}}
+  :lane.rules/substitute {?origini ?origini ?righte ?righte ?lefti ?lefti}}
 
  {:intersection/ident ["10th Street" "Chestnut Street"]
-  :intersection.install/rules :shamrock
   :intersection.install/schedule :shamrock-schedule}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
@@ -67,7 +66,7 @@
   :street.lane.install/ident ?a
   :street.lane.install/light ?w
   :street.lane.install/substitute {?origini ?a ?origine ?A
-                                   ?lefte ?B ?righte ?D
+                                   ?lefti ?b ?lefte ?B ?righte ?D
                                    ?straighte ?C ?straighti ?c}}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
@@ -86,7 +85,7 @@
   :street.lane.install/ident ?b
   :street.lane.install/light ?x
   :street.lane.install/substitute {?origini ?b ?origine ?B
-                                   ?lefte ?C ?righte ?A
+                                   ?lefti ?c ?lefte ?C ?righte ?A
                                    ?straighte ?D ?straighti ?d}}
  
  {:intersection/of ["10th Street" "Chestnut Street"]
@@ -105,7 +104,7 @@
   :street.lane.install/ident ?c
   :street.lane.install/light ?y
   :street.lane.install/substitute {?origini ?c ?origine ?C
-                                   ?lefte ?D ?righte ?B
+                                   ?lefti ?d ?lefte ?D ?righte ?B
                                    ?straighte ?A ?straighti ?a}}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
@@ -124,7 +123,7 @@
   :street.lane.install/ident ?d
   :street.lane.install/light ?z
   :street.lane.install/substitute {?origini ?d ?origine ?D
-                                   ?lefte ?A ?righte ?C
+                                   ?lefti ?a ?lefte ?A ?righte ?C
                                    ?straighte ?B ?straighti ?b}}
  
  {:intersection/of ["10th Street" "Chestnut Street"]

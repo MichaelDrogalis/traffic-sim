@@ -87,6 +87,7 @@
 (def straight-rule (:straight rule-catalog))
 
 (def src (:src @mike))
+
 (def dst (:dst @mike))
 
 (def vars (street-lane-id-index (:intersection/of src)))
@@ -94,6 +95,35 @@
 (def street-mapping (:street.lane.install/substitute (street-catalog src)))
 
 (def semantic-var->4t (fmap #(vars %) street-mapping))
+
+(def rule-set (lane-rules (:street.lane.install/rules (street-catalog src))))
+
+(defn apply-substitions-to-rule-set [rs]
+  (apply merge (map (fn [sem-var] {sem-var (semantic-var->4t sem-var)})
+                    (:lane.rules/vars rs))))
+
+(def rule-set-with-subs (apply-substitions-to-rule-set rule-set))
+
+(def registered-rules (rule-substitution-catalog (:street.lane.install/rules (street-catalog src))))
+
+(def rule-binders-with-subs
+  (map
+   (fn [binder]
+     (assoc binder :lane.rules/substitute (fmap #(rule-set-with-subs %) (:lane.rules/substitute binder))))
+   registered-rules))
+
+(pprint
+ (map
+  (fn [binder]
+    (let [rule (rule-catalog (:lane.rules/register binder))
+          sub-map (:lane.rules/substitute binder)]
+      (-> rule
+          (assoc :src (sub-map (:src rule)))
+          (assoc :dst (sub-map (:dst rule)))
+          (assoc :yield (map (fn [[src dst]] [(sub-map src) (sub-map dst)]) (:yield rule))))))
+  rule-binders-with-subs))
+
+
 
 ;;;
 
