@@ -56,7 +56,7 @@
 (defn build-light-for-schedule [schedule light-catalog]
   (fmap #(:light-face/init (light-catalog %)) (:schedule/substitute schedule)))
 
-(defn traffic-light-index [intx-catalog light-catalog]
+(def traffic-light-index
   (apply merge
          (map (fn [[intx _]]
                 {intx (agent (-> intx
@@ -83,68 +83,60 @@
                         :street.lane.install/name "out"}
                   :id  (java.util.UUID/randomUUID)}))
 
-(def schedule (schedule-catalog :shamrock-schedule))
+(defn semantic-var->4t [vars unevaled-street-map]
+  (fmap #(vars %) unevaled-street-map))
 
-(def src (:src @mike))
-
-(def dst (:dst @mike))
-
-(def light-to-watch (:street.lane.install/light (street-catalog src)))
-
-(def vars (street-lane-id-index (:intersection/of src)))
-
-(def street-mapping (:street.lane.install/substitute (street-catalog src)))
-
-(def semantic-var->4t (fmap #(vars %) street-mapping))
-
-(def rule-set (lane-rules (:street.lane.install/rules (street-catalog src))))
-
-(defn evaluate-rule-set [rule-set]
-  (apply merge (map (fn [sem-var] {sem-var (semantic-var->4t sem-var)})
+(defn evaluate-rule-set [semantic-map rule-set]
+  (apply merge (map (fn [sem-var] {sem-var (semantic-map sem-var)})
                     (:lane.rules/vars rule-set))))
 
 (defn registered-rules [rule-sub-catalog street-catalog src]
   (rule-sub-catalog (:street.lane.install/rules (street-catalog src))))
 
-(defn evaluate-rule-binders [binders]
+(defn evaluate-rules [evaled-rule-binders]
+  (map
+   (fn [binder]
+     (let [rule (rule-catalog (:lane.rules/register binder))
+           sub-map (:lane.rules/substitute binder)]
+       (-> rule
+           (assoc :src (first (sub-map (:src rule))))
+           (assoc :dst (first (sub-map (:dst rule))))
+           (assoc :yield (map (fn [[src dst]] [(sub-map src) (sub-map dst)]) (:yield rule))))))
+   evaled-rule-binders))
+
+(defn evaluate-rule-binders [binders semantic-map]
   (map (fn [binder]
          (assoc binder :lane.rules/substitute
-                (fmap #(evaluate-rule-set %) (:lane.rules/substitute binder))))
+                (fmap (fn [sem-var] (semantic-map sem-var)) (:lane.rules/substitute binder))))
        binders))
 
-(defn evaluate-rules [evaled-rule-binders]
- (map
-  (fn [binder]
-    (let [rule (rule-catalog (:lane.rules/register binder))
-          sub-map (:lane.rules/substitute binder)]
-      (-> rule
-          (assoc :src (sub-map (:src rule)))
-          (assoc :dst (sub-map (:dst rule)))
-          (assoc :yield (map (fn [[src dst]] [(sub-map src) (sub-map dst)]) (:yield rule))))))
-  evaled-rule-binders))
-
 (defn applicable-rules [evaled-rules src dst light]
- (filter
-  (fn [rule]
-    (and (= (dissoc (first (:src rule)) :street.lane.install/ident) src)
-         (= (dissoc (first (:dst rule)) :street.lane.install/ident) dst)
-         (subset? (light light-to-watch) (into #{} (:light rule)))))
-  evaled-rules))
-
-;;;
+  (filter
+   (fn [rule]
+     (and (= (dissoc (:src rule) :street.lane.install/ident) src)
+          (= (dissoc (:dst rule) :street.lane.install/ident) dst)
+          (subset? light (into #{} (:light rule)))))
+   evaled-rules))
 
 (defn safe-to-drive-through? [src dst light]
-  (let [binders (registered-rules rule-substitution-catalog street-catalog src)
-        evaled-rules (evaluate-rules binders)]
+  (let [vars (street-lane-id-index (:intersection/of src))
+        street-mapping (:street.lane.install/substitute (street-catalog src))
+        semantic-map (semantic-var->4t vars street-mapping)
+        binders (registered-rules rule-substitution-catalog street-catalog src)
+        evaled-binders (evaluate-rule-binders binders semantic-map)
+        evaled-rules (evaluate-rules evaled-binders)]
     (not (empty? (applicable-rules evaled-rules src dst light)))))
 
-(defn drive-through-intersection [])
+(defn drive-through-intersection []
+  (prn "Vrooom!"))
 
 (defn complicated-bit [])
 
-(defn attempt-to-drive-through [me light]
-  (let [{:keys [src dst]} @me]
-    (if (safe-to-drive-through? src dst ((traffic-light-index intx-catalog light-catalog) src))
+(defn attempt-to-drive-through [me]
+  (let [{:keys [src dst]} @me
+        light-ident (:street.lane.install/light (street-catalog src))
+        light ((deref (traffic-light-index (:intersection/of src))) light-ident)]
+    (if (safe-to-drive-through? src dst light)
       (drive-through-intersection)
       (complicated-bit))))
 
@@ -176,8 +168,8 @@
          (watch-car-ahead-of-me tail me))))))
 
 (defn turn-on-all-traffic-lights! []
-  (doseq [[intx light] (traffic-light-index intx-catalog light-catalog)]
-    (add-watch light :printer (fn [_ _ _ state] (info state)))
+  (doseq [[intx light] traffic-light-index]
+;    (add-watch light :printer (fn [_ _ _ state] (info state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn -main [& args]

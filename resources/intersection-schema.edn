@@ -13,8 +13,8 @@
                       {:states {?x [:red] ?z [:red]} :duration 3000}]}
 
  {:rule/ident :straight
-  :src ?origini
-  :dst ?straighte
+  :src ?i
+  :dst ?e
   :light [:green :yellow]}
 
  {:rule/ident :left
@@ -39,7 +39,7 @@
 
  {:lane.rules/of :shamrock
   :lane.rules/register :straight
-  :lane.rules/substitute {?origini ?origini ?straighte ?straighte}}
+  :lane.rules/substitute {?i ?origini ?e ?straighte}}
 
  {:lane.rules/of :shamrock
   :lane.rules/register :left
