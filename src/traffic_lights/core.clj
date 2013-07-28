@@ -59,16 +59,16 @@
 (defn traffic-light-index [intx-catalog light-catalog]
   (apply merge
          (map (fn [[intx _]]
-                {intx (-> intx
-                          intx-index
-                          :intersection.install/schedule
-                          schedule-catalog
-                          (build-light-for-schedule light-catalog))})
+                {intx (agent (-> intx
+                                 intx-index
+                                 :intersection.install/schedule
+                                 schedule-catalog
+                                 (build-light-for-schedule light-catalog)))})
               intx-catalog)))
 
-(defn turn-on-light [light schedule]
+(defn turn-on-light! [light schedule]
   (future
-    (doseq [{:keys [states duration] :as step} schedule]
+    (doseq [{:keys [states duration] :as step} (:schedule/sequence schedule)]
       (send light (fn [x] (merge x states)))
       (Thread/sleep duration))))
 
@@ -84,8 +84,6 @@
                   :id  (java.util.UUID/randomUUID)}))
 
 (def schedule (schedule-catalog :shamrock-schedule))
-
-(def traffic-light (agent (build-light-for-schedule schedule light-catalog)))
 
 (def src (:src @mike))
 
@@ -144,8 +142,8 @@
 
 (defn complicated-bit [])
 
-(defn attempt-to-drive-through [me]
-  (let [light traffic-light {:keys [src dst]} @me]
+(defn attempt-to-drive-through [me light]
+  (let [{:keys [src dst]} @me]
     (if (safe-to-drive-through? src dst ((traffic-light-index intx-catalog light-catalog) src))
       (drive-through-intersection)
       (complicated-bit))))
@@ -172,14 +170,8 @@
        (let [tail (last-driver-in-lane (:src @me))]
          (watch-car-ahead-of-me tail me))))))
 
-;;; Begin experimentation.
-
-(add-watch traffic-light :printer
-           (fn [_ _ _ light]
-;             (info light)
-             ))
-
 (defn -main [& args]
-  (turn-on-light traffic-light (:schedule/sequence schedule))
-  (drive-to-ingress-lane mike))
+  (doseq [[intx light] (traffic-light-index intx-catalog light-catalog)]
+    (add-watch light :printer (fn [_ _ _ state] (info state)))
+    (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
