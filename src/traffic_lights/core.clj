@@ -40,7 +40,7 @@
                        :street/tag 
                        :street.lane.install/name])))
 
-(def queues (fmap (fn [_] (agent [])) street-catalog))
+(def queues-index (fmap (fn [_] (ref [])) street-catalog))
 
 (def intx-catalog (build-non-unique-catalog schema :intersection/of))
 
@@ -149,10 +149,10 @@
       (complicated-bit))))
 
 (defn lane-is-empty? [src]
-  (empty? @(queues src)))
+  (empty? @(queues-index src)))
 
 (defn last-driver-in-lane [src]
-  (last @(queues src)))
+  (last @(queues-index src)))
 
 (defn watch-car-ahead-of-me [target me]
   (add-watch target me
@@ -162,16 +162,25 @@
                    (remove-watch car me)
                    (attempt-to-drive-through))))))
 
+(defn put-me-in-queue [me]
+  (let [queue (queues-index (:src @me))]
+    (alter queue conj me)))
+
 (defn drive-to-ingress-lane [me]
   (future
     (dosync
      (if (lane-is-empty? (:src @me))
-       (attempt-to-drive-through me)
+       (do (put-me-in-queue me)
+           (attempt-to-drive-through me))
        (let [tail (last-driver-in-lane (:src @me))]
          (watch-car-ahead-of-me tail me))))))
 
-(defn -main [& args]
+(defn turn-on-all-traffic-lights! []
   (doseq [[intx light] (traffic-light-index intx-catalog light-catalog)]
     (add-watch light :printer (fn [_ _ _ state] (info state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
+
+(defn -main [& args]
+  (turn-on-all-traffic-lights!)
+  (drive-to-ingress-lane mike))
 
