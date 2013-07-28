@@ -6,11 +6,12 @@
  {:schedule/ident :shamrock-schedule
   :schedule/substitute {?w :standard ?x :standard ?y :standard ?z :standard}
   :schedule/sequence [{:states {?w [:green] ?y [:green]} :duration 8000}
-                      {:states {?w [:yellow] ?y [:yellow]} :duration 3000}
-                      {:states {?w [:red] ?y [:red]} :duration 3000}
-                      {:states {?x [:green] ?z [:green]} :duration 8000}
-                      {:states {?x [:yellow] ?z [:yellow]} :duration 3000}
-                      {:states {?x [:red] ?z [:red]} :duration 3000}]}
+;                      {:states {?w [:yellow] ?y [:yellow]} :duration 3000}
+;                      {:states {?w [:red] ?y [:red]} :duration 3000}
+;                      {:states {?x [:green] ?z [:green]} :duration 8000}
+;                      {:states {?x [:yellow] ?z [:yellow]} :duration 3000}
+;                      {:states {?x [:red] ?z [:red]} :duration 3000}
+                      ]}
 
  {:rule/ident :straight
   :src ?i

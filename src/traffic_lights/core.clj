@@ -68,9 +68,11 @@
 
 (defn turn-on-light! [light schedule]
   (future
-    (doseq [{:keys [states duration] :as step} (:schedule/sequence schedule)]
-      (send light (fn [x] (merge x states)))
-      (Thread/sleep duration))))
+    (loop []
+        (doseq [{:keys [states duration] :as step} (:schedule/sequence schedule)]
+          (send light (fn [x] (merge x states)))
+          (Thread/sleep duration)))
+    (recur)))
 
 ;;;;
 (def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
@@ -118,14 +120,19 @@
           (subset? light (into #{} (:light rule)))))
    evaled-rules))
 
+(defn yield-lanes-clear? [rules]
+  true)
+
 (defn safe-to-drive-through? [src dst light]
   (let [vars (street-lane-id-index (:intersection/of src))
         street-mapping (:street.lane.install/substitute (street-catalog src))
         semantic-map (semantic-var->4t vars street-mapping)
         binders (registered-rules rule-substitution-catalog street-catalog src)
         evaled-binders (evaluate-rule-binders binders semantic-map)
-        evaled-rules (evaluate-rules evaled-binders)]
-    (not (empty? (applicable-rules evaled-rules src dst light)))))
+        evaled-rules (evaluate-rules evaled-binders)
+        relevant-rules (applicable-rules evaled-rules src dst light)]
+    (and (not (empty? relevant-rules))
+         (yield-lanes-clear? relevant-rules))))
 
 (defn drive-through-intersection []
   (prn "Vrooom!"))
@@ -169,10 +176,11 @@
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
-;    (add-watch light :printer (fn [_ _ _ state] (info state)))
+    (add-watch light :printer (fn [_ _ _ state] (info state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
+  (Thread/sleep 100)
   (drive-to-ingress-lane mike))
 
