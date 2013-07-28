@@ -52,12 +52,6 @@
 (defn build-light-for-schedule [schedule light-catalog]
   (fmap #(:light-face/init (light-catalog %)) (:schedule/substitute schedule)))
 
-(defn turn-light-on [traffic-light schedule light-catalog]
-  (doseq [step schedule]
-    (let [{:keys [states duration]} step]
-      (send traffic-light (fn [light] (apply merge light states)))
-      (Thread/sleep duration))))
-
 (defn turn-on-light [light schedule]
   (future
     (doseq [{:keys [states duration] :as step} schedule]
@@ -70,8 +64,8 @@
                         :street/tag "south"
                         :street.lane.install/name "in"}
                   :dst {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "Chestnut Street"
-                        :street/tag "east"
+                        :street/name "10th Street"
+                        :street/tag "north"
                         :street.lane.install/name "out"}
                   :id  (java.util.UUID/randomUUID)}))
 
@@ -134,6 +128,8 @@
 
 ;;;
 
+(defn safe-to-drive-through? [])
+
 (defn light-okay? [light src]
   (prn light)
   (prn src))
@@ -147,7 +143,7 @@
 (defn attempt-to-drive-through [me]
   (let [light traffic-light
         {:keys [src dst]} @me]
-    (if (and (light-okay? light src) (no-one-to-yield-to? src dst))
+    (if (safe-to-drive-through?)
       (drive-through-intersection)
       (complicated-bit))))
 
