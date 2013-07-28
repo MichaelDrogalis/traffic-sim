@@ -40,7 +40,11 @@
                        :street/tag 
                        :street.lane.install/name])))
 
+(def queues (fmap (fn [_] (agent [])) street-catalog))
+
 (def intx-catalog (build-non-unique-catalog schema :intersection/of))
+
+(def intx-index (build-catalog schema :intersection/ident))
 
 (defn street-lane-id-index [intx]
   (group-by :street.lane.install/ident
@@ -51,6 +55,16 @@
 
 (defn build-light-for-schedule [schedule light-catalog]
   (fmap #(:light-face/init (light-catalog %)) (:schedule/substitute schedule)))
+
+(defn traffic-light-index [intx-catalog light-catalog]
+  (apply merge
+         (map (fn [[intx _]]
+                {intx (-> intx
+                          intx-index
+                          :intersection.install/schedule
+                          schedule-catalog
+                          (build-light-for-schedule light-catalog))})
+              intx-catalog)))
 
 (defn turn-on-light [light schedule]
   (future
@@ -73,12 +87,6 @@
 
 (def traffic-light (agent (build-light-for-schedule schedule light-catalog)))
 
-(def queues {{:intersection/of ["10th Street" "Chestnut Street"]
-              :street/name "10th Street"
-              :street/tag "south"
-              :street.lane.install/name "in"}
-             (agent [])})
-
 (def src (:src @mike))
 
 (def dst (:dst @mike))
@@ -93,21 +101,20 @@
 
 (def rule-set (lane-rules (:street.lane.install/rules (street-catalog src))))
 
-(defn apply-substitions-to-rule-set [rs]
+(defn evaluate-rule-set [rule-set]
   (apply merge (map (fn [sem-var] {sem-var (semantic-var->4t sem-var)})
-                    (:lane.rules/vars rs))))
+                    (:lane.rules/vars rule-set))))
 
-(def rule-set-with-subs (apply-substitions-to-rule-set rule-set))
+(defn registered-rules [rule-sub-catalog street-catalog src]
+  (rule-sub-catalog (:street.lane.install/rules (street-catalog src))))
 
-(def registered-rules (rule-substitution-catalog (:street.lane.install/rules (street-catalog src))))
+(defn evaluate-rule-binders [binders]
+  (map (fn [binder]
+         (assoc binder :lane.rules/substitute
+                (fmap #(rule-set-with-subs %) (:lane.rules/substitute binder))))
+       binders))
 
-(def rule-binders-with-subs
-  (map
-   (fn [binder]
-     (assoc binder :lane.rules/substitute (fmap #(rule-set-with-subs %) (:lane.rules/substitute binder))))
-   registered-rules))
-
-(def rules-with-subs
+(defn rules-with-subs [evaled-rule-binders]
  (map
   (fn [binder]
     (let [rule (rule-catalog (:lane.rules/register binder))
@@ -116,15 +123,15 @@
           (assoc :src (sub-map (:src rule)))
           (assoc :dst (sub-map (:dst rule)))
           (assoc :yield (map (fn [[src dst]] [(sub-map src) (sub-map dst)]) (:yield rule))))))
-  rule-binders-with-subs))
+  evaled-rule-binders))
 
-(def encounter-rules
+(defn applicable-rules [evaled-rules src dst light]
  (filter
   (fn [rule]
     (and (= (dissoc (first (:src rule)) :street.lane.install/ident) src)
          (= (dissoc (first (:dst rule)) :street.lane.install/ident) dst)
-         (subset? (@traffic-light light-to-watch) (into #{} (:light rule)))))
-  rules-with-subs))
+         (subset? (light light-to-watch) (into #{} (:light rule)))))
+  evaled-rules))
 
 ;;;
 
