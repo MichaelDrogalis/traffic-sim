@@ -188,7 +188,7 @@
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
-    (add-watch light :printer (fn [_ _ _ state] (info "\n" state)))
+    (add-watch light :printer (fn [_ _ _ state] (info state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn verbose-queues! []
@@ -196,6 +196,10 @@
     (add-watch q :printer
                (fn [_ _ _ cars]
                  (info "\n" (format-lane k) ":" (map (comp :id deref) cars))))))
+
+(defn verbose-intersections! []
+  (doseq [[k a] intx-area-index]
+    (add-watch a :printer (fn [_ _ _ area] (info a)))))
 
 (def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
                         :street/name "10th Street"
@@ -220,8 +224,10 @@
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
   (verbose-queues!)
+  (verbose-intersections!)
   (println "Mike is" (:id @mike))
   (println "Dorrene is" (:id @dorrene))
+  (Thread/sleep 2000)
   (drive-to-ingress-lane mike)
   (drive-to-ingress-lane dorrene))
 
