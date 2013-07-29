@@ -146,11 +146,13 @@
          (yield-lanes-clear? relevant-rules))))
 
 (defn drive-through-intersection [me]
-  (alter (queues-index (:src @me)) (partial filter (partial = me)))
-  (alter (intx-area-index (:intersection/of (:src @me))) conj me)
-  (Thread/sleep 2000)
-  (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial = me)))
-  (alter (queues-index (:src @me)) dissoc :src))
+  (future
+    (dosync
+     (alter (intx-area-index (:intersection/of (:src @me))) conj me))
+    (Thread/sleep 2000)
+    (dosync
+     (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
+     (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %))))))
 
 (defn complicated-bit [me])
 
@@ -199,7 +201,7 @@
 
 (defn verbose-intersections! []
   (doseq [[k a] intx-area-index]
-    (add-watch a :printer (fn [_ _ _ area] (info a)))))
+    (add-watch a :printer (fn [_ _ _ area] (info k "::" (map (comp :id deref) area))))))
 
 (def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
                         :street/name "10th Street"
