@@ -55,6 +55,10 @@
                                 :street/name :street/tag :street.lane.install/name])
                  (intx-catalog intx))))
 
+(defn format-lane [lane-ident]
+  (str (:street/tag lane-ident) "/"
+       (:street.lane.install/name lane-ident)))
+
 (defn build-light-for-schedule [schedule light-catalog]
   (fmap #(:light-face/init (light-catalog %)) (:schedule/substitute schedule)))
 
@@ -173,24 +177,25 @@
     (alter queue conj me)))
 
 (defn drive-to-ingress-lane [me]
-  (dosync
-   (if (lane-is-empty? (:src @me))
-     (do (put-me-in-queue me)
-         (attempt-to-drive-through me))
-     (let [tail (last-driver-in-lane (:src @me))]
+  (future
+    (dosync
+     (if (lane-is-empty? (:src @me))
        (do (put-me-in-queue me)
-           (watch-car-ahead-of-me tail me))))))
+           (attempt-to-drive-through me))
+       (let [tail (last-driver-in-lane (:src @me))]
+         (do (put-me-in-queue me)
+             (watch-car-ahead-of-me tail me)))))))
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
-    (add-watch light :printer (fn [_ _ _ state] (info state)))
+    (add-watch light :printer (fn [_ _ _ state] (info "\n" state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn verbose-queues! []
   (doseq [[k q] queues-index]
     (add-watch q :printer
                (fn [_ _ _ cars]
-                 (info "Queue of " k ": " cars)))))
+                 (info "\n" (format-lane k) ":" (map (comp :id deref) cars))))))
 
 (def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
                         :street/name "10th Street"
@@ -200,7 +205,7 @@
                         :street/name "10th Street"
                         :street/tag "north"
                         :street.lane.install/name "out"}
-                  :id  (java.util.UUID/randomUUID)}))
+                  :id (java.util.UUID/randomUUID)}))
 
 (def dorrene (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
                            :street/name "10th Street"
@@ -210,7 +215,7 @@
                            :street/name "10th Street"
                            :street/tag "north"
                            :street.lane.install/name "out"}
-                     :id  (java.util.UUID/randomUUID)}))
+                     :id (java.util.UUID/randomUUID)}))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
@@ -219,7 +224,4 @@
   (println "Dorrene is" (:id @dorrene))
   (drive-to-ingress-lane mike)
   (drive-to-ingress-lane dorrene))
-
-(pprint @(nth (vals queues-index) 4))
-
 
