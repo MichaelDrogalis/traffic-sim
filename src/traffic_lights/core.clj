@@ -135,12 +135,12 @@
    rules))
 
 (defn safe-to-drive-through? [src dst light]
-  (let [vars (street-lane-id-index (:intersection/of src))
+  (let [vars           (street-lane-id-index (:intersection/of src))
         street-mapping (:street.lane.install/substitute (street-catalog src))
-        semantic-map (semantic-var->4t vars street-mapping)
-        binders (registered-rules rule-substitution-catalog street-catalog src)
+        semantic-map   (semantic-var->4t vars street-mapping)
+        binders        (registered-rules rule-substitution-catalog street-catalog src)
         evaled-binders (evaluate-rule-binders binders semantic-map)
-        evaled-rules (evaluate-rules evaled-binders)
+        evaled-rules   (evaluate-rules evaled-binders)
         relevant-rules (applicable-rules evaled-rules src dst light)]
     (and (not (empty? relevant-rules))
          (yield-lanes-clear? relevant-rules))))
@@ -152,7 +152,8 @@
     (Thread/sleep 2000)
     (dosync
      (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
-     (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %))))))
+     (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
+     (send me dissoc :src))))
 
 (defn complicated-bit [me])
 
@@ -170,9 +171,9 @@
 (defn watch-car-ahead-of-me [target me]
   (add-watch target me
              (fn [_ _ _ car]
-               (when-not (= (:src @car) (:src me))
-                 (do (remove-watch car me)
-                     (attempt-to-drive-through))))))
+               (when-not (= (:src car) (:src @me))
+                 (do (remove-watch target me)
+                     (attempt-to-drive-through me))))))
 
 (defn put-me-in-queue [me]
   (let [queue (queues-index (:src @me))]
@@ -231,5 +232,6 @@
   (println "Dorrene is" (:id @dorrene))
   (Thread/sleep 2000)
   (drive-to-ingress-lane mike)
+  (Thread/sleep 10000)
   (drive-to-ingress-lane dorrene))
 
