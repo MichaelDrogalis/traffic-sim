@@ -156,7 +156,7 @@
      (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
      (send me dissoc :src))))
 
-(defn complicated-bit [me]
+(defn watch-light-and-yield-lanes [me]
   (prn @me "is confused."))
 
 (defn light-ok? [me light]
@@ -185,7 +185,7 @@
       (drive-through-intersection me)
       (if-not lights-ok?
         (wait-for-light me)
-        (complicated-bit me)))))
+        (watch-light-and-yield-lanes me)))))
 
 (defn last-driver-in-lane [src]
   (last @(queues-index src)))
