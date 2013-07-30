@@ -142,11 +142,12 @@
         evaled-binders (evaluate-rule-binders binders semantic-map)
         evaled-rules   (evaluate-rules evaled-binders)
         relevant-rules (applicable-rules evaled-rules src dst light)]
-    (and (not (empty? relevant-rules))
-         (yield-lanes-clear? relevant-rules))))
+    {:lights-ok? (not (empty? relevant-rules))
+     :yield-ok? (yield-lanes-clear? relevant-rules)}))
 
 (defn drive-through-intersection [me]
   (future
+    (println (:id @me) "is driving through the intersection.")
     (dosync
      (alter (intx-area-index (:intersection/of (:src @me))) conj me))
     (Thread/sleep 2000)
@@ -155,15 +156,36 @@
      (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
      (send me dissoc :src))))
 
-(defn complicated-bit [me])
+(defn complicated-bit [me]
+  (prn @me "is confused."))
+
+(defn light-ok? [me light]
+  (let [src (:src me)
+        light-ident (:street.lane.install/light (street-catalog src))
+        schedule (:intersection.install/schedule (intx-index (:intersection/of src)))
+        light-info (light-catalog (light-ident (:schedule/substitute (schedule-catalog schedule))))]
+    (subset? (into #{} (light-ident light)) (into #{} (:light-face/proceed light-info)))))
+
+(declare attempt-to-drive-through)
+
+(defn wait-for-light [me]
+  (let [light (traffic-light-index (:intersection/of (:src @me)))]
+    (add-watch light me
+               (fn [_ _ _ state]
+                 (when (light-ok? @me state)
+                   (do (remove-watch light me)
+                       (attempt-to-drive-through me)))))))
 
 (defn attempt-to-drive-through [me]
   (let [{:keys [src dst]} @me
         light-ident (:street.lane.install/light (street-catalog src))
-        light ((deref (traffic-light-index (:intersection/of src))) light-ident)]
-    (if (safe-to-drive-through? src dst light)
+        light ((deref (traffic-light-index (:intersection/of src))) light-ident)
+        {:keys [lights-ok? yield-ok?]} (safe-to-drive-through? src dst light)]
+    (if (and lights-ok? yield-ok?)
       (drive-through-intersection me)
-      (complicated-bit me))))
+      (if-not lights-ok?
+        (wait-for-light me)
+        (complicated-bit me)))))
 
 (defn last-driver-in-lane [src]
   (last @(queues-index src)))
@@ -191,18 +213,18 @@
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
-    (add-watch light :printer (fn [_ _ _ state] (info state)))
+    (add-watch light :printer (fn [_ _ _ state] (println state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn verbose-queues! []
   (doseq [[k q] queues-index]
     (add-watch q :printer
                (fn [_ _ _ cars]
-                 (info "\n" (format-lane k) ":" (map (comp :id deref) cars))))))
+                 (println (format-lane k) ":" (map (comp :id deref) cars))))))
 
 (defn verbose-intersections! []
   (doseq [[k a] intx-area-index]
-    (add-watch a :printer (fn [_ _ _ area] (info k "::" (map (comp :id deref) area))))))
+    (add-watch a :printer (fn [_ _ _ area] (println k "::" (map (comp :id deref) area))))))
 
 (def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
                         :street/name "10th Street"
@@ -230,8 +252,8 @@
   (verbose-intersections!)
   (println "Mike is" (:id @mike))
   (println "Dorrene is" (:id @dorrene))
-  (Thread/sleep 2000)
+  (Thread/sleep 5000)
   (drive-to-ingress-lane mike)
-  (Thread/sleep 10000)
+  (Thread/sleep 500)
   (drive-to-ingress-lane dorrene))
 
