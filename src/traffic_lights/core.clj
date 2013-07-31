@@ -1,7 +1,7 @@
 (ns traffic-lights.core
   (:require [clojure.algo.generic.functor :refer [fmap]]
-            [clojure.tools.logging :refer [info]]
             [clojure.set :refer [subset?]]
+            [clojure.tools.logging :refer [info]]
             [clojure.pprint :refer [pprint]]))
 
 (def schema
@@ -119,20 +119,21 @@
   (empty? @(queues-index src)))
 
 (defn yield-lanes-clear? [rules]
-  (map
-   (fn [rule]
-     (let [{:keys [dst yield]} rule]
-       (every?
-        true?
-        (map
-         (fn [[in & out]]
-           (let [in-4t (dissoc in :street.lane.install/ident)]
-             (if out
-               (let [head-car (first (deref (queues-index in-4t)))]
-                 (not= (:dst head-car) dst))
-               (lane-is-empty? in-4t))))
-         yield))))
-   rules))
+  (every? true?
+          (map
+           (fn [rule]
+             (let [{:keys [dst yield]} rule]
+               (every?
+                true?
+                (map
+                 (fn [[in & out]]
+                   (let [in-4t (dissoc in :street.lane.install/ident)]
+                     (if-not (empty? (filter identity out))
+                       (let [head-car (first (deref (queues-index in-4t)))]
+                         (not= (:dst head-car) dst))
+                       (lane-is-empty? in-4t))))
+                 yield))))
+           rules)))
 
 (defn safe-to-drive-through? [src dst light]
   (let [vars           (street-lane-id-index (:intersection/of src))
@@ -147,7 +148,7 @@
 
 (defn drive-through-intersection [me]
   (future
-    (println (:id @me) "is driving through the intersection.")
+    (info (:id @me) "is driving through the intersection.")
     (dosync
      (alter (intx-area-index (:intersection/of (:src @me))) conj me))
     (Thread/sleep 2000)
@@ -213,47 +214,51 @@
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
-    (add-watch light :printer (fn [_ _ _ state] (println state)))
+    (add-watch light :printer (fn [_ _ _ state] (info state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn verbose-queues! []
   (doseq [[k q] queues-index]
     (add-watch q :printer
                (fn [_ _ _ cars]
-                 (println (format-lane k) ":" (map (comp :id deref) cars))))))
+                 (info (format-lane k) ":" (map (comp :id deref) cars))))))
 
 (defn verbose-intersections! []
   (doseq [[k a] intx-area-index]
-    (add-watch a :printer (fn [_ _ _ area] (println k "::" (map (comp :id deref) area))))))
+    (add-watch a :printer (fn [_ _ _ area] (info k "::" (map (comp :id deref) area))))))
 
 (def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
                         :street/name "10th Street"
                         :street/tag "south"
                         :street.lane.install/name "in"}
                   :dst {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "10th Street"
-                        :street/tag "north"
+                        :street/name "Chestnut Street"
+                        :street/tag "west"
                         :street.lane.install/name "out"}
-                  :id (java.util.UUID/randomUUID)}))
+                  :id "Mike"}))
 
-(def dorrene (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
-                           :street/name "10th Street"
-                           :street/tag "south"
-                           :street.lane.install/name "in"}
-                     :dst {:intersection/of ["10th Street" "Chestnut Street"]
-                           :street/name "10th Street"
-                           :street/tag "north"
-                           :street.lane.install/name "out"}
-                     :id (java.util.UUID/randomUUID)}))
+(defn opposing-driver [x]
+  (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
+                :street/name "10th Street"
+                :street/tag "north"
+                :street.lane.install/name "in"}
+          :dst {:intersection/of ["10th Street" "Chestnut Street"]
+                :street/name "10th Street"
+                :street/tag "south"
+                :street.lane.install/name "out"}
+          :id x}))
+
+(def dorrene (opposing-driver "Dorrene"))
+(def benti   (opposing-driver "Benti"))
+(def derek   (opposing-driver "Derek"))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
   (verbose-queues!)
   (verbose-intersections!)
-  (println "Mike is" (:id @mike))
-  (println "Dorrene is" (:id @dorrene))
-  (Thread/sleep 5000)
-  (drive-to-ingress-lane mike)
   (Thread/sleep 500)
-  (drive-to-ingress-lane dorrene))
+  (drive-to-ingress-lane dorrene)
+  (drive-to-ingress-lane benti)
+  (drive-to-ingress-lane derek)
+  (drive-to-ingress-lane mike))
 
