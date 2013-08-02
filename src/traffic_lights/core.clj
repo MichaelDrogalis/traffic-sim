@@ -1,5 +1,6 @@
 (ns traffic-lights.core
-  (:require [clojure.algo.generic.functor :refer [fmap]]
+  (:require [clojure.core.async :refer [chan go >!! <!! <! >!]]
+            [clojure.algo.generic.functor :refer [fmap]]
             [clojure.set :refer [subset?]]
             [clojure.tools.logging :refer [info]]
             [clojure.pprint :refer [pprint]]))
@@ -40,7 +41,8 @@
                        :street/tag 
                        :street.lane.install/name])))
 
-(def queues-index (fmap (fn [_] (ref [])) street-catalog))
+(def queues-index
+  (fmap (fn [_] (ref [])) street-catalog))
 
 (def intx-catalog (build-non-unique-catalog schema :intersection/of))
 
@@ -157,8 +159,7 @@
      (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
      (send me dissoc :src))))
 
-(defn watch-light-and-yield-lanes [me]
-  (prn @me "is confused."))
+(defn watch-light-and-yield-lanes [me])
 
 (defn light-ok? [me light]
   (let [src (:src me)
@@ -191,26 +192,29 @@
 (defn last-driver-in-lane [src]
   (last @(queues-index src)))
 
-(defn watch-car-ahead-of-me [target me]
+(defn watch-car-ahead-of-me [target me ch]
   (add-watch target me
              (fn [_ _ _ car]
                (when-not (= (:src car) (:src @me))
                  (do (remove-watch target me)
-                     (attempt-to-drive-through me))))))
+                     (go (>! ch true)))))))
 
-(defn put-me-in-queue [me]
-  (let [queue (queues-index (:src @me))]
-    (alter queue conj me)))
+(defn touch [x]
+  (dosync (alter x identity)))
 
 (defn drive-to-ingress-lane [me]
-  (future
-    (dosync
-     (if (lane-is-empty? (:src @me))
-       (do (put-me-in-queue me)
-           (attempt-to-drive-through me))
-       (let [tail (last-driver-in-lane (:src @me))]
-         (do (put-me-in-queue me)
-             (watch-car-ahead-of-me tail me)))))))
+  (let [queue (queues-index (:src @me))]
+    (dosync (alter queue conj me))
+    (let [tail (last (butlast @queue))]
+      (if (> (count @queue) 1)
+        (let [ch (chan)]
+          (go (watch-car-ahead-of-me tail me ch)
+              (touch tail)
+              (<! ch)))))))
+
+;;; (drive-to-ingress-lane mike)
+
+;; (drive-to-ingress-lane dorrene)
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
@@ -237,6 +241,16 @@
                         :street.lane.install/name "out"}
                   :id "Mike"}))
 
+(def dorrene (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
+                        :street/name "10th Street"
+                        :street/tag "south"
+                        :street.lane.install/name "in"}
+                  :dst {:intersection/of ["10th Street" "Chestnut Street"]
+                        :street/name "Chestnut Street"
+                        :street/tag "west"
+                        :street.lane.install/name "out"}
+                  :id "Dorrene"}))
+
 (defn opposing-driver [x]
   (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
                 :street/name "10th Street"
@@ -248,17 +262,13 @@
                 :street.lane.install/name "out"}
           :id x}))
 
-(def dorrene (opposing-driver "Dorrene"))
-(def benti   (opposing-driver "Benti"))
-(def derek   (opposing-driver "Derek"))
+;;(def dorrene (opposing-driver "Dorrene"))
+;;(def benti   (opposing-driver "Benti"))
+;;(def derek   (opposing-driver "Derek"))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
   (verbose-queues!)
   (verbose-intersections!)
-  (Thread/sleep 500)
-  (drive-to-ingress-lane dorrene)
-  (drive-to-ingress-lane benti)
-  (drive-to-ingress-lane derek)
-  (drive-to-ingress-lane mike))
+  (Thread/sleep 500))
 
