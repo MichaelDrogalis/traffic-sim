@@ -200,17 +200,20 @@
                      (go (>! ch true)))))))
 
 (defn touch [x]
-  (dosync (alter x identity)))
+  (send x identity))
 
 (defn drive-to-ingress-lane [me]
   (let [queue (queues-index (:src @me))]
-    (dosync (alter queue conj me))
-    (let [tail (last (butlast @queue))]
+    (let [tail (last @queue)]
+      (dosync (alter queue conj me))
       (if (> (count @queue) 1)
         (let [ch (chan)]
-          (go (watch-car-ahead-of-me tail me ch)
-              (touch tail)
-              (<! ch)))))))
+          (watch-car-ahead-of-me tail me ch)
+          (touch tail)
+          (go (<! ch)
+              (prn "Forward motion")))
+        (prn "Head")))))
+
 
 ;;; (drive-to-ingress-lane mike)
 
