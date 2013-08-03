@@ -5,6 +5,15 @@
             [clojure.tools.logging :refer [info]]
             [clojure.pprint :refer [pprint]]))
 
+(defprotocol Touch
+  (touch [this]))
+
+(extend-protocol Touch
+  clojure.lang.Ref
+  (touch [x] (dosync (commute x identity)))
+  clojure.lang.Agent
+  (touch [x] (send x identity)))
+
 (def schema
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
 
@@ -157,9 +166,6 @@
    (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
    (send me dissoc :src)))
 
-(defn touch [x]
-  (send x identity))
-
 (defn wait-for-light [light me ch]
   (add-watch light me
              (fn [_ _ old new]
@@ -177,7 +183,9 @@
 (defn watch-yielding-lanes [rules me ch]
   (doseq [lane (yielding-lanes rules)]
     (add-watch lane me
-               (fn [_ _ _ _] (go (>! ch true))))))
+               (fn [_ _ old new]
+                 (when-not (= old new)
+                   (go (>! ch true)))))))
 
 (defn ignore-light [light me]
   (remove-watch light me))
@@ -202,6 +210,7 @@
               (do (wait-for-light light me ch)
                   (watch-yielding-lanes rules me ch)
                   (touch light)
+                  (doseq [x (yielding-lanes rules)] (touch x))
                   (<! ch)
                   (ignore-light light me)
                   (ignore-yielding-lanes rules me)
@@ -240,44 +249,21 @@
 (defn verbose-queues! []
   (doseq [[k q] queues-index]
     (add-watch q :printer
-               (fn [_ _ _ cars]
-                 (info (format-lane k) ":" (map (comp :id deref) cars))))))
+               (fn [_ _ old new]
+                 (when-not (= old new)
+                   (info (format-lane k) ":" (map (comp :id deref) new)))))))
 
 (defn verbose-intersections! []
   (doseq [[k a] intx-area-index]
     (add-watch a :printer (fn [_ _ _ area] (info k "::" (map (comp :id deref) area))))))
 
-(def mike (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "10th Street"
-                        :street/tag "south"
-                        :street.lane.install/name "in"}
-                  :dst {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "Chestnut Street"
-                        :street/tag "west"
-                        :street.lane.install/name "out"}
-                  :id "Mike"}))
-
-(defn opposing-driver [x]
-  (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
-                :street/name "10th Street"
-                :street/tag "north"
-                :street.lane.install/name "in"}
-          :dst {:intersection/of ["10th Street" "Chestnut Street"]
-                :street/name "10th Street"
-                :street/tag "south"
-                :street.lane.install/name "out"}
-          :id x}))
-
-(def dorrene (opposing-driver "Dorrene"))
-(def benti   (opposing-driver "Benti"))
-(def derek   (opposing-driver "Derek"))
+(defn start-all-drivers! []
+  (doseq [driver (read-string (slurp (clojure.java.io/resource "drivers.edn")))]
+    (drive-to-ingress-lane (agent driver))))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
   (verbose-queues!)
   (verbose-intersections!)
-  (drive-to-ingress-lane mike)
-  (drive-to-ingress-lane dorrene)
-  (drive-to-ingress-lane benti)
-  (drive-to-ingress-lane derek))
+  (start-all-drivers!))
 
