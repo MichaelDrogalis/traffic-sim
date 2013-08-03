@@ -137,7 +137,7 @@
                  yield))))
            rules)))
 
-(defn safe-to-drive-through? [src dst light]
+(defn relevant-rules [src dst light]
   (let [vars           (street-lane-id-index (:intersection/of src))
         street-mapping (:street.lane.install/substitute (street-catalog src))
         semantic-map   (semantic-var->4t vars street-mapping)
@@ -145,52 +145,64 @@
         evaled-binders (evaluate-rule-binders binders semantic-map)
         evaled-rules   (evaluate-rules evaled-binders)
         relevant-rules (applicable-rules evaled-rules src dst light)]
-    {:lights-ok? (not (empty? relevant-rules))
-     :yield-ok? (yield-lanes-clear? relevant-rules)}))
+    relevant-rules))
 
 (defn drive-through-intersection [me]
-  (future
-    (info (:id @me) "is driving through the intersection.")
-    (dosync
-     (alter (intx-area-index (:intersection/of (:src @me))) conj me))
-    (Thread/sleep 2000)
-    (dosync
-     (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
-     (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
-     (send me dissoc :src))))
+  (info (:id @me) "is driving through the intersection.")
+  (dosync
+   (alter (intx-area-index (:intersection/of (:src @me))) conj me))
+  (Thread/sleep 2000)
+  (dosync
+   (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
+   (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
+   (send me dissoc :src)))
 
-(defn watch-light-and-yield-lanes [me])
+(defn touch [x]
+  (send x identity))
 
-(defn light-ok? [me light]
-  (let [src (:src me)
-        light-ident (:street.lane.install/light (street-catalog src))
-        schedule (:intersection.install/schedule (intx-index (:intersection/of src)))
-        light-info (light-catalog (light-ident (:schedule/substitute (schedule-catalog schedule))))]
-    (subset? (into #{} (light-ident light)) (into #{} (:light-face/proceed light-info)))))
+(defn wait-for-light [light me ch]
+  (add-watch light me
+             (fn [_ _ old new]
+               (when-not (= old new)
+                 (go (>! ch light))))))
 
-(declare attempt-to-drive-through)
+(defn yielding-lanes [rules]
+  (filter identity
+          (mapcat (fn [[a b]]
+                    (let [a (dissoc a :street.lane.install/ident)
+                          b (dissoc b :street.lane.install/ident)]
+                      [(queues-index a) (queues-index b)]))
+                  (mapcat :yield rules))))
 
-(defn wait-for-light [me]
-  (let [light (traffic-light-index (:intersection/of (:src @me)))]
-    (add-watch light me
-               (fn [_ _ _ state]
-                 (when (light-ok? @me state)
-                   (do (remove-watch light me)
-                       (attempt-to-drive-through me)))))))
+(defn watch-yielding-lanes [rules me ch]
+  (doseq [lane (yielding-lanes rules)]
+    (add-watch lane me
+               (fn [_ _ _ _] (go (>! ch true))))))
 
-(defn attempt-to-drive-through [me]
+(defn ignore-light [light me]
+  (remove-watch light me))
+
+(defn ignore-yielding-lanes [rules me]
+  (doseq [lane (yielding-lanes rules)]
+    (remove-watch lane me)))
+
+(defn wait-for-turn [me]
   (let [{:keys [src dst]} @me
         light-ident (:street.lane.install/light (street-catalog src))
-        light ((deref (traffic-light-index (:intersection/of src))) light-ident)
-        {:keys [lights-ok? yield-ok?]} (safe-to-drive-through? src dst light)]
-    (if (and lights-ok? yield-ok?)
-      (drive-through-intersection me)
-      (if-not lights-ok?
-        (wait-for-light me)
-        (watch-light-and-yield-lanes me)))))
-
-(defn last-driver-in-lane [src]
-  (last @(queues-index src)))
+        light (traffic-light-index (:intersection/of src))
+        ch (chan)]
+    (go (loop []
+          (let [rules (relevant-rules src dst (light-ident (deref light)))]
+            (wait-for-light light me ch)
+            (watch-yielding-lanes rules me ch)
+            (touch light)
+            (<! ch)
+            (ignore-light light me)
+            (ignore-yielding-lanes rules me)
+            (let [current-rules (relevant-rules src dst (light-ident (deref light)))]
+              (if (and (not (empty? current-rules)) (yield-lanes-clear? rules))
+                (drive-through-intersection me)
+                (recur))))))))
 
 (defn watch-car-ahead-of-me [target me ch]
   (add-watch target me
@@ -198,9 +210,6 @@
                (when-not (= (:src car) (:src @me))
                  (do (remove-watch target me)
                      (go (>! ch true)))))))
-
-(defn touch [x]
-  (send x identity))
 
 (defn drive-to-ingress-lane [me]
   (let [queue (queues-index (:src @me))]
@@ -211,17 +220,12 @@
           (watch-car-ahead-of-me tail me ch)
           (touch tail)
           (go (<! ch)
-              (prn "Forward motion")))
-        (prn "Head")))))
-
-
-;;; (drive-to-ingress-lane mike)
-
-;; (drive-to-ingress-lane dorrene)
+              (wait-for-turn me)))
+        (wait-for-turn me)))))
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
-    (add-watch light :printer (fn [_ _ _ state] (info state)))
+    (add-watch light :printer (fn [_ _ _ state] (prn state)))
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn verbose-queues! []
@@ -244,16 +248,6 @@
                         :street.lane.install/name "out"}
                   :id "Mike"}))
 
-(def dorrene (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "10th Street"
-                        :street/tag "south"
-                        :street.lane.install/name "in"}
-                  :dst {:intersection/of ["10th Street" "Chestnut Street"]
-                        :street/name "Chestnut Street"
-                        :street/tag "west"
-                        :street.lane.install/name "out"}
-                  :id "Dorrene"}))
-
 (defn opposing-driver [x]
   (agent {:src {:intersection/of ["10th Street" "Chestnut Street"]
                 :street/name "10th Street"
@@ -265,13 +259,17 @@
                 :street.lane.install/name "out"}
           :id x}))
 
-;;(def dorrene (opposing-driver "Dorrene"))
-;;(def benti   (opposing-driver "Benti"))
-;;(def derek   (opposing-driver "Derek"))
+(def dorrene (opposing-driver "Dorrene"))
+(def benti   (opposing-driver "Benti"))
+(def derek   (opposing-driver "Derek"))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
   (verbose-queues!)
   (verbose-intersections!)
-  (Thread/sleep 500))
+  (Thread/sleep 500)
+  (drive-to-ingress-lane mike)
+  (drive-to-ingress-lane dorrene)
+  (drive-to-ingress-lane benti)
+  (drive-to-ingress-lane derek))
 
