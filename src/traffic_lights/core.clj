@@ -151,7 +151,7 @@
   (info (:id @me) "is driving through the intersection.")
   (dosync
    (alter (intx-area-index (:intersection/of (:src @me))) conj me))
-;;  (Thread/sleep 2000)
+  (Thread/sleep 2000)
   (dosync
    (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
    (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
@@ -186,6 +186,10 @@
   (doseq [lane (yielding-lanes rules)]
     (remove-watch lane me)))
 
+(defn safe-to-go? [rules]
+  (and (not (empty? rules))
+       (yield-lanes-clear? rules)))
+
 (defn wait-for-turn [me]
   (let [{:keys [src dst]} @me
         light-ident (:street.lane.install/light (street-catalog src))
@@ -193,8 +197,7 @@
         ch (chan)]
     (go (loop []
           (let [rules (relevant-rules src dst (light-ident (deref light)))]
-            (if (and (not (empty? rules))
-                     (yield-lanes-clear? rules))
+            (if (safe-to-go? rules)
               (drive-through-intersection me)
               (do (wait-for-light light me ch)
                   (watch-yielding-lanes rules me ch)
@@ -202,11 +205,7 @@
                   (<! ch)
                   (ignore-light light me)
                   (ignore-yielding-lanes rules me)
-                  (let [current-rules (relevant-rules src dst (light-ident (deref light)))]
-                    (if (and (not (empty? current-rules))
-                             (yield-lanes-clear? current-rules))
-                      (drive-through-intersection me)
-                      (recur))))))))))
+                  (recur))))))))
 
 (defn watch-car-ahead-of-me [target me ch]
   (add-watch target me
