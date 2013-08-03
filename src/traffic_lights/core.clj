@@ -158,9 +158,7 @@
 
 (defn drive-through-intersection [me]
   (info (:id @me) "is driving through the intersection.")
-  (dosync
-   (alter (intx-area-index (:intersection/of (:src @me))) conj me))
-  (Thread/sleep 2000)
+  (dosync (alter (intx-area-index (:intersection/of (:src @me))) conj me))
   (dosync
    (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
    (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
