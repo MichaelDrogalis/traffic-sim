@@ -4,7 +4,7 @@
         :street.lane.install/name "in"}
   :dst {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "Chestnut Street"
-        :street/tag "west"
+        :street/tag "east"
         :street.lane.install/name "out"}
   :id "Mike"}
  {:src {:intersection/of ["10th Street" "Chestnut Street"]
@@ -13,7 +13,7 @@
         :street.lane.install/name "in"}
   :dst {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "Chestnut Street"
-        :street/tag "north"
+        :street/tag "east"
         :street.lane.install/name "out"}
   :id "Kristen"}
  {:src {:intersection/of ["10th Street" "Chestnut Street"]

@@ -262,8 +262,8 @@
     (drive-to-ingress-lane (agent driver))))
 
 (defn -main [& args]
-  (start-all-drivers!)
   (turn-on-all-traffic-lights!)
   (verbose-queues!)
-  (verbose-intersections!))
+  (verbose-intersections!)
+  (start-all-drivers!))
 
