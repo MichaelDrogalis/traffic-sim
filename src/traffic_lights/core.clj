@@ -151,7 +151,7 @@
   (info (:id @me) "is driving through the intersection.")
   (dosync
    (alter (intx-area-index (:intersection/of (:src @me))) conj me))
-  (Thread/sleep 2000)
+;;  (Thread/sleep 2000)
   (dosync
    (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
    (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
@@ -193,17 +193,20 @@
         ch (chan)]
     (go (loop []
           (let [rules (relevant-rules src dst (light-ident (deref light)))]
-            (wait-for-light light me ch)
-            (watch-yielding-lanes rules me ch)
-            (touch light)
-            (<! ch)
-            (ignore-light light me)
-            (ignore-yielding-lanes rules me)
-            (let [current-rules (relevant-rules src dst (light-ident (deref light)))]
-              (if (and (not (empty? current-rules))
-                       (yield-lanes-clear? current-rules))
-                (drive-through-intersection me)
-                (recur))))))))
+            (if (and (not (empty? rules))
+                     (yield-lanes-clear? rules))
+              (drive-through-intersection me)
+              (do (wait-for-light light me ch)
+                  (watch-yielding-lanes rules me ch)
+                  (touch light)
+                  (<! ch)
+                  (ignore-light light me)
+                  (ignore-yielding-lanes rules me)
+                  (let [current-rules (relevant-rules src dst (light-ident (deref light)))]
+                    (if (and (not (empty? current-rules))
+                             (yield-lanes-clear? current-rules))
+                      (drive-through-intersection me)
+                      (recur))))))))))
 
 (defn watch-car-ahead-of-me [target me ch]
   (add-watch target me
@@ -224,9 +227,15 @@
               (wait-for-turn me)))
         (wait-for-turn me)))))
 
+(defn echo-light-state [light]
+  (add-watch light :printer
+             (fn [_ _ old new]
+               (when-not (= old new)
+                 (prn new)))))
+
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
-    (add-watch light :printer (fn [_ _ _ state] (prn state)))
+    (echo-light-state light)
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn verbose-queues! []
