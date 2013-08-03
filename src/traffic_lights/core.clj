@@ -200,7 +200,8 @@
             (ignore-light light me)
             (ignore-yielding-lanes rules me)
             (let [current-rules (relevant-rules src dst (light-ident (deref light)))]
-              (if (and (not (empty? current-rules)) (yield-lanes-clear? rules))
+              (if (and (not (empty? current-rules))
+                       (yield-lanes-clear? current-rules))
                 (drive-through-intersection me)
                 (recur))))))))
 
@@ -267,7 +268,6 @@
   (turn-on-all-traffic-lights!)
   (verbose-queues!)
   (verbose-intersections!)
-  (Thread/sleep 500)
   (drive-to-ingress-lane mike)
   (drive-to-ingress-lane dorrene)
   (drive-to-ingress-lane benti)
