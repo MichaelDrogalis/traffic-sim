@@ -223,7 +223,7 @@
 
 (defn drive-to-ingress-lane [me]
   (let [queue (queues-index (:src @me))]
-    (let [tail (last @queue)]
+    (let [tail (peek @queue)]
       (dosync (alter queue conj me))
       (if (> (count @queue) 1)
         (let [ch (chan)]
