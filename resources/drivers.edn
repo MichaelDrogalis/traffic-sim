@@ -1,10 +1,10 @@
 [{:src {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "10th Street"
-        :street/tag "south"
-        :street.lane.install/name "in"}
+        :street/tag "south-left"
+        :street.lane.install/name "in-left"}
   :dst {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "Chestnut Street"
-        :street/tag "east"
+        :street/tag "west"
         :street.lane.install/name "out"}
   :id "Mike"}
  {:src {:intersection/of ["10th Street" "Chestnut Street"]
