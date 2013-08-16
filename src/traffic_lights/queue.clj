@@ -2,34 +2,42 @@
   (:require [clojure.core.async]))
 
 (defprotocol GulpingQueue
-  (offer! [this car f])
+  (offer! [this car])
   (gulp! [this car])
   (take! [this])
   (head [this]))
 
-(defn ref-gulping-offer! [q distance car f]
+(defn put-at-back! [car distance]
+  (send car (fn [x] (assoc x :front (- distance (:length x))))))
+
+(defn ref-offer! [q distance car]
   (dosync
    (if-let [tail (last @q)]
-     (let [room (- distance (+ (:front tail) (:length tail)))]
-       (if (<= (:length car) room)
-         (alter q conj (f car distance))
+     (let [room (- distance (+ (:front @tail) (:length @tail)))]
+       (if (<= (:length @car) room)
+         (do (alter q conj (put-at-back! car distance)) nil)
          tail))
-     (alter q conj (f car distance)))))
+     (do (alter q conj (put-at-back! car distance)) nil))))
 
-(defn ref-gulping-take! [q]
+(defn ref-gulp! [q car]
+  (while (> (:front @car) 0)
+    (send car (fn [x] (assoc x :front (- (:front x) 5))))))
+
+(defn ref-take! [q]
   (dosync
    (let [head (first @q)]
      (alter q rest)
      head)))
 
-(defn ref-gulping-head [q]
+(defn ref-head [q]
   (first @q))
 
 (deftype RefQueue [line distance]
   GulpingQueue
-  (offer! [this car f] (ref-gulping-offer! line distance car f))
-  (take! [this] (ref-gulping-take! line))
-  (head [this] (ref-gulping-head line))
+  (offer! [this car] (ref-offer! line distance car))
+  (gulp! [this car] (ref-gulp! line car))
+  (take! [this] (ref-take! line))
+  (head [this] (ref-head line))
 
   clojure.lang.IDeref
   (deref [this] @line))
@@ -37,12 +45,11 @@
 (defn ref-gulping-queue [distance]
   (RefQueue. (ref []) distance))
 
-(defn put-at-back! [car distance]
-  (send car (fn [x] (assoc x :front (- distance (:length x))))))
-
 (def queue (ref-gulping-queue 100))
 
-(offer! queue (agent {:length 15}) put-at-back!)
+(offer! queue (agent {:length 20}))
 
+(ref-gulp! queue (first @queue))
 
+queue
 
