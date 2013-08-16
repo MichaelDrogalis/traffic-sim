@@ -2,8 +2,8 @@
   (:require [clojure.core.async :refer [chan go >!! <!! <! >!]]
             [clojure.algo.generic.functor :refer [fmap]]
             [clojure.set :refer [subset?]]
-            [clojure.tools.logging :refer [info]]
-            [clojure.pprint :refer [pprint]]))
+            [clojure.pprint :refer [pprint]]
+            [taoensso.timbre :refer [info set-config!]]))
 
 (defprotocol Touch
   (touch [this]))
@@ -51,13 +51,13 @@
                        :street.lane.install/name])))
 
 (def queues-index
-  (fmap (fn [_] (ref [])) street-catalog))
+  (fmap (fn [_] (agent [])) street-catalog))
 
 (def intx-catalog (build-non-unique-catalog schema :intersection/of))
 
 (def intx-index (build-catalog schema :intersection/ident))
 
-(def intx-area-index (fmap (fn [_] (ref [])) intx-index))
+(def intx-area-index (fmap (fn [_] (agent [])) intx-index))
 
 (defn street-lane-id-index [intx]
   (group-by :street.lane.install/ident
@@ -157,12 +157,11 @@
     relevant-rules))
 
 (defn drive-through-intersection [me]
-  (info (:id @me) "is driving through the intersection.")
-  (dosync (alter (intx-area-index (:intersection/of (:src @me))) conj me))
-  (dosync
-   (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
-   (alter (queues-index (:src @me)) #(vec (filter (partial not= me) %)))
-   (send me dissoc :src)))
+  (info (:id @me) "is going through.")
+  (send (intx-area-index (:intersection/of (:src @me))) conj me)
+  (send (queues-index (:src @me)) (comp vec rest))
+  (send (intx-area-index (:intersection/of (:src @me))) (comp vec rest))
+  (send me dissoc :src))
 
 (defn wait-for-light [light me ch]
   (add-watch light me
@@ -224,7 +223,7 @@
 (defn drive-to-ingress-lane [me]
   (let [queue (queues-index (:src @me))]
     (let [tail (peek @queue)]
-      (dosync (alter queue conj me))
+      (dosync (send queue conj me))
       (if (> (count @queue) 1)
         (let [ch (chan)]
           (watch-car-ahead-of-me tail me ch)
