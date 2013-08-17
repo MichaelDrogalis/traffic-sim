@@ -10,18 +10,31 @@
 (defn put-at-back! [car distance]
   (send car (fn [x] (assoc x :front (- distance (:length x))))))
 
+(defn occupy-lane-space [q car distance]
+  (alter q conj (put-at-back! car distance))
+  nil)
+
 (defn ref-offer! [q distance car]
   (dosync
    (if-let [tail (last @q)]
      (let [room (- distance (+ (:front @tail) (:length @tail)))]
        (if (<= (:length @car) room)
-         (do (alter q conj (put-at-back! car distance)) nil)
+         (occupy-lane-space q car distance)
          tail))
-     (do (alter q conj (put-at-back! car distance)) nil))))
+     (occupy-lane-space q car distance)))
+  (await))
+
+(defn drive-distance [car]
+  (let [step 5
+        space-left (:front car)]
+    (if (> space-left step)
+      step
+      space-left)))
 
 (defn ref-gulp! [q car]
   (while (> (:front @car) 0)
-    (send car (fn [x] (assoc x :front (- (:front x) 5))))))
+    (send car (fn [x] (assoc x :front (- (:front x) (drive-distance x)))))
+    (await car)))
 
 (defn ref-take! [q]
   (dosync
@@ -46,10 +59,4 @@
   (RefQueue. (ref []) distance))
 
 (def queue (ref-gulping-queue 100))
-
-(offer! queue (agent {:length 20}))
-
-(ref-gulp! queue (first @queue))
-
-queue
 
