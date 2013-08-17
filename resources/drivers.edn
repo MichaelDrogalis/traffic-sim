@@ -1,12 +1,12 @@
 [{:src {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "10th Street"
-        :street/tag "south-left"
-        :street.lane.install/name "in-left"}
+        :street/tag "south"
+        :street.lane.install/name "in"}
   :dst {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "Chestnut Street"
         :street/tag "west"
         :street.lane.install/name "out"}
-  :id "Mike"}
+  :id "Dan"}
  {:src {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "10th Street"
         :street/tag "south"
@@ -24,32 +24,5 @@
         :street/name "10th Street"
         :street/tag "south"
         :street.lane.install/name "out"}
-  :id "Dorrene"}
- {:src {:intersection/of ["10th Street" "Chestnut Street"]
-        :street/name "10th Street"
-        :street/tag "north"
-        :street.lane.install/name "in"}
-  :dst {:intersection/of ["10th Street" "Chestnut Street"]
-        :street/name "10th Street"
-        :street/tag "south"
-        :street.lane.install/name "out"}
-  :id "Benti"}
- {:src {:intersection/of ["10th Street" "Chestnut Street"]
-        :street/name "10th Street"
-        :street/tag "north"
-        :street.lane.install/name "in"}
-  :dst {:intersection/of ["10th Street" "Chestnut Street"]
-        :street/name "10th Street"
-        :street/tag "south"
-        :street.lane.install/name "out"}
-  :id "Derek"}
- {:src {:intersection/of ["10th Street" "Chestnut Street"]
-        :street/name "Chestnut Street"
-        :street/tag "west"
-        :street.lane.install/name "in"}
-  :dst {:intersection/of ["10th Street" "Chestnut Street"]
-        :street/name "Chestnut Street"
-        :street/tag "east"
-        :street.lane.install/name "out"}
-  :id "Dan"}]
+  :id "Dorrene"}]
 

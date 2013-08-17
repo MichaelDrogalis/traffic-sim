@@ -3,22 +3,14 @@
   :light-face/proceed [:yellow :green]
   :light-face/init [:red]}
 
- {:light-face/ident :left-only
-  :light-face/halt [:red-left-arrow]
-  :light-face/proceed [:yellow-left-arrow :green-left-arrow]
-  :light-face/init [:red-left-arrow]}
-
- {:schedule/ident :busy-schedule
-  :schedule/substitute {?v :left-only ?w :standard ?x :standard ?y :standard ?z :standard}
-  :schedule/sequence [{:states {?v [:green-left-arrow] ?y [:green]} :duration 8000}
-                      {:states {?v [:yellow-left-arrow]} :duration 3000}
-                      {:states {?v [:red-left-arrow]} :duration 3000}
-                      {:states {?w [:green]} :duration 8000}
-                      {:states {?w [:yellow] ?y [:yellow]} :duration 3000}
-                      {:states {?w [:red] ?y [:red]} :duration 3000}
-                      {:states {?x [:green] ?z [:green]} :duration 8000}
+ {:schedule/ident :shamrock-schedule
+  :schedule/substitute {?w :standard ?x :standard ?y :standard ?z :standard}
+  :schedule/sequence [{:states {?x [:green] ?z [:green]} :duration 8000}
                       {:states {?x [:yellow] ?z [:yellow]} :duration 3000}
-                      {:states {?x [:red] ?z [:red]} :duration 3000}]}
+                      {:states {?x [:red] ?z [:red]} :duration 3000}
+                      {:states {?w [:green]  ?y [:green]} :duration 8000}
+                      {:states {?w [:yellow] ?y [:yellow]} :duration 3000}
+                      {:states {?w [:red] ?y [:red]} :duration 3000}]}
 
  {:rule/ident :straight
   :src ?origini
@@ -42,16 +34,8 @@
   :yield [[?lefti ?righte]]
   :light [:red]}
 
- {:rule/ident :guarded-left
-  :src ?origini
-  :dst ?lefte
-  :light [:green-left-arrow :yellow-left-arrow]}
-
  {:lane.rules/ident :shamrock
   :lane.rules/vars [?origini ?origine ?lefti ?lefte ?righte ?straighte ?straighti]}
-
- {:lane.rules/ident :guarded-left
-  :lane.rules/vars [?origini ?lefte]}
 
  {:lane.rules/of :shamrock
   :lane.rules/register :straight
@@ -70,12 +54,8 @@
   :lane.rules/register :right-on-red
   :lane.rules/substitute {?origini ?origini ?righte ?righte ?lefti ?lefti}}
 
- {:lane.rules/of :guarded-left
-  :lane.rules/register :guarded-left
-  :lane.rules/substitute {?origini ?origini ?lefte ?lefte}}
-
  {:intersection/ident ["10th Street" "Chestnut Street"]
-  :intersection.install/schedule :busy-schedule}
+  :intersection.install/schedule :shamrock-schedule}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
@@ -129,16 +109,6 @@
   :street.lane.install/substitute {?origini ?c ?origine ?C
                                    ?lefti ?d ?lefte ?D ?righte ?B
                                    ?straighte ?A ?straighti ?a}}
-
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
-  :street/tag "south-left"
-  :street.lane.install/name "in-left"
-  :street.lane.install/type :ingress
-  :street.lane.install/rules :guarded-left
-  :street.lane.install/ident ?e
-  :street.lane.install/light ?v
-  :street.lane.install/substitute {?origini ?e ?lefte ?D}}
 
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
