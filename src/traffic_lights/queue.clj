@@ -1,11 +1,23 @@
 (ns traffic-lights.core
-  (:require [clojure.core.async]))
+  (:require [clojure.core.async :refer [chan go >! <! <!! timeout]]))
+
+(defprotocol Touch
+  (touch [this]))
+
+(extend-protocol Touch
+  clojure.lang.Ref
+  (touch [x] (dosync (commute x identity)))
+  clojure.lang.Agent
+  (touch [x] (send x identity)))
 
 (defprotocol GulpingQueue
   (offer! [this car])
   (gulp! [this car])
   (take! [this])
   (head [this]))
+
+(defn back-of-car [car]
+  (+ (:front car) (:length car)))
 
 (defn put-at-back! [car distance]
   (send car (fn [x] (assoc x :front (- distance (:length x))))))
@@ -21,20 +33,46 @@
        (if (<= (:length @car) room)
          (occupy-lane-space q car distance)
          tail))
-     (occupy-lane-space q car distance)))
-  (await))
+     (occupy-lane-space q car distance))))
+
+(def car-step 5)
+
+(def buffer-space 3)
 
 (defn drive-distance [car]
-  (let [step 5
+  (let [step car-step
         space-left (:front car)]
     (if (> space-left step)
       step
-      space-left)))
+      car-step)))
+
+(defn drive-step [car]
+  (assoc car :front (- (:front car) (drive-distance car))))
+
+(defn watch-car-for-motion [me car ch]
+  (add-watch car me
+             (fn [_ _ old new]
+               (when-not (= old new)
+                 (go (>! true))))))
+
+(defn drive-forward [car]
+  (send car drive-step)
+  (<!! (timeout 500))
+  (await car))
 
 (defn ref-gulp! [q car]
   (while (> (:front @car) 0)
-    (send car (fn [x] (assoc x :front (- (:front x) (drive-distance x)))))
-    (await car)))
+    (let [preceeding-pos (dec (.indexOf @q car))]
+      (if-not (neg? preceeding-pos)
+        (let [preceeding-car (nth @q preceeding-pos)]
+          (if (<= (- (:front @car) (back-of-car @preceeding-car)) buffer-space)
+            (let [ch (chan)]
+              (watch-car-for-motion car preceeding-car ch)
+              (touch preceeding-car)
+              (<! ch)
+              (remove-watch car preceeding-car))
+            (drive-forward car)))
+        (drive-forward car)))))
 
 (defn ref-take! [q]
   (dosync
@@ -57,6 +95,4 @@
 
 (defn ref-gulping-queue [distance]
   (RefQueue. (ref []) distance))
-
-(def queue (ref-gulping-queue 100))
 

@@ -81,6 +81,7 @@
   :street/name "10th Street"
   :street/tag "north"
   :street.lane.install/name "in"
+  :street.lane.install/length 100
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?a
@@ -100,6 +101,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :street.lane.install/name "in"
+  :street.lane.install/length 100
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?b
@@ -119,6 +121,7 @@
   :street/name "10th Street"
   :street/tag "south"
   :street.lane.install/name "in"
+  :street.lane.install/length 100
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?c
@@ -148,6 +151,7 @@
   :street/name "Chestnut Street"
   :street/tag "west"
   :street.lane.install/name "in"
+  :street.lane.install/length 100
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?d
