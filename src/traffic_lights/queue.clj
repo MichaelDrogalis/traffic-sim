@@ -1,4 +1,4 @@
-(ns traffic-lights.core
+(ns traffic-lights.queue
   (:require [clojure.core.async :refer [chan go >! <! <!! timeout]]))
 
 (defprotocol Touch
@@ -27,13 +27,16 @@
   nil)
 
 (defn ref-offer! [q distance car]
-  (dosync
-   (if-let [tail (last @q)]
-     (let [room (- distance (+ (:front @tail) (:length @tail)))]
-       (if (<= (:length @car) room)
-         (occupy-lane-space q car distance)
-         tail))
-     (occupy-lane-space q car distance))))
+  (let [result
+        (dosync
+         (if-let [tail (last @q)]
+           (let [room (- distance (+ (:front @tail) (:length @tail)))]
+             (if (<= (:length @car) room)
+               (occupy-lane-space q car distance)
+               tail))
+           (occupy-lane-space q car distance)))]
+    (await car)
+    result))
 
 (def car-step 5)
 
@@ -56,6 +59,7 @@
                  (go (>! true))))))
 
 (defn drive-forward [car]
+  (prn (:id @car) ": " (:front @car))
   (send car drive-step)
   (<!! (timeout 500))
   (await car))
@@ -90,6 +94,10 @@
   (take! [this] (ref-take! line))
   (head [this] (ref-head line))
 
+  clojure.lang.IRef
+  (addWatch [this key cb] (add-watch line key cb))
+  (removeWatch [this key] (remove-watch line key))
+  
   clojure.lang.IDeref
   (deref [this] @line))
 

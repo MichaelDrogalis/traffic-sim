@@ -3,7 +3,8 @@
             [clojure.algo.generic.functor :refer [fmap]]
             [clojure.tools.logging :refer [info]]
             [clojure.set :refer [subset?]]
-            [clojure.pprint :refer [pprint]]))
+            [clojure.pprint :refer [pprint]]
+            [traffic-lights.queue :as q]))
 
 (defprotocol Touch
   (touch [this]))
@@ -51,7 +52,7 @@
                        :street.lane.install/name])))
 
 (def queues-index
-  (fmap (fn [_] (ref [])) street-catalog))
+  (fmap (fn [x] (q/ref-gulping-queue (:street.lane.install/length x))) street-catalog))
 
 (def intx-catalog (build-non-unique-catalog schema :intersection/of))
 
@@ -221,16 +222,12 @@
                      (go (>! ch true)))))))
 
 (defn drive-to-ingress-lane [me]
-  (let [queue (queues-index (:src @me))]
-    (let [tail (peek @queue)]
-      (dosync (alter queue conj me))
-      (if (> (count @queue) 1)
-        (let [ch (chan)]
-          (watch-car-ahead-of-me tail me ch)
-          (touch tail)
-          (go (<! ch)
-              (wait-for-turn me)))
-        (wait-for-turn me)))))
+  (let [queue (queues-index (:src @me))
+        blocking-car (q/offer! queue me)]
+    (if-not blocking-car
+      (do (go (q/gulp! queue me))
+          (wait-for-turn me))
+      (info "Backpressure rejected " (:id @me)))))
 
 (defn echo-light-state [light]
   (add-watch light :printer
@@ -256,7 +253,8 @@
 
 (defn start-all-drivers! []
   (doseq [driver (read-string (slurp (clojure.java.io/resource "drivers.edn")))]
-    (drive-to-ingress-lane (agent driver))))
+    (drive-to-ingress-lane (agent driver))
+    (Thread/sleep 1000)))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)

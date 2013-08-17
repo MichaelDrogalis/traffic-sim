@@ -6,6 +6,7 @@
         :street/name "Chestnut Street"
         :street/tag "west"
         :street.lane.install/name "out"}
+  :length 10
   :id "Dan"}
  {:src {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "10th Street"
@@ -15,6 +16,7 @@
         :street/name "10th Street"
         :street/tag "north"
         :street.lane.install/name "out"}
+  :length 20
   :id "Kristen"}
  {:src {:intersection/of ["10th Street" "Chestnut Street"]
         :street/name "10th Street"
@@ -24,5 +26,6 @@
         :street/name "10th Street"
         :street/tag "south"
         :street.lane.install/name "out"}
+  :length 10
   :id "Dorrene"}]
 
