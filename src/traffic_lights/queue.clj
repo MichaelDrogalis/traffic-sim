@@ -14,7 +14,8 @@
   (offer! [this car])
   (gulp! [this car])
   (take! [this])
-  (head [this]))
+  (head [this])
+  (vacant? [this]))
 
 (defn back-of-car [car]
   (+ (:front car) (:length car)))
@@ -88,12 +89,16 @@
 (defn ref-head [q]
   (first @q))
 
+(defn ref-vacant? [q]
+  (or (empty? @q) (>= (:front (deref (last @q))) 25)))
+
 (deftype RefQueue [line distance]
   GulpingQueue
   (offer! [this car] (ref-offer! line distance car))
   (gulp! [this car] (ref-gulp! line car))
   (take! [this] (ref-take! line))
   (head [this] (ref-head line))
+  (vacant? [this] (ref-vacant? line))
 
   clojure.lang.IRef
   (addWatch [this key cb] (add-watch line key cb))

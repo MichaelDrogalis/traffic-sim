@@ -61,7 +61,7 @@
   :street/name "10th Street"
   :street/tag "north"
   :street.lane.install/name "in"
-  :street.lane.install/length 100
+  :street.lane.install/length 200
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?a

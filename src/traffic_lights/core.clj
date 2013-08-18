@@ -119,7 +119,7 @@
    evaled-rules))
 
 (defn lane-is-empty? [src]
-  (empty? @(queues-index src)))
+  (q/vacant? (queues-index src)))
 
 (defn yield-lanes-clear? [rules]
   (every? true?
