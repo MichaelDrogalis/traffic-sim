@@ -222,12 +222,12 @@
                      (go (>! ch true)))))))
 
 (defn drive-to-ingress-lane [me]
-  (let [queue (queues-index (:src @me))
-        blocking-car (q/offer! queue me)]
-    (if-not blocking-car
-      (do (go (q/gulp! queue me))
-          (wait-for-turn me))
-      (info "Backpressure rejected " (:id @me)))))
+  (go (let [queue (queues-index (:src @me))
+            blocking-car (q/offer! queue me)]
+        (if-not blocking-car
+          (do (q/gulp! queue me)
+              (wait-for-turn me))
+          (info "Backpressure rejected " (:id @me))))))
 
 (defn echo-light-state [light]
   (add-watch light :printer
@@ -254,7 +254,7 @@
 (defn start-all-drivers! []
   (doseq [driver (read-string (slurp (clojure.java.io/resource "drivers.edn")))]
     (drive-to-ingress-lane (agent driver))
-    (Thread/sleep 1000)))
+    (Thread/sleep 2000)))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)

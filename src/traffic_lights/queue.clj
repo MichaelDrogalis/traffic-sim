@@ -56,7 +56,7 @@
   (add-watch car me
              (fn [_ _ old new]
                (when-not (= old new)
-                 (go (>! true))))))
+                 (go (>! ch true))))))
 
 (defn drive-forward [car]
   (prn (:id @car) ": " (:front @car))
@@ -73,7 +73,7 @@
             (let [ch (chan)]
               (watch-car-for-motion car preceeding-car ch)
               (touch preceeding-car)
-              (<! ch)
+              (<!! ch)
               (remove-watch car preceeding-car))
             (drive-forward car)))
         (drive-forward car)))))
@@ -82,6 +82,7 @@
   (dosync
    (let [head (first @q)]
      (alter q rest)
+     (send head dissoc :front)
      head)))
 
 (defn ref-head [q]
