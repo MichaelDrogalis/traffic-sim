@@ -100,7 +100,10 @@
   (removeWatch [this key] (remove-watch line key))
   
   clojure.lang.IDeref
-  (deref [this] @line))
+  (deref [this] @line)
+
+  Touch
+  (touch [this] (touch line)))
 
 (defn ref-gulping-queue [distance]
   (RefQueue. (ref []) distance))

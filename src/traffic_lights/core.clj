@@ -6,15 +6,6 @@
             [clojure.pprint :refer [pprint]]
             [traffic-lights.queue :as q]))
 
-(defprotocol Touch
-  (touch [this]))
-
-(extend-protocol Touch
-  clojure.lang.Ref
-  (touch [x] (dosync (commute x identity)))
-  clojure.lang.Agent
-  (touch [x] (send x identity)))
-
 (def schema
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
 
@@ -207,8 +198,8 @@
               (drive-through-intersection me)
               (do (wait-for-light light me ch)
                   (watch-yielding-lanes rules me ch)
-                  (touch light)
-                  (doseq [x (yielding-lanes rules)] (touch x))
+                  (q/touch light)
+                  (doseq [x (yielding-lanes rules)] (q/touch x))
                   (<! ch)
                   (ignore-light light me)
                   (ignore-yielding-lanes rules me)
@@ -227,7 +218,7 @@
         (if-not blocking-car
           (do (q/gulp! queue me)
               (wait-for-turn me))
-          (info "Backpressure rejected " (:id @me))))))
+          (info "Backpressure rejected" (:id @me))))))
 
 (defn echo-light-state [light]
   (add-watch light :printer
