@@ -1,8 +1,9 @@
-[{:src/intersection/of ["10th Street" "Chestnut Street"]
-  :src/street/name "10th Street"
-  :src/street/tag "north"
-  :src/lane/name "straight"
-  :dst/intersection/of ["10th Street" "Market Street"]
-  :dst/street/name "10th Street"
-  :dst/street/tag "south"
-  :dst/lane/name "straight"}]
+{{:src.intersection/of ["10th Street" "Chestnut Street"]
+  :src.street/name "10th Street"
+  :src.street/tag "north"
+  :src.lane/name "out"}
+ {:dst.intersection/of ["10th Street" "Market Street"]
+  :dst.street/name "10th Street"
+  :dst.street/tag "south"
+  :dst.lane/name "in"}}
+

@@ -9,6 +9,9 @@
 (def schema
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
 
+(def connections
+  (read-string (slurp (clojure.java.io/resource "connections-schema.edn"))))
+
 (defn ensure-uniqueness [catalog]
   (fmap first catalog))
 
@@ -44,6 +47,17 @@
 
 (def queues-index
   (fmap (fn [x] (q/ref-gulping-queue (:street.lane.install/length x))) street-catalog))
+
+(defn connections-catalog [intx street tag lane]
+  (let [ingress (get connections
+                     {:src.intersection/of intx
+                      :src.street/name street
+                      :src.street/tag tag
+                      :src.lane/name lane})]
+    (queues-index {:intersection/of (:dst.intersection/of ingress)
+                   :street/name (:dst.street/name ingress)
+                   :street/tag (:dst.street/tag ingress)
+                   :street.lane.install/name (:dst.lane/name ingress)})))
 
 (def intx-catalog (build-non-unique-catalog schema :intersection/of))
 
