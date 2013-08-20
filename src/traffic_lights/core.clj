@@ -162,12 +162,11 @@
         relevant-rules (applicable-rules evaled-rules src dst light)]
     relevant-rules))
 
-(defn drive-through-intersection [me]
+(defn drive-through-intersection [me src dst]
   (info (:id @me) "is driving through the intersection.")
-  (dosync (alter (intx-area-index (:intersection/of (:src @me))) conj me))
-  (dosync (alter (intx-area-index (:intersection/of (:src @me))) (partial filter (partial not= me)))
-          (q/take! (queues-index (:src @me)))
-          (send me dissoc :src)))
+  (dosync (alter (intx-area-index (:intersection/of src)) conj me))
+  (dosync (alter (intx-area-index (:intersection/of src)) (partial filter (partial not= me)))
+          (q/take! (queues-index src))))
 
 (defn wait-for-light [light me ch]
   (add-watch light me
@@ -201,15 +200,22 @@
   (and (not (empty? rules))
        (yield-lanes-clear? rules)))
 
-(defn wait-for-turn [me]
-  (let [{:keys [src dst]} @me
-        light-ident (:street.lane.install/light (street-catalog src))
+(defn wait-for-turn [me src dst]
+  (let [light-ident (:street.lane.install/light (street-catalog src))
         light (traffic-light-index (:intersection/of src))
         ch (chan)]
     (go (loop []
           (let [rules (relevant-rules src dst (light-ident (deref light)))]
             (if (safe-to-go? rules)
-              (drive-through-intersection me)
+              (let [blocker (q/offer! (queues-index dst) me)]
+                (if (nil? blocker)
+                  (drive-through-intersection me)
+                  (let [ch (chan)]
+                    (q/watch-car-for-motion me blocker ch)
+                    (q/touch blocker)
+                    (<!! ch)
+                    (remove-watch blocker me)
+                    (recur))))
               (do (wait-for-light light me ch)
                   (watch-yielding-lanes rules me ch)
                   (q/touch light)
@@ -219,30 +225,15 @@
                   (ignore-yielding-lanes rules me)
                   (recur))))))))
 
-(defn watch-car-ahead-of-me [target me ch]
-  (add-watch target me
-             (fn [_ _ _ car]
-               (when-not (= (:src car) (:src @me))
-                 (do (remove-watch target me)
-                     (go (>! ch true)))))))
-
-(defn drive-to-ingress-lane [me]
-  (go (let [queue (queues-index (:src @me))
-            blocking-car (q/offer! queue me)]
-        (if-not blocking-car
-          (do (q/gulp! queue me)
-              (wait-for-turn me))
-          (info "Backpressure rejected" (:id @me))))))
-
-(defn echo-light-state [light]
+(defn echo-light-state [intx light]
   (add-watch light :printer
              (fn [_ _ old new]
                (when-not (= old new)
-                 (prn new)))))
+                 (info intx ":: " new)))))
 
 (defn turn-on-all-traffic-lights! []
   (doseq [[intx light] traffic-light-index]
-    (echo-light-state light)
+    (echo-light-state intx light)
     (turn-on-light! light (schedule-catalog (:intersection.install/schedule (intx-index intx))))))
 
 (defn verbose-queues! []
@@ -256,10 +247,24 @@
   (doseq [[k a] intx-area-index]
     (add-watch a :printer (fn [_ _ _ area] (info k "::" (map (comp :id deref) area))))))
 
+(defn drive [me [src dst & more]]
+  (go
+   (let [blocker (q/offer! (queues-index src) me)]
+     (if-not blocker
+       (loop [in src out dst [next-src next-dst & directions] more]
+         (q/gulp! (queues-index in) me)
+         (wait-for-turn me in out)
+         (drive-through-intersection me in out)
+         (when directions (recur next-src next-dst directions)))
+       (info (:id @me) "was rejected from backpressure on initial bootstrapping.")))
+     (info (:id @me) "has finished driving.")))
+
 (defn start-all-drivers! []
   (doseq [driver (read-string (slurp (clojure.java.io/resource "drivers.edn")))]
-    (drive-to-ingress-lane (agent driver))
-    (Thread/sleep 2000)))
+    (let [directions (:directions driver)
+          driver (dissoc driver :directions)]
+      (drive (agent driver) directions)
+      (Thread/sleep 2000))))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
