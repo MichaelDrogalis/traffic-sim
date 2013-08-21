@@ -72,7 +72,6 @@
   (await car))
 
 (defn ref-gulp! [q car]
-  (prn "Car is: " car)
   (while (> (:front @car) 0)
     (let [preceeding-pos (dec (.indexOf @q car))]
       (if-not (neg? preceeding-pos)
@@ -129,6 +128,27 @@
   Touch
   (touch [this] (touch line)))
 
+(deftype NullQueue [line]
+  GulpingQueue
+  (offer! [this car])
+  (gulp! [this car])
+  (take! [this] nil)
+
+  Peekable
+  (back-peek [this] nil)
+  
+  SpatialEmpty
+  (back-empty? [this] true)
+
+  clojure.lang.IDeref
+  (deref [this] @line)
+
+  Touch
+  (touch [this] (touch line)))
+
 (defn ref-gulping-queue [distance]
   (RefQueue. (ref []) distance))
+
+(defn null-gulping-queue []
+  (NullQueue. (ref [])))
 

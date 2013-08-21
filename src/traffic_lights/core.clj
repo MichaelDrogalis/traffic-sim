@@ -56,11 +56,12 @@
                         {:src.intersection/of intx
                          :src.street/name street
                          :src.street/tag tag
-                         :src.lane/name lane})]
-       (queues-index {:intersection/of (:dst.intersection/of ingress)
-                      :street/name (:dst.street/name ingress)
-                      :street/tag (:dst.street/tag ingress)
-                      :street.lane.install/name (:dst.lane/name ingress)}))))
+                         :src.lane/name lane})
+           result (queues-index {:intersection/of (:dst.intersection/of ingress)
+                                 :street/name (:dst.street/name ingress)
+                                 :street/tag (:dst.street/tag ingress)
+                                 :street.lane.install/name (:dst.lane/name ingress)})]
+       (or result (q/null-gulping-queue)))))
 
 (def intx-catalog (build-non-unique-catalog schema :intersection/of))
 
@@ -170,8 +171,19 @@
   (info (:id @me) "is driving through the intersection.")
   (dosync (q/take! (queues-index src))
           (alter (intx-area-index (:intersection/of src)) conj me))
-  (dosync (alter (intx-area-index (:intersection/of src))
-                 (partial filter (partial not= me)))))
+  (let [next-lane (connections-catalog dst)
+        blocker (q/offer! next-lane me)
+        ch (chan)]
+    (go (loop []
+          (when-not (nil? blocker)
+            (do (q/watch-car-for-motion me blocker ch)
+                (q/touch blocker)
+                (<! ch)
+                (remove-watch blocker me)
+                (recur)))))
+    (dosync (alter (intx-area-index (:intersection/of src))
+                   (partial filter (partial not= me))))
+    (q/gulp! next-lane me)))
 
 (defn wait-for-light [light me ch]
   (add-watch light me
@@ -248,14 +260,19 @@
 
 (defn verbose-intersections! []
   (doseq [[k a] intx-area-index]
-    (add-watch a :printer (fn [_ _ _ area] (info k "::" (map (comp :id deref) area))))))
+    (add-watch a :printer
+               (fn [_ _ _ area]
+                 (info k "::" (map (comp :id deref) area))))))
 
 (defn drive [me [src dst & more]]
   (go (q/offer! (queues-index src) me)
       (q/gulp! (queues-index src) me)
-      (<! (wait-for-turn me src dst))
-      (drive-through-intersection me src dst)
-      (info (:id @me) " onward!!")))
+      (loop [in src out dst directions more]
+        (<! (wait-for-turn me in out))
+        (drive-through-intersection me in out)
+        (when-not (empty? directions)
+          (recur (first directions) (second directions) (drop 2 directions))))
+      (info (:id @me) " is done driving.")))
 
 (defn start-all-drivers! []
   (doseq [driver (read-string (slurp (clojure.java.io/resource "drivers.edn")))]
