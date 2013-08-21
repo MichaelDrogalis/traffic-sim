@@ -14,11 +14,14 @@
   (front-empty? [this])
   (back-empty? [this]))
 
+(defprotocol Peekable
+  (front-peek [this])
+  (back-peek [this]))
+
 (defprotocol GulpingQueue
   (offer! [this car])
   (gulp! [this car])
-  (take! [this])
-  (head [this]))
+  (take! [this]))
 
 (defn back-of-car [car]
   (+ (:front car) (:length car)))
@@ -90,8 +93,11 @@
      (send head dissoc :front)
      head)))
 
-(defn ref-head [q]
+(defn ref-front-peek [q]
   (first @q))
+
+(defn ref-back-peek [q]
+  (last @q))
 
 (defn ref-front-empty? [q]
   (or (empty? @q) (>= (:front (deref (first @q))) 25)))
@@ -104,8 +110,11 @@
   (offer! [this car] (ref-offer! line distance car))
   (gulp! [this car] (ref-gulp! line car))
   (take! [this] (ref-take! line))
-  (head [this] (ref-head line))
 
+  Peekable
+  (front-peek [this] (ref-front-peek line))
+  (back-peek [this] (ref-back-peek line))
+  
   SpatialEmpty
   (front-empty? [this] (ref-front-empty? line))
   (back-empty? [this] (ref-back-empty? line))

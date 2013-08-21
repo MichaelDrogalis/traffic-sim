@@ -137,5 +137,90 @@
   :street/tag "west"
   :street.lane.install/name "out"
   :street.lane.install/type :egress
+  :street.lane.install/ident ?D}
+
+  ;;; 10th & Market
+
+ {:intersection/ident ["10th Street" "Market Street"]
+  :intersection.install/schedule :shamrock-schedule}
+
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "10th Street"
+  :street/tag "north"
+  :street.lane.install/name "in"
+  :street.lane.install/length 200
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :shamrock
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?w
+  :street.lane.install/substitute {?origini ?a ?origine ?A
+                                   ?lefti ?b ?lefte ?B ?righte ?D
+                                   ?straighte ?C ?straighti ?c}}
+
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "10th Street"
+  :street/tag "north"
+  :street.lane.install/name "out"
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?A}
+
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "Market Street"
+  :street/tag "east"
+  :street.lane.install/name "in"
+  :street.lane.install/length 100
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :shamrock
+  :street.lane.install/ident ?b
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?b ?origine ?B
+                                   ?lefti ?c ?lefte ?C ?righte ?A
+                                   ?straighte ?D ?straighti ?d}}
+ 
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "Market Street"
+  :street/tag "east"
+  :street.lane.install/name "out"
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "10th Street"
+  :street/tag "south"
+  :street.lane.install/name "in"
+  :street.lane.install/length 30
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :shamrock
+  :street.lane.install/ident ?c
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?c ?origine ?C
+                                   ?lefti ?d ?lefte ?D ?righte ?B
+                                   ?straighte ?A ?straighti ?a}}
+
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "10th Street"
+  :street/tag "south"
+  :street.lane.install/name "out"
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?C}
+
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "Market Street"
+  :street/tag "west"
+  :street.lane.install/name "in"
+  :street.lane.install/length 100
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :shamrock
+  :street.lane.install/ident ?d
+  :street.lane.install/light ?z
+  :street.lane.install/substitute {?origini ?d ?origine ?D
+                                   ?lefti ?a ?lefte ?A ?righte ?C
+                                   ?straighte ?B ?straighti ?b}}
+ 
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "Market Street"
+  :street/tag "west"
+  :street.lane.install/name "out"
+  :street.lane.install/type :egress
   :street.lane.install/ident ?D}]
 

@@ -48,16 +48,19 @@
 (def queues-index
   (fmap (fn [x] (q/ref-gulping-queue (:street.lane.install/length x))) street-catalog))
 
-(defn connections-catalog [intx street tag lane]
-  (let [ingress (get connections
-                     {:src.intersection/of intx
-                      :src.street/name street
-                      :src.street/tag tag
-                      :src.lane/name lane})]
-    (queues-index {:intersection/of (:dst.intersection/of ingress)
-                   :street/name (:dst.street/name ingress)
-                   :street/tag (:dst.street/tag ingress)
-                   :street.lane.install/name (:dst.lane/name ingress)})))
+(defn connections-catalog
+  ([q] (connections-catalog (:intersection/of q) (:street/name q)
+                            (:street/tag q) (:street.lane.install/name q)))
+  ([intx street tag lane]
+     (let [ingress (get connections
+                        {:src.intersection/of intx
+                         :src.street/name street
+                         :src.street/tag tag
+                         :src.lane/name lane})]
+       (queues-index {:intersection/of (:dst.intersection/of ingress)
+                      :street/name (:dst.street/name ingress)
+                      :street/tag (:dst.street/tag ingress)
+                      :street.lane.install/name (:dst.lane/name ingress)}))))
 
 (def intx-catalog (build-non-unique-catalog schema :intersection/of))
 
@@ -165,9 +168,10 @@
 
 (defn drive-through-intersection [me src dst]
   (info (:id @me) "is driving through the intersection.")
-  (dosync (alter (intx-area-index (:intersection/of src)) conj me))
-  (dosync (alter (intx-area-index (:intersection/of src)) (partial filter (partial not= me)))
-          (q/take! (queues-index src))))
+  (dosync (q/take! (queues-index src))
+          (alter (intx-area-index (:intersection/of src)) conj me))
+  (dosync (alter (intx-area-index (:intersection/of src))
+                 (partial filter (partial not= me)))))
 
 (defn wait-for-light [light me ch]
   (add-watch light me
@@ -202,14 +206,13 @@
        (yield-lanes-clear? rules)))
 
 (defn wait-for-turn [me src dst]
-  (prn "target queue is: " (queues-index dst))
   (let [light-ident (:street.lane.install/light (street-catalog src))
         light (traffic-light-index (:intersection/of src))
         ch (chan)]
     (go (loop []
           (let [rules (relevant-rules src dst (light-ident (deref light)))]
             (if (safe-to-go? rules)
-              (let [blocker (q/offer! (queues-index dst) me)]
+              (let [blocker (q/back-peek (connections-catalog dst))]
                 (when-not (nil? blocker)
                   (do (q/watch-car-for-motion me blocker ch)
                       (q/touch blocker)
@@ -251,7 +254,8 @@
   (go (q/offer! (queues-index src) me)
       (q/gulp! (queues-index src) me)
       (<! (wait-for-turn me src dst))
-      (drive-through-intersection me src dst)))
+      (drive-through-intersection me src dst)
+      (info (:id @me) " onward!!")))
 
 (defn start-all-drivers! []
   (doseq [driver (read-string (slurp (clojure.java.io/resource "drivers.edn")))]
