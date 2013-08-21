@@ -10,12 +10,15 @@
   clojure.lang.Agent
   (touch [x] (send x identity)))
 
+(defprotocol SpatialEmpty
+  (front-empty? [this])
+  (back-empty? [this]))
+
 (defprotocol GulpingQueue
   (offer! [this car])
   (gulp! [this car])
   (take! [this])
-  (head [this])
-  (vacant? [this]))
+  (head [this]))
 
 (defn back-of-car [car]
   (+ (:front car) (:length car)))
@@ -66,6 +69,7 @@
   (await car))
 
 (defn ref-gulp! [q car]
+  (prn "Car is: " car)
   (while (> (:front @car) 0)
     (let [preceeding-pos (dec (.indexOf @q car))]
       (if-not (neg? preceeding-pos)
@@ -89,8 +93,11 @@
 (defn ref-head [q]
   (first @q))
 
-(defn ref-vacant? [q]
-  (or (empty? @q) (>= (:front (deref (last @q))) 25)))
+(defn ref-front-empty? [q]
+  (or (empty? @q) (>= (:front (deref (first @q))) 25)))
+
+(defn ref-back-empty? [q]
+  (or (empty? @q) (<= (:front (deref (last @q))) 80)))
 
 (deftype RefQueue [line distance]
   GulpingQueue
@@ -98,7 +105,10 @@
   (gulp! [this car] (ref-gulp! line car))
   (take! [this] (ref-take! line))
   (head [this] (ref-head line))
-  (vacant? [this] (ref-vacant? line))
+
+  SpatialEmpty
+  (front-empty? [this] (ref-front-empty? line))
+  (back-empty? [this] (ref-back-empty? line))
 
   clojure.lang.IRef
   (addWatch [this key cb] (add-watch line key cb))

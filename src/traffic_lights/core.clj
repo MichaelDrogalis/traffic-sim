@@ -73,7 +73,8 @@
                  (intx-catalog intx))))
 
 (defn format-lane [lane-ident]
-  (str (:street/tag lane-ident) "/"
+  (str (:intersection/of lane-ident) "/"
+       (:street/tag lane-ident) "/"
        (:street.lane.install/name lane-ident)))
 
 (defn build-light-for-schedule [schedule light-catalog]
@@ -133,7 +134,7 @@
    evaled-rules))
 
 (defn lane-is-empty? [src]
-  (q/vacant? (queues-index src)))
+  (q/front-empty? (queues-index src)))
 
 (defn yield-lanes-clear? [rules]
   (every? true?
@@ -201,6 +202,7 @@
        (yield-lanes-clear? rules)))
 
 (defn wait-for-turn [me src dst]
+  (prn "target queue is: " (queues-index dst))
   (let [light-ident (:street.lane.install/light (street-catalog src))
         light (traffic-light-index (:intersection/of src))
         ch (chan)]
@@ -208,14 +210,12 @@
           (let [rules (relevant-rules src dst (light-ident (deref light)))]
             (if (safe-to-go? rules)
               (let [blocker (q/offer! (queues-index dst) me)]
-                (if (nil? blocker)
-                  (drive-through-intersection me)
-                  (let [ch (chan)]
-                    (q/watch-car-for-motion me blocker ch)
-                    (q/touch blocker)
-                    (<!! ch)
-                    (remove-watch blocker me)
-                    (recur))))
+                (when-not (nil? blocker)
+                  (do (q/watch-car-for-motion me blocker ch)
+                      (q/touch blocker)
+                      (<! ch)
+                      (remove-watch blocker me)
+                      (recur))))
               (do (wait-for-light light me ch)
                   (watch-yielding-lanes rules me ch)
                   (q/touch light)
@@ -248,23 +248,15 @@
     (add-watch a :printer (fn [_ _ _ area] (info k "::" (map (comp :id deref) area))))))
 
 (defn drive [me [src dst & more]]
-  (go
-   (let [blocker (q/offer! (queues-index src) me)]
-     (if-not blocker
-       (loop [in src out dst [next-src next-dst & directions] more]
-         (q/gulp! (queues-index in) me)
-         (wait-for-turn me in out)
-         (drive-through-intersection me in out)
-         (when directions (recur next-src next-dst directions)))
-       (info (:id @me) "was rejected from backpressure on initial bootstrapping.")))
-     (info (:id @me) "has finished driving.")))
+  (go (q/offer! (queues-index src) me)
+      (q/gulp! (queues-index src) me)
+      (<! (wait-for-turn me src dst))
+      (drive-through-intersection me src dst)))
 
 (defn start-all-drivers! []
   (doseq [driver (read-string (slurp (clojure.java.io/resource "drivers.edn")))]
-    (let [directions (:directions driver)
-          driver (dissoc driver :directions)]
-      (drive (agent driver) directions)
-      (Thread/sleep 2000))))
+    (drive (agent (:profile driver)) (:directions driver))
+    (Thread/sleep 2000)))
 
 (defn -main [& args]
   (turn-on-all-traffic-lights!)
