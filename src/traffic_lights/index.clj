@@ -75,4 +75,3 @@
 (def traffic-light-index
   (apply merge (map (fn [[intx _]] (initial-light-state intx)) intx-index)))
 
-

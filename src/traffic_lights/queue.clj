@@ -29,15 +29,16 @@
       (let [target (nth old (dec my-slot))]
         (conj new-lane (drive-watching-forward car target speed))))))
 
-(defn produce-next-lane-state [[lane-id lane]]
+(defn next-lane-state [[lane-id lane]]
   {lane-id (r/reduce (partial advance 1 lane) [] lane)})
 
-(defn produce-next-light-state [{:keys [state fns]}]
+(defn next-light-state [{:keys [state fns]}]
   (let [[f & more] fns]
     {:state (f state) :fns (conj (vec more) f)}))
 
 (defn drive [old-lanes old-lights]
-  (let [new-lanes (apply merge (pmap produce-next-lane-state old-lanes))
-        new-lights (apply merge (pmap produce-next-light-state old-lights))]
+  (let [new-lanes (apply merge (pmap next-lane-state old-lanes))
+        new-lights (apply merge (pmap next-light-state old-lights))]
     (Thread/sleep 200)
     (recur new-lanes new-lights)))
+
