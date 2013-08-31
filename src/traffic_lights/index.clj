@@ -65,14 +65,14 @@
 (defn build-light-for-schedule [schedule light-catalog]
   (fmap #(:light-face/init (light-face-index %)) (:schedule/substitute schedule)))
 
+(defn initial-light-state [intx]
+  (let [light (-> (intx-registration-index intx)
+                  :intersection.install/schedule
+                  light-group-schedule-index
+                  (build-light-for-schedule light-face-index))]
+    {intx light}))
+
 (def traffic-light-index
-  (apply merge
-         (map (fn [[intx _]]
-                (let [light (-> (intx-registration-index intx)
-                                :intersection.install/schedule
-                                light-group-schedule-index
-                                (build-light-for-schedule light-face-index))]
-                  {intx light}))
-              intx-index)))
+  (apply merge (map (fn [[intx _]] (initial-light-state intx)) intx-index)))
 
 
