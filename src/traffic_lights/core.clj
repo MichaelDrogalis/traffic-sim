@@ -5,51 +5,10 @@
             [clojure.pprint :refer [pprint]]
             [traffic-lights.queue :as q]))
 
-(defn connections-catalog
-  ([q] (connections-catalog (:intersection/of q) (:street/name q)
-                            (:street/tag q) (:street.lane.install/name q)))
-  ([intx street tag lane]
-     (let [ingress (get connections
-                        {:src.intersection/of intx
-                         :src.street/name street
-                         :src.street/tag tag
-                         :src.lane/name lane})
-           result (queues-index {:intersection/of (:dst.intersection/of ingress)
-                                 :street/name (:dst.street/name ingress)
-                                 :street/tag (:dst.street/tag ingress)
-                                 :street.lane.install/name (:dst.lane/name ingress)})]
-       (or result (q/null-gulping-queue)))))
-
-(def intx-catalog (build-non-unique-catalog schema :intersection/of))
-
-(def intx-index (build-catalog schema :intersection/ident))
-
-(def intx-area-index (fmap (fn [_] (ref [])) intx-index))
-
-(defn street-lane-id-index [intx]
-  (group-by :street.lane.install/ident
-            (map #(select-keys %
-                               [:street.lane.install/ident :intersection/of
-                                :street/name :street/tag :street.lane.install/name])
-                 (intx-catalog intx))))
-
 (defn format-lane [lane-ident]
   (str (:intersection/of lane-ident) "/"
        (:street/tag lane-ident) "/"
        (:street.lane.install/name lane-ident)))
-
-(defn build-light-for-schedule [schedule light-catalog]
-  (fmap #(:light-face/init (light-catalog %)) (:schedule/substitute schedule)))
-
-(def traffic-light-index
-  (apply merge
-         (map (fn [[intx _]]
-                {intx (agent (-> intx
-                                 intx-index
-                                 :intersection.install/schedule
-                                 schedule-catalog
-                                 (build-light-for-schedule light-catalog)))})
-              intx-catalog)))
 
 (defn turn-on-light! [light schedule]
   (future
