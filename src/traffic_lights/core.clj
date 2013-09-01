@@ -23,14 +23,10 @@
   (pprint (parallel-map-merge :state lanes)))
 
 (defn drive [old-lanes old-lights]
-  (pprint old-lanes)
-  (let [new-lanes  (future (parallel-map-merge q/next-lane-state
-                                               (parallel-map-merge q/ch->lane old-lanes)))
+  (let [new-lanes  (future (-> old-lanes
+                               (partial parallel-map-merge q/ch->lane)
+                               (partial parallel-map-merge q/next-lane-state)))
         new-lights (future (parallel-map-merge q/next-light-state old-lights))]
     (Thread/sleep 1000)
     (recur @new-lanes @new-lights)))
-
-;(future (drive i/lane-state-index []))
-;(q/enqueue-into-ch (:channel (second (first i/lane-state-index))) {:id "Mike" :len 5})
-
 
