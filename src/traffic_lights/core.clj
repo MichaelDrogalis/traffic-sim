@@ -1,7 +1,5 @@
 (ns traffic-lights.core
-  (:require [clojure.algo.generic.functor :refer [fmap]]
-            [clojure.tools.logging :refer [info]]
-            [clojure.set :refer [subset?]]
+  (:require [clojure.tools.logging :refer [info]]
             [clojure.pprint :refer [pprint]]
             [traffic-lights.queue :as q]
             [traffic-lights.index :as i]))
