@@ -3,7 +3,6 @@
             [clojure.tools.logging :refer [info]]
             [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]
-            [dire.core :as d]
             [traffic-lights.queue :as q]
             [traffic-lights.index :as i]))
 
@@ -17,13 +16,14 @@
 (def light-state-machines
   (parallel-map-merge build-light-state-machine i/traffic-light-index))
 
+(defn loud-lights! [lights]
+  (pprint (parallel-map-merge :state lights)))
+
 (defn drive [old-lanes old-lights]
+  (loud-lights! old-lights)
   (let [new-lanes  (future (parallel-map-merge q/next-lane-state old-lanes))
         new-lights (future (parallel-map-merge q/next-light-state old-lights))]
     (Thread/sleep 1000)
     (recur @new-lanes @new-lights)))
 
-(d/with-pre-hook! #'drive
-  (fn [lanes lights]
-    (pprint (parallel-map-merge :state lights))))
-
+(drive [] light-state-machines)
