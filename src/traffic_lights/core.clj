@@ -6,9 +6,21 @@
             [traffic-lights.queue :as q]
             [traffic-lights.index :as i]))
 
+(def light-state-machines
+ (apply merge
+        (map
+         (fn [[intx state-seq]]
+           {intx {:state (:state (first state-seq))
+                  :fns (mapcat q/light-transition->fns state-seq)}})
+         i/traffic-light-index)))
+
 (defn drive [old-lanes old-lights]
-  (let [new-lanes (apply merge (pmap q/next-lane-state old-lanes))
-        new-lights (apply merge (pmap q/next-light-state old-lights))]
-    (Thread/sleep 200)
+  (pprint (map (fn [[k v]] {k (:state v)}) old-lights))
+  (let [new-lanes (apply merge (pmap (fn [[k v]] {k (q/next-lane-state v)}) old-lanes))
+        new-lights (apply merge (pmap (fn [[k v]] {k (q/next-light-state v)}) old-lights))]
+    (Thread/sleep 1000)
     (recur new-lanes new-lights)))
+
+(drive [] light-state-machines)
+
 
