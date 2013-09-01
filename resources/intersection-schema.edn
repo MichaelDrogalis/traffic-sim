@@ -5,12 +5,12 @@
 
  {:schedule/ident :shamrock-schedule
   :schedule/substitute {?w :standard ?x :standard ?y :standard ?z :standard}
-  :schedule/sequence [{:state {?x [:green] ?z [:green]} :ticks 8}
-                      {:state {?x [:yellow] ?z [:yellow]} :ticks 3}
-                      {:state {?x [:red] ?z [:red]} :ticks 3}
-                      {:state {?w [:green]  ?y [:green]} :ticks 8}
-                      {:state {?w [:yellow] ?y [:yellow]} :ticks 3}
-                      {:state {?w [:red] ?y [:red]} :ticks 3}]}
+  :schedule/sequence [{:state-diff {?x [:green] ?z [:green]} :ticks 8}
+                      {:state-diff {?x [:yellow] ?z [:yellow]} :ticks 3}
+                      {:state-diff {?x [:red] ?z [:red]} :ticks 3}
+                      {:state-diff {?w [:green]  ?y [:green]} :ticks 8}
+                      {:state-diff {?w [:yellow] ?y [:yellow]} :ticks 3}
+                      {:state-diff {?w [:red] ?y [:red]} :ticks 3}]}
 
  {:rule/ident :straight
   :src ?origini

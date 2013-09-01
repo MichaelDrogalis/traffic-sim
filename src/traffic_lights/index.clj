@@ -69,11 +69,11 @@
   (:schedule/sequence (light-group-schedule-index schedule)))
 
 (defn initial-light-state [intx]
-  {:state (-> (intx-registration-index intx)
-              :intersection.install/schedule
-              light-group-schedule-index
-              (build-light-for-schedule light-face-index))
-   :ticks 1})
+  {:state-diff (-> (intx-registration-index intx)
+                   :intersection.install/schedule
+                   light-group-schedule-index
+                   (build-light-for-schedule light-face-index))
+   :ticks 0})
 
 (def traffic-light-index
   (apply merge
@@ -83,3 +83,4 @@
                     (build-light-sequence (:intersection.install/schedule
                                            (intx-registration-index x))))})
               (keys intx-index))))
+

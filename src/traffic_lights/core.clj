@@ -10,7 +10,7 @@
  (apply merge
         (map
          (fn [[intx state-seq]]
-           {intx {:state (:state (first state-seq))
+           {intx {:state (:state-diff (first state-seq))
                   :fns (mapcat q/light-transition->fns state-seq)}})
          i/traffic-light-index)))
 
@@ -20,7 +20,4 @@
         new-lights (apply merge (pmap (fn [[k v]] {k (q/next-light-state v)}) old-lights))]
     (Thread/sleep 1000)
     (recur new-lanes new-lights)))
-
-(drive [] light-state-machines)
-
 
