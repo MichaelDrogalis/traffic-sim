@@ -79,3 +79,12 @@
 (fact (add-to-lane {:state [] :length 10} {:len 1})
       => {:state [{:front 9 :len 1}] :length 10})
 
+(fact (mark-ripe {:state []}) => {:state []})
+
+(fact (mark-ripe {:state [{:front 5}]}) => {:state [{:front 5 :ripe? false}]})
+
+(fact (mark-ripe {:state [{:front 0}]}) => {:state [{:front 0 :ripe? true}]})
+
+(fact (mark-ripe {:state [{:front 0} {:front 5}]})
+      => {:state [{:front 0 :ripe? true} {:front 5}]})
+

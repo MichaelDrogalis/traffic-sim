@@ -29,7 +29,7 @@
       (let [target (nth old (dec my-slot))]
         (conj new-lane (drive-watching-forward car target speed))))))
 
-(defn next-lane-state [{:keys [state] :as lane}]
+(defn advance-cars-in-lane [{:keys [state] :as lane}]
   (assoc lane :state (r/reduce (partial advance 1 state) [] state)))
 
 (defn next-light-state [{:keys [state fns]}]
@@ -51,4 +51,13 @@
   (if-not (zero? (.size channel))
     (add-to-lane lane (take-from-channel channel))
     lane))
+
+(defn mark-ripe [{:keys [channel state] :as lane}]
+  (let [[head-car & more] state]
+    (if head-car
+      (assoc lane :state (conj more (assoc head-car :ripe? (zero? (:front head-car)))))
+      lane)))
+
+(defn harvest-lane [lane]
+  lane)
 

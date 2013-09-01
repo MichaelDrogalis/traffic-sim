@@ -23,7 +23,9 @@
 (defn genesis! [old-lanes old-lights]
   (let [new-lanes  (future (-> old-lanes
                                (partial parallel-map-merge q/ch->lane)
-                               (partial parallel-map-merge q/next-lane-state)))
+                               (partial parallel-map-merge q/mark-ripe)
+                               (partial parallel-map-merge q/advance-cars-in-lane)
+                               (partial parallel-map-merge q/harvest-lane)))
         new-lights (future (parallel-map-merge q/next-light-state old-lights))]
     (Thread/sleep 1000)
     (recur @new-lanes @new-lights)))
