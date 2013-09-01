@@ -16,8 +16,8 @@
 
 (defn drive [old-lanes old-lights]
   (pprint (map (fn [[k v]] {k (:state v)}) old-lights))
-  (let [new-lanes (apply merge (pmap (fn [[k v]] {k (q/next-lane-state v)}) old-lanes))
-        new-lights (apply merge (pmap (fn [[k v]] {k (q/next-light-state v)}) old-lights))]
+  (let [new-lanes  (future (apply merge (pmap (fn [[k v]] {k (q/next-lane-state v)}) old-lanes)))
+        new-lights (future (apply merge (pmap (fn [[k v]] {k (q/next-light-state v)}) old-lights)))]
     (Thread/sleep 1000)
-    (recur new-lanes new-lights)))
+    (recur @new-lanes @new-lights)))
 
