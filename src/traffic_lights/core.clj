@@ -7,7 +7,7 @@
             [traffic-lights.index :as i]))
 
 (defn parallel-map-merge [f state]
-  (apply merge (pmap (fn [[k v]] {k (f v)}) state)))
+  (apply merge (map (fn [[k v]] {k (f v)}) state)))
 
 (defn build-light-state-machine [x]
   {:state (:state-diff (first x))
@@ -23,11 +23,12 @@
   (pprint (parallel-map-merge :state lanes)))
 
 (defn drive [old-lanes old-lights]
-;  (loud-lights! old-lights)
-  (loud-lanes! old-lanes)
-  (let [new-lanes  (future (parallel-map-merge (partial q/next-lane-state :state) old-lanes))
+  (pprint old-lanes)
+  (let [new-lanes  (future (parallel-map-merge q/next-lane-state
+                                               (parallel-map-merge q/ch->lane old-lanes)))
         new-lights (future (parallel-map-merge q/next-light-state old-lights))]
     (Thread/sleep 1000)
     (recur @new-lanes @new-lights)))
 
 (drive i/lane-state-index [])
+

@@ -61,7 +61,10 @@
         :street.lane.install/name lane-name}))
 
 (def lane-state-index
-  (fmap (fn [x] {:state [] :length (:street.lane.install/length x)}) lane-index))
+  (fmap (fn [x] {:state []
+                 :length (:street.lane.install/length x)
+                 :channel (java.util.concurrent.LinkedBlockingQueue. 1)})
+        lane-index))
 
 (defn lane-var-catalog [intx]
   (let [index-keys [:intersection/of :street/name :street/tag
