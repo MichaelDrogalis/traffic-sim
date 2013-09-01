@@ -30,7 +30,7 @@
         (conj new-lane (drive-watching-forward car target speed))))))
 
 (defn next-lane-state [{:keys [state] :as lane}]
-  (assoc lane :state (r/reduce (partial advance 1 lane) [] state)))
+  (assoc lane :state (r/reduce (partial advance 1 state) [] state)))
 
 (defn next-light-state [{:keys [state fns]}]
   (let [[f & more] fns]

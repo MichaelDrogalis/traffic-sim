@@ -54,9 +54,9 @@
                [] {:id "Benti" :front 7 :len 1 :buf 1})
       => [{:id "Benti" :front 7 :len 1 :buf 1}])
 
-(fact (next-lane-state ["south" []]) => {"south" []})
-(fact (next-lane-state ["south" [{:id "Mike" :front 10}]])
-      => {"south" [{:id "Mike" :front 9}]})
+(fact (next-lane-state {:state []}) => {:state []})
+(fact (next-lane-state {:state [{:id "Mike" :front 10}]})
+      => {:state [{:id "Mike" :front 9}]})
 
 (let [fns (light-transition->fns {:state-diff {:x [:green]} :ticks 1})]
   (fact (reductions #(%2 %1) {:x [:red]} fns)
