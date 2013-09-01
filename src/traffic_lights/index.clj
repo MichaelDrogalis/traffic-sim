@@ -10,8 +10,10 @@
 (def drivers
   (read-string (slurp (clojure.java.io/resource "drivers.edn"))))
 
-(def lane-identifiers [:street.lane.install/ident :intersection/of
-                       :street/name :street/tag :street.lane.install/name])
+(def directions
+  (read-string (slurp (clojure.java.io/resource "directions.edn"))))
+
+(def lane-identifiers [:intersection/of :street/name :street/tag :street.lane.install/name])
 
 (defn ensure-uniqueness [catalog]
   (fmap first catalog))
@@ -19,31 +21,35 @@
 (defn group-by-key [schema kw]
   (group-by kw (filter #(contains? % kw) schema)))
 
-(defn build-catalog [schema kw]
+(defn build-index [schema kw]
   (ensure-uniqueness (group-by-key schema kw)))
 
-(defn build-non-unique-catalog [schema kw]
+(defn build-non-unique-index [schema kw]
   (group-by-key schema kw))
 
-(defn build-composite-key-catalog [schema id-kw kws]
+(defn build-composite-key-index [schema id-kw kws]
   (group-by #(select-keys % kws) (filter #(contains? % id-kw) schema)))
 
-(def light-face-index (build-catalog schema :light-face/ident))
+(def drivers-index (build-index drivers :id))
 
-(def light-group-schedule-index (build-catalog schema :schedule/ident))
+(def directions-index (build-index directions :id))
 
-(def atomic-rule-index (build-catalog schema :rule/ident))
+(def light-face-index (build-index schema :light-face/ident))
 
-(def intx-registration-index (build-catalog schema :intersection/ident))
+(def light-group-schedule-index (build-index schema :schedule/ident))
 
-(def intx-index (build-non-unique-catalog schema :intersection/of))
+(def atomic-rule-index (build-index schema :rule/ident))
 
-(def lane-rules-index (build-catalog schema :lane.rules/ident))
+(def intx-registration-index (build-index schema :intersection/ident))
 
-(def lanes-rules-subtitution-index (build-non-unique-catalog schema :lane.rules/of))
+(def intx-index (build-non-unique-index schema :intersection/of))
+
+(def lane-rules-index (build-index schema :lane.rules/ident))
+
+(def lanes-rules-subtitution-index (build-non-unique-index schema :lane.rules/of))
 
 (def lane-index
-  (ensure-uniqueness (build-composite-key-catalog
+  (ensure-uniqueness (build-composite-key-index
                       schema :intersection/of
                       lane-identifiers)))
 
@@ -58,9 +64,11 @@
   (fmap (fn [x] {:state [] :length (:street.lane.install/length x)}) lane-index))
 
 (defn lane-var-catalog [intx]
-  (group-by :street.lane.install/ident
-            (map #(select-keys % lane-identifiers)
-                 (intx-index intx))))
+  (let [index-keys [:intersection/of :street/name :street/tag
+                    :street.lane.install/name :street.lane.install/ident]]
+    (group-by :street.lane.install/ident
+              (map #(select-keys % index-keys)
+                   (intx-index intx)))))
 
 (defn build-light-for-schedule [schedule light-catalog]
   (fmap #(:light-face/init (light-face-index %)) (:schedule/substitute schedule)))

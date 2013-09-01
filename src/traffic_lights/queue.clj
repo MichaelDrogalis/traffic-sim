@@ -29,10 +29,13 @@
       (let [target (nth old (dec my-slot))]
         (conj new-lane (drive-watching-forward car target speed))))))
 
-(defn next-lane-state [[lane-id lane]]
-  {lane-id (r/reduce (partial advance 1 lane) [] lane)})
+(defn next-lane-state [lane-id {:keys [state] :as lane}]
+  {lane-id (r/reduce (partial advance 1 lane) [] state)})
 
 (defn next-light-state [{:keys [state fns]}]
   (let [[f & more] fns]
     {:state (f state) :fns (conj (vec more) f)}))
+
+(defn add-to-lane [{:keys [state length] :as lane} {:keys [len] :as car}]
+  (assoc lane :state (conj state (assoc car :front (- length len)))))
 

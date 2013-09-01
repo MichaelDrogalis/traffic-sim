@@ -73,3 +73,9 @@
 (let [light {:state 0 :fns [inc dec]}]
   (fact (next-light-state light) => {:state 1 :fns [dec inc]}))
 
+(fact (add-to-lane {:state [] :length 10} {:len 5})
+      => {:state [{:front 5 :len 5}] :length 10})
+
+(fact (add-to-lane {:state [] :length 10} {:len 1})
+      => {:state [{:front 9 :len 1}] :length 10})
+

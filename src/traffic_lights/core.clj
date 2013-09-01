@@ -19,11 +19,15 @@
 (defn loud-lights! [lights]
   (pprint (parallel-map-merge :state lights)))
 
+(defn loud-lanes! [lanes]
+  (pprint (parallel-map-merge :state lanes)))
+
 (defn drive [old-lanes old-lights]
-  (loud-lights! old-lights)
-  (let [new-lanes  (future (parallel-map-merge q/next-lane-state old-lanes))
+;  (loud-lights! old-lights)
+  (loud-lanes! old-lanes)
+  (let [new-lanes  (future (parallel-map-merge (partial q/next-lane-state :state) old-lanes))
         new-lights (future (parallel-map-merge q/next-light-state old-lights))]
     (Thread/sleep 1000)
     (recur @new-lanes @new-lights)))
 
-(drive [] light-state-machines)
+(drive i/lane-state-index [])
