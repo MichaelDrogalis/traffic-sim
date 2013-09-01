@@ -22,7 +22,7 @@
 (defn loud-lanes! [lanes]
   (pprint (parallel-map-merge :state lanes)))
 
-(defn drive [old-lanes old-lights]
+(defn genesis! [old-lanes old-lights]
   (let [new-lanes  (future (-> old-lanes
                                (partial parallel-map-merge q/ch->lane)
                                (partial parallel-map-merge q/next-lane-state)))
