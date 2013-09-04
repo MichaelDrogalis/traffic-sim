@@ -63,7 +63,8 @@
     (if (:ripe? head-car)
       (let [out-lane (get (:directions (get directions-index (:id head-car))) lane-id)
             out-ch (:channel (get lane-index out-lane))]
-        (enqueue-into-ch out-ch (dissoc head-car :ripe?))
+        (when-not (nil? out-ch)
+          (enqueue-into-ch out-ch (dissoc head-car :ripe?)))
         (assoc lane :state (or more [])))
       lane)))
 

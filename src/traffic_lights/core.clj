@@ -5,7 +5,7 @@
             [traffic-lights.index :as i]))
 
 (defn par-map-merge [f state & args]
-  (apply merge (map (fn [[k v]] {k (apply f k v args)}) state)))
+  (apply merge (pmap (fn [[k v]] {k (apply f k v args)}) state)))
 
 (defn build-light-state-machine [_ x]
   {:state (:state-diff (first x))
@@ -25,17 +25,11 @@
                  (par-map-merge q/advance-cars-in-lane
                                 (par-map-merge q/mark-ripe
                                                (par-map-merge q/ch->lane old-lanes)))
-                 i/directions-index i/lane-index))
+                 i/directions-index i/lane-state-index))
 
 (defn genesis! [old-lanes old-lights]
-  (pprint old-lanes)
-  (let [new-lanes (transform-lanes old-lanes)
-        new-lights (par-map-merge q/next-light-state old-lights)]
-    (Thread/sleep 2000)
-    (recur new-lanes new-lights)))
-
-(def car {:id "Mike" :len 5 :buf 3})
-(q/enqueue-into-ch (:channel (second (first i/lane-state-index))) car)
-
-(genesis! i/lane-state-index [])
+  (let [new-lanes (future (transform-lanes old-lanes))
+        new-lights (future (par-map-merge q/next-light-state old-lights))]
+    (Thread/sleep 1000)
+    (recur @new-lanes @new-lights)))
 
