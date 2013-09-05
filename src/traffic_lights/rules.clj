@@ -49,14 +49,19 @@
 (defn matching-lights [atomic-rules light-state]
   (filter #(subset? light-state (into #{} (:light %))) atomic-rules))
 
-(def lane (get i/lane-index (ffirst i/lane-index)))
+(defn lane-clear?
+  ([lane-state-index src]
+     (empty? (:state (get i/lane-state-index src))))
+  ([lane-state-index src dst]
+     (let [head-car (first (:state (get i/lane-state-index src)))]
+       (not= (:dst head-car) dst))))
 
-(def rules (eval-all-atomic-rules lane i/lanes-rules-subtitution-index i/atomic-rule-index))
+(defn all-lanes-clear? [lane-state-index lanes]
+  (every? #(lane-clear? lane-state-index %) lanes))
 
-(matching-lights
- (relevant-rules rules (ffirst i/lane-index) (nth (keys i/lane-index) 9))
- [:yellow])
-
-;(pprint rules)
-
+(defn safe-to-go? [lane rule-sub-idx atomic-rule-idx src dst light-state]
+  (let [rules (eval-all-atomic-rules lane rule-sub-idx atomic-rule-idx)
+        applicable-rules (relevant-rules rules src dst)
+        matching (matching-lights applicable-rules light-state)]
+    (all-lanes-clear? matching)))
 

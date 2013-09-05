@@ -59,7 +59,7 @@
 
 (defn harvest-lane [lane-id {:keys [state] :as lane} directions-index lane-index]
   (let [[head-car & more] state]
-    (if (:ripe? head-car)
+    (if (and (:ripe? head-car))
       (let [out-lane (get (:directions (get directions-index (:id head-car))) lane-id)
             out-ch (:channel (get lane-index out-lane))]
         (when-not (nil? out-ch)
