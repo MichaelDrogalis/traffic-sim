@@ -9,6 +9,13 @@
     :dst (mapping dst)
     :yield (map (fn [[src dst]] [(first (mapping src)) (first (mapping dst))]) yield)))
 
+;;; 1. Obtain all lane data
+;;; 2. Get the rule set name for the lane
+;;; 3. Get all of the registered rules for the rule set
+;;; 4. Get the intersection-var map
+;;; 5. Evaluate the lane's local substitution map
+;;; 6. Evaluate each registered rule's substitution map
+;;; 7. Evalulate each atomic rule's src, dst, and yield
 (defn eval-all-atomic-rules [lane-index sub-index atomic-index lane-id]
   (let [lane (get lane-index lane-id)
         rule-set (:street.lane.install/rules lane)
