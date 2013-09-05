@@ -38,11 +38,11 @@
 
 (def light-group-schedule-index (build-index schema :schedule/ident))
 
-(def atomic-rule-index (build-index schema :rule/ident))
-
 (def intx-registration-index (build-index schema :intersection/ident))
 
 (def intx-index (build-non-unique-index schema :intersection/of))
+
+(def atomic-rule-index (build-index schema :rule/ident))
 
 (def lane-rules-index (build-index schema :lane.rules/ident))
 

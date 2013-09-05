@@ -1,6 +1,5 @@
 (ns traffic-lights.queue
-  (:require [clojure.core.reducers :as r]
-            [clojure.pprint :refer [pprint]]))
+  (:require [clojure.core.reducers :as r]))
 
 (defn light-transition->fns [{:keys [state-diff ticks]}]
   (map (fn [_] (fn [light] (merge light state-diff))) (range ticks)))
