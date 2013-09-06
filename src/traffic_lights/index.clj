@@ -46,7 +46,7 @@
 
 (def lane-rules-index (build-index schema :lane.rules/ident))
 
-(def lanes-rules-subtitution-index (build-non-unique-index schema :lane.rules/of))
+(def lanes-rules-substitution-index (build-non-unique-index schema :lane.rules/of))
 
 (def lane-index
   (ensure-uniqueness (build-composite-key-index
