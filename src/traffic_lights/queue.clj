@@ -28,7 +28,7 @@
       (let [target (nth old (dec my-slot))]
         (conj new-lane (drive-watching-forward car target speed))))))
 
-(defn next-light-state [{:keys [state fns]}]
+(defn next-light-state [_ {:keys [state fns]}]
   (let [[f & more] fns]
     {:state (f state) :fns (conj (vec more) f)}))
 

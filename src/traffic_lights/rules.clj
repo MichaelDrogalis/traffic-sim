@@ -59,10 +59,10 @@
 (defn all-lanes-clear? [lane-state-index lanes]
   (every? #(lane-clear? lane-state-index %) lanes))
 
-(defn safe-to-go? [rule-sub-idx atomic-rule-idx light-state-index src dst]
+(defn safe-to-go? [lane-idx rule-sub-idx atomic-rule-idx old-lanes light-state-index src dst]
   (let [light-state (light-state-index src)
-        rules (eval-all-atomic-rules src rule-sub-idx atomic-rule-idx)
+        rules (eval-all-atomic-rules (lane-idx src) rule-sub-idx atomic-rule-idx)
         applicable-rules (relevant-rules rules src dst)
         matching (matching-lights applicable-rules light-state)]
-    (all-lanes-clear? matching)))
+    (all-lanes-clear? old-lanes matching)))
 
