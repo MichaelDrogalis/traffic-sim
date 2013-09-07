@@ -1,5 +1,7 @@
 (ns traffic-lights.index
-  (:require [clojure.algo.generic.functor :refer [fmap]]))
+  (:require [clojure.algo.generic.functor :refer [fmap]]
+            [clojure.pprint :refer [pprint]])
+  (:import [java.util.concurrent LinkedBlockingQueue]))
 
 (def schema
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
@@ -15,17 +17,20 @@
 
 (def lane-identifiers [:intersection/of :street/name :street/tag :street.lane.install/name])
 
+(defn build-catalog [schema kw]
+  (filter #(contains? % kw) schema))
+
 (defn ensure-uniqueness [catalog]
   (fmap first catalog))
 
 (defn group-by-key [schema kw]
   (group-by kw (filter #(contains? % kw) schema)))
 
-(defn build-index [schema kw]
-  (ensure-uniqueness (group-by-key schema kw)))
-
 (defn build-non-unique-index [schema kw]
   (group-by-key schema kw))
+
+(defn build-index [schema kw]
+  (ensure-uniqueness (build-non-unique-index schema kw)))
 
 (defn build-composite-key-index [schema id-kw kws]
   (group-by #(select-keys % kws) (filter #(contains? % id-kw) schema)))
@@ -53,23 +58,7 @@
                       schema :intersection/of
                       lane-identifiers)))
 
-(def ingress-lane-index
-  (let [index (ensure-uniqueness (build-composite-key-index
-                                  schema :intersection/of
-                                  (conj lane-identifiers :street.lane.install/type)))]
-    (apply merge (map (partial apply hash-map)
-                    (filter (fn [[k _]]
-                              (= (:street.lane.install/type k) :ingress))
-                            index)))))
-
-(def egress-lane-index
-  (let [index (ensure-uniqueness (build-composite-key-index
-                                  schema :intersection/of
-                                  (conj lane-identifiers :street.lane.install/type)))]
-    (apply merge (map (partial apply hash-map)
-                    (filter (fn [[k _]]
-                              (= (:street.lane.install/type k) :egress))
-                            index)))))
+(def lane-catalogv (build-catalog schema :intersection/of))
 
 (defn lane-catalog [intx street-name tag lane-name]
   (get lane-index
@@ -78,15 +67,16 @@
         :street/tag tag
         :street.lane.install/name lane-name}))
 
-(defn state-index [lanes]
-  (fmap (fn [x] {:state []
-                 :length (:street.lane.install/length x)
-                 :channel (java.util.concurrent.LinkedBlockingQueue. 1)})
-        lanes))
+(defn initialize-lane [lanes]
+  (map (fn [x] {:lane x :state [] :channel (LinkedBlockingQueue. 1)}) lanes))
 
-(def ingress-lane-state-index (state-index ingress-lane-index))
+(def ingress-lane-catalog (filter #(= (:street.lane.install/type %) :ingress) lane-catalogv))
 
-(def egress-lane-state-index (state-index egress-lane-index))
+(def egress-lane-catalog (filter #(= (:street.lane.install/type %) :egress) lane-catalogv))
+
+(def ingress-lane-state-catalog (initialize-lane ingress-lane-catalog))
+
+(def egress-lane-state-catalog (initialize-lane egress-lane-catalog))
 
 (defn lane-var-catalog [intx]
   (let [index-keys [:intersection/of :street/name :street/tag
@@ -108,12 +98,11 @@
                    (build-light-for-schedule light-face-index))
    :ticks 0})
 
-(def traffic-light-index
-  (apply merge
-         (map (fn [x]
-                {x (cons
-                    (initial-light-state x)
-                    (build-light-sequence (:intersection.install/schedule
-                                           (intx-registration-index x))))})
-              (keys intx-index))))
+(def traffic-light-catalog
+  (map (fn [x]
+         (let [intx-reg (intx-registration-index x)
+               initial (initial-light-state x)
+               subsequent (build-light-sequence (:intersection.install/schedule intx-reg))]
+           {:intersection x :state-seq (cons initial subsequent)}))
+       (keys intx-index)))
 
