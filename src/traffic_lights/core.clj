@@ -8,18 +8,12 @@
 (defn par-map-merge [f state & args]
   (apply merge (pmap (fn [[k v]] {k (apply f k v args)}) state)))
 
-(defn build-light-state-machine [_ x]
-  {:state (:state-diff (first x))
-   :fns (mapcat q/light-transition->fns x)})
+(defn build-light-state-machine [x]
+  {:state (:state-diff (first (:state-seq x)))
+   :fns (mapcat q/light-transition->fns (:state-seq x))})
 
 (def light-state-machines
-  (par-map-merge build-light-state-machine i/traffic-light-index))
-
-(defn loud-lights! [lights]
-  (pprint (par-map-merge :state lights)))
-
-(defn loud-lanes! [lanes]
-  (pprint (par-map-merge :state lanes)))
+  (map build-light-state-machine i/traffic-light-catalog))
 
 (defn transform-ingress-lanes [old-lanes safety-fn]
   (par-map-merge q/harvest-ingress-lane
@@ -36,14 +30,9 @@
                  i/directions-index i/egress-lane-state-index))
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
-  (pprint (map (fn [[k v]] {k (:state v)}) old-lights))
-  (pprint (map (fn [[k v]] {(:street/tag k) (:state v)}) old-i-lanes))
-  (pprint (map (fn [[k v]] {(:street/tag k) (:state v)}) old-e-lanes))
-
   (let [new-i-lanes (future (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights)))
         new-e-lanes (future (transform-egress-lanes old-e-lanes))
         new-lights  (future (par-map-merge q/next-light-state old-lights))]
-;    (Thread/sleep 1000)
     (recur @new-i-lanes @new-e-lanes @new-lights safety-fn)))
 
 (def safety-f
