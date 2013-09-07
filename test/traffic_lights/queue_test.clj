@@ -54,8 +54,8 @@
                [] {:id "Benti" :front 7 :len 1 :buf 1})
       => [{:id "Benti" :front 7 :len 1 :buf 1}])
 
-(fact (next-lane-state {:state []}) => {:state []})
-(fact (next-lane-state {:state [{:id "Mike" :front 10}]})
+(fact (advance-cars-in-lane "lane" {:state []}) => {:state []})
+(fact (advance-cars-in-lane "lane" {:state [{:id "Mike" :front 10}]})
       => {:state [{:id "Mike" :front 9}]})
 
 (let [fns (light-transition->fns {:state-diff {:x [:green]} :ticks 1})]
@@ -71,7 +71,7 @@
         => [{:x [:red]} {:x [:green]} {:x [:green]}]))
 
 (let [light {:state 0 :fns [inc dec]}]
-  (fact (next-light-state light) => {:state 1 :fns [dec inc]}))
+  (fact (next-light-state "light" light) => {:state 1 :fns [dec inc]}))
 
 (fact (add-to-lane {:state [] :length 10} {:len 5})
       => {:state [{:front 5 :len 5}] :length 10})
@@ -79,12 +79,12 @@
 (fact (add-to-lane {:state [] :length 10} {:len 1})
       => {:state [{:front 9 :len 1}] :length 10})
 
-(fact (mark-ripe {:state []}) => {:state []})
+(fact (mark-ripe "lane" {:state []}) => {:state []})
 
-(fact (mark-ripe {:state [{:front 5}]}) => {:state [{:front 5 :ripe? false}]})
+(fact (mark-ripe "lane" {:state [{:front 5}]}) => {:state [{:front 5 :ripe? false}]})
 
-(fact (mark-ripe {:state [{:front 0}]}) => {:state [{:front 0 :ripe? true}]})
+(fact (mark-ripe "lane" {:state [{:front 0}]}) => {:state [{:front 0 :ripe? true}]})
 
-(fact (mark-ripe {:state [{:front 0} {:front 5}]})
+(fact (mark-ripe "lane" {:state [{:front 0} {:front 5}]})
       => {:state [{:front 0 :ripe? true} {:front 5}]})
 
