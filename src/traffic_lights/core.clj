@@ -37,8 +37,8 @@
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (pprint (map (fn [[k v]] {k (:state v)}) old-lights))
-  (pprint (map (fn [[k v]] {k (:state v)}) old-i-lanes))
-  (pprint (map (fn [[k v]] {k (:state v)}) old-e-lanes))
+  (pprint (map (fn [[k v]] {(:street/tag k) (:state v)}) old-i-lanes))
+  (pprint (map (fn [[k v]] {(:street/tag k) (:state v)}) old-e-lanes))
 
   (let [new-i-lanes (future (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights)))
         new-e-lanes (future (transform-egress-lanes old-e-lanes))
@@ -52,8 +52,15 @@
            i/lanes-rules-substitution-index
            i/atomic-rule-index))
 
-;(q/enqueue-into-ch (:channel (second (first i/lane-state-index))) {:id "Mike" :len 1 :buf 0})
-;(genesis! i/ingress-lane-state-index i/egress-lane-state-index light-state-machines safety-f)
+(def in-lane {:street.lane.install/type :ingress,
+              :street.lane.install/name "in",
+              :street/tag "south",
+              :street/name "10th Street",
+              :intersection/of ["10th Street" "Market Street"]})
+
+(q/enqueue-into-ch (:channel (get i/ingress-lane-state-index in-lane)) {:id "Mike" :len 1 :buf 0})
+(genesis! i/ingress-lane-state-index i/egress-lane-state-index light-state-machines safety-f)
+
 
 
 
