@@ -43,7 +43,7 @@
   (let [new-i-lanes (future (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights)))
         new-e-lanes (future (transform-egress-lanes old-e-lanes))
         new-lights  (future (par-map-merge q/next-light-state old-lights))]
-    (Thread/sleep 1000)
+;    (Thread/sleep 1000)
     (recur @new-i-lanes @new-e-lanes @new-lights safety-fn)))
 
 (def safety-f
