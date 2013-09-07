@@ -4,14 +4,30 @@
             [traffic-lights.index :as i]
             [clojure.pprint :refer [pprint]]))
 
+(defn getx
+  "Like two-argument get, but throws an exception if the key is
+   not found."
+  [m k]
+  (let [e (get m k ::sentinel)]
+    (if-not (= e ::sentinel)
+      e
+      (throw (ex-info "Missing required key" {:map m :key k})))))
+
 (defn without-ident [x]
   (dissoc x :street.lane.install/ident))
 
+(defn eval-yield
+  ([mapping src]
+     [(first (getx mapping src))])
+  ([mapping src dst]
+     [(first (getx mapping src))
+      (first (getx mapping dst))]))
+
 (defn eval-atom [{:keys [src dst yield] :as rule} mapping]
   (assoc rule
-    :src (without-ident (first (mapping src)))
-    :dst (without-ident (first (mapping dst)))
-    :yield (map (fn [[src dst]] [(first (mapping src)) (first (mapping dst))]) yield)))
+    :src (without-ident (first (getx mapping src)))
+    :dst (without-ident (first (getx mapping dst)))
+    :yield (map (partial apply eval-yield mapping) yield)))
 
 (defn local-var-index [lane var-catalog]
   (var-catalog (:intersection/of lane)))
