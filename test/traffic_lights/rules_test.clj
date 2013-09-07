@@ -173,3 +173,24 @@
   (fact (:dst right-on-red) => (:dst (expected (:rule/ident right-on-red))))
   (fact (:yield right-on-red) => (:yield (expected (:rule/ident right-on-red)))))
 
+(fact (relevant-rules [{:src "a" :dst "b"}] "a" "b")
+      => [{:src "a" :dst "b"}])
+
+(fact (relevant-rules [{:src "a" :dst "b"}] "c" "d")
+      => [])
+
+(fact (matching-lights [{:light [:green]}] [:green])
+      => [{:light [:green]}])
+
+(fact (matching-lights [{:light [:green :yellow]}] [:green])
+      => [{:light [:green :yellow]}])
+
+(fact (matching-lights [{:light [:green :yellow]}] [:red])
+      => [])
+
+(fact (lane-clear? {"a" {:state []}} "a") => true)
+(fact (lane-clear? {"a" {:state [1]}} "a") => false)
+
+(fact (lane-clear? {"a" {:state [{:dst "b"}]}} "a" "c") => true)
+(fact (lane-clear? {"a" {:state [{:dst "b"}]}} "a" "b") => false)
+

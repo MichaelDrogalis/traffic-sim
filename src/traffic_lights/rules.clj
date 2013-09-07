@@ -69,6 +69,7 @@
      (empty? (:state (lane-state-index src))))
   ([lane-state-index src dst]
      (let [head-car (first (:state (lane-state-index src)))]
+       (when (nil? (:dst head-car)) (throw (ex-info "Head car dst not implemented." {:car head-car})))
        (not= (:dst head-car) dst))))
 
 (defn all-lanes-clear? [lane-state-index lanes]
