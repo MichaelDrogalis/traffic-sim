@@ -3,31 +3,31 @@
             [traffic-lights.rules :refer :all]))
 
 (fact (eval-atom '{:src ?a :dst ?b :yield []}
-                 '{?a [{:id "a"}] ?b [{:id "b"}]})
+                 '{?a {:id "a"} ?b {:id "b"}})
       => '{:src {:id "a"} :dst {:id "b"} :yield []})
 
 (fact (eval-atom '{:src ?a :dst ?b :yield [[?c]]}
-                 '{?a [{:id "a"}] ?b [{:id "b"}] ?c [{:id "c"}]})
+                 '{?a {:id "a"} ?b {:id "b"} ?c {:id "c"}})
       => '{:src {:id "a"} :dst {:id "b"} :yield [[{:id "c"}]]})
 
 (fact (eval-atom '{:src ?a :dst ?b :yield [[?c ?d]]}
-                 '{?a [{:id "a"}] ?b [{:id "b"}] ?c [{:id "c"}] ?d [{:id "d"}]})
+                 '{?a {:id "a"} ?b {:id "b"} ?c {:id "c"} ?d {:id "d"}})
       => '{:src {:id "a"} :dst {:id "b"} :yield [[{:id "c"} {:id "d"}]]})
 
 (fact (eval-atom '{:src ?a :dst ?b :yield []}
-                 '{?b [{:id "b"}]})
+                 '{?b {:id "b"}})
       => (throws clojure.lang.ExceptionInfo))
 
 (fact (eval-atom '{:src ?a :dst ?b :yield []}
-                 '{?a [{:id "a"}]})
+                 '{?a {:id "a"}})
       => (throws clojure.lang.ExceptionInfo))
 
 (fact (eval-atom '{:src ?a :dst ?b :yield [[?c]]}
-                 '{?a [{:id "a"}] ?b [{:id "b"}]})
+                 '{?a {:id "a"} ?b {:id "b"}})
       => (throws clojure.lang.ExceptionInfo))
 
 (fact (eval-atom '{:src ?a :dst ?b :yield [[?c ?d]]}
-                 '{?a [{:id "a"}] ?b [{:id "b"}] ?c [{:id "c"}]})
+                 '{?a {:id "a"} ?b {:id "b"} ?c {:id "c"}})
       => (throws clojure.lang.ExceptionInfo))
 
 (fact (local-var-index {:intersection/of ["a"]} {["a"] {"b" "c"}})
@@ -116,6 +116,9 @@
     :street.lane.install/rules :shamrock
     :street.lane.install/substitute {?origini ?b ?straighte ?A}})
 
+(defn find-rule [rules ident]
+  (first (filter (fn [x] (= (:rule/ident x) ident)) rules)))
+
 (let [rules (eval-all-atomic-rules lane sub-index atomic-index var-catalog)
       expected '{:straight {:src [{:street.lane.install/ident ?b
                                    :street.lane.install/name "in"
@@ -148,9 +151,25 @@
                                        :street/name "10th Street",
                                        :intersection/of ["10th Street" "Market Street"]}]
                                 :dst ?righte
-                                :yield [[?lefti ?righte]]}}]
-  (doseq [r rules]
-    (fact (:src (expected (:rule/ident r))) => (:src r))
-    (fact (:dst (expected (:rule/ident r))) => (:dst r))
-    (fact (:yield (expected (:rule/ident r))) => (:yield r))))
+                                :yield [[?lefti ?righte]]}}
+      straight (find-rule rules :straight)
+      left (find-rule rules :left)
+      right (find-rule rules :right)
+      right-on-red (find-rule rules :right-on-red)]
+  
+  (fact (:src straight) => (:src (expected (:rule/ident straight))))
+  (fact (:dst straight) => (:dst (expected (:rule/ident straight))))
+  (fact (:yield straight) => (:yield (expected (:rule/ident straight))))
+
+  (fact (:src left) => (:src (expected (:rule/ident left))))
+  (fact (:dst left) => (:dst (expected (:rule/ident left))))
+  (fact (:yield left) => (:yield (expected (:rule/ident left))))
+
+  (fact (:src right) => (:src (expected (:rule/ident right))))
+  (fact (:dst right) => (:dst (expected (:rule/ident right))))
+  (fact (:yield right) => (:yield (expected (:rule/ident right))))
+
+  (fact (:src right-on-red) => (:src (expected (:rule/ident right-on-red))))
+  (fact (:dst right-on-red) => (:dst (expected (:rule/ident right-on-red))))
+  (fact (:yield right-on-red) => (:yield (expected (:rule/ident right-on-red)))))
 
