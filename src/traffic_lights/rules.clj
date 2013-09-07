@@ -51,9 +51,9 @@
 
 (defn lane-clear?
   ([lane-state-index src]
-     (empty? (:state (get i/lane-state-index src))))
+     (empty? (:state (lane-state-index src))))
   ([lane-state-index src dst]
-     (let [head-car (first (:state (get i/lane-state-index src)))]
+     (let [head-car (first (:state (lane-state-index src)))]
        (not= (:dst head-car) dst))))
 
 (defn all-lanes-clear? [lane-state-index lanes]

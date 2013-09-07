@@ -57,13 +57,22 @@
       (assoc lane :state (conj more (assoc head-car :ripe? (zero? (:front head-car)))))
       lane)))
 
-(defn harvest-lane [lane-id {:keys [state] :as lane} directions-index lane-index safe?]
+(defn harvest-ingress-lane [lane-id {:keys [state] :as lane} directions-index lane-index safe?]
   (let [[head-car & more] state]
     (if (and (:ripe? head-car) (safe? lane-id ((:directions (directions-index (:id head-car))) lane-id)))
       (let [out-lane ((:directions (directions-index (:id head-car))) lane-id)
-            out-ch (:channel (lane-index out-lane))]
-        (when-not (nil? out-ch)
-          (enqueue-into-ch out-ch (dissoc head-car :ripe?)))
+            ch (:channel (lane-index out-lane))]
+        (when-not (nil? ch)
+          (enqueue-into-ch ch (dissoc head-car :ripe?)))
         (assoc lane :state (or more [])))
       lane)))
 
+(defn harvest-egress-lane [lane-id {:keys [state] :as lane} directions-index lane-index]
+  (let [[head-car & more] state]
+    (if (:ripe? head-car)
+      (let [out-lane ((:directions (directions-index (:id head-car))) lane-id)
+            ch (:channel (lane-index out-lane))]
+        (when-not (nil? ch)
+          (enqueue-into-ch ch (dissoc head-car :ripe?)))
+        (assoc lane :state (or more [])))
+      lane)))

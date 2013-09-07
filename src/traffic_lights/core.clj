@@ -21,20 +21,30 @@
 (defn loud-lanes! [lanes]
   (pprint (par-map-merge :state lanes)))
 
-(defn transform-lanes [old-lanes safety-fn]
-  (par-map-merge q/harvest-lane
+(defn transform-ingress-lanes [old-lanes safety-fn]
+  (par-map-merge q/harvest-ingress-lane
                  (par-map-merge q/advance-cars-in-lane
                                 (par-map-merge q/mark-ripe
                                                (par-map-merge q/ch->lane old-lanes)))
-                 i/directions-index i/lane-state-index safety-fn))
+                 i/directions-index i/ingress-lane-state-index safety-fn))
 
-(defn genesis! [old-lanes old-lights safety-fn]
+(defn transform-egress-lanes [old-lanes]
+  (par-map-merge q/harvest-egress-lane
+                 (par-map-merge q/advance-cars-in-lane
+                                (par-map-merge q/mark-ripe
+                                               (par-map-merge q/ch->lane old-lanes)))
+                 i/directions-index i/egress-lane-state-index))
+
+(defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (pprint (map (fn [[k v]] {k (:state v)}) old-lights))
-  (pprint (map (fn [[k v]] {k (:state v)}) old-lanes))
-  (let [new-lanes  (future (transform-lanes old-lanes (partial safety-fn old-lanes old-lights)))
-        new-lights (future (par-map-merge q/next-light-state old-lights))]
+  (pprint (map (fn [[k v]] {k (:state v)}) old-i-lanes))
+  (pprint (map (fn [[k v]] {k (:state v)}) old-e-lanes))
+
+  (let [new-i-lanes (future (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights)))
+        new-e-lanes (future (transform-egress-lanes old-e-lanes))
+        new-lights  (future (par-map-merge q/next-light-state old-lights))]
     (Thread/sleep 1000)
-    (recur @new-lanes @new-lights safety-fn)))
+    (recur @new-i-lanes @new-e-lanes @new-lights safety-fn)))
 
 (def safety-f
   (partial r/safe-to-go?
@@ -42,7 +52,8 @@
            i/lanes-rules-substitution-index
            i/atomic-rule-index))
 
-(q/enqueue-into-ch (:channel (second (first i/lane-state-index))) {:id "Mike" :len 1 :buf 0})
+;(q/enqueue-into-ch (:channel (second (first i/lane-state-index))) {:id "Mike" :len 1 :buf 0})
+;(genesis! i/ingress-lane-state-index i/egress-lane-state-index light-state-machines safety-f)
 
-(genesis! i/lane-state-index light-state-machines safety-f)
+
 

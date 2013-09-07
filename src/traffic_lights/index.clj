@@ -57,17 +57,19 @@
   (let [index (ensure-uniqueness (build-composite-key-index
                                   schema :intersection/of
                                   (conj lane-identifiers :street.lane.install/type)))]
-    (apply merge (filter (fn [[k _]]
-                           (= (:street.lane.install/type k) :ingress))
-                         index))))
+    (apply merge (map (partial apply hash-map)
+                    (filter (fn [[k _]]
+                              (= (:street.lane.install/type k) :ingress))
+                            index)))))
 
 (def egress-lane-index
   (let [index (ensure-uniqueness (build-composite-key-index
                                   schema :intersection/of
                                   (conj lane-identifiers :street.lane.install/type)))]
-    (apply merge (filter (fn [[k _]]
-                           (= (:street.lane.install/type k) :egress))
-                         index))))
+    (apply merge (map (partial apply hash-map)
+                    (filter (fn [[k _]]
+                              (= (:street.lane.install/type k) :egress))
+                            index)))))
 
 (defn lane-catalog [intx street-name tag lane-name]
   (get lane-index
@@ -76,11 +78,15 @@
         :street/tag tag
         :street.lane.install/name lane-name}))
 
-(def lane-state-index
+(defn state-index [lanes]
   (fmap (fn [x] {:state []
                  :length (:street.lane.install/length x)
                  :channel (java.util.concurrent.LinkedBlockingQueue. 1)})
-        lane-index))
+        lanes))
+
+(def ingress-lane-state-index (state-index ingress-lane-index))
+
+(def egress-lane-state-index (state-index egress-lane-index))
 
 (defn lane-var-catalog [intx]
   (let [index-keys [:intersection/of :street/name :street/tag
