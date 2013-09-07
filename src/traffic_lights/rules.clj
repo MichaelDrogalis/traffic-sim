@@ -1,7 +1,6 @@
 (ns traffic-lights.rules
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.set :refer [subset?]]
-            [traffic-lights.index :as i]
             [clojure.pprint :refer [pprint]]))
 
 (defn getx
@@ -18,25 +17,25 @@
 
 (defn eval-yield
   ([mapping src]
-     [(first (getx mapping src))])
+     [(getx mapping src)])
   ([mapping src dst]
-     [(first (getx mapping src))
-      (first (getx mapping dst))]))
+     [(getx mapping src)
+      (getx mapping dst)]))
 
 (defn eval-atom [{:keys [src dst yield] :as rule} mapping]
   (assoc rule
-    :src (without-ident (first (getx mapping src)))
-    :dst (without-ident (first (getx mapping dst)))
+    :src (getx mapping src)
+    :dst (getx mapping dst)
     :yield (map (partial apply eval-yield mapping) yield)))
 
 (defn local-var-index [lane var-catalog]
-  (var-catalog (:intersection/of lane)))
+  (getx var-catalog (:intersection/of lane)))
 
 (defn rule-set-name [lane]
   (:street.lane.install/rules lane))
 
 (defn eval-local-lane-subs [lane locals]
-  (fmap #(locals %) (:street.lane.install/substitute lane)))
+  (fmap #(getx locals %) (:street.lane.install/substitute lane)))
 
 (defn eval-binders [registered-rules evaled-lane-subs]
   (map #(assoc % :lane.rules/substitute
@@ -47,10 +46,10 @@
   (map #(eval-atom (atomic-index (:lane.rules/register %))
                    (:lane.rules/substitute %)) evaled-binders))
 
-(defn eval-all-atomic-rules [lane sub-index atomic-index]
-  (let [locals-index (local-var-index lane i/lane-var-catalog)
+(defn eval-all-atomic-rules [lane sub-index atomic-index var-catalog]
+  (let [locals-index (local-var-index lane var-catalog)
         rule-set (rule-set-name lane)
-        registered-rules (get sub-index rule-set)
+        registered-rules (getx sub-index rule-set)
         evaled-lane-subs (eval-local-lane-subs lane locals-index)
         evaled-binders (eval-binders registered-rules evaled-lane-subs)
         evaled-atomic-rules (eval-atomic-rule atomic-index evaled-binders)]
@@ -75,12 +74,10 @@
 (defn all-lanes-clear? [lane-state-index lanes]
   (every? #(lane-clear? lane-state-index %) lanes))
 
-(use 'clojure.pprint)
-
-(defn safe-to-go? [lane-idx rule-sub-idx atomic-rule-idx old-lanes light-state-index src dst]
+(defn safe-to-go? [lane-idx rule-sub-idx atomic-rule-idx old-lanes light-state-index var-catalog src dst]
   (let [lane-id (dissoc src :street.lane.install/type)
         light-state (light-state-index lane-id)
-        rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx)
+        rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
         applicable-rules (relevant-rules rules src dst)
         matching (matching-lights applicable-rules light-state)]
     (all-lanes-clear? old-lanes matching)))

@@ -50,17 +50,6 @@
   (partial r/safe-to-go?
            i/lane-index
            i/lanes-rules-substitution-index
-           i/atomic-rule-index))
-
-(def in-lane {:street.lane.install/type :ingress,
-              :street.lane.install/name "in",
-              :street/tag "south",
-              :street/name "10th Street",
-              :intersection/of ["10th Street" "Market Street"]})
-
-(q/enqueue-into-ch (:channel (get i/ingress-lane-state-index in-lane)) {:id "Mike" :len 1 :buf 0})
-(genesis! i/ingress-lane-state-index i/egress-lane-state-index light-state-machines safety-f)
-
-
-
+           i/atomic-rule-index
+           i/lane-var-catalog))
 
