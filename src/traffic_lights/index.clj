@@ -53,6 +53,22 @@
                       schema :intersection/of
                       lane-identifiers)))
 
+(def ingress-lane-index
+  (let [index (ensure-uniqueness (build-composite-key-index
+                                  schema :intersection/of
+                                  (conj lane-identifiers :street.lane.install/type)))]
+    (apply merge (filter (fn [[k _]]
+                           (= (:street.lane.install/type k) :ingress))
+                         index))))
+
+(def egress-lane-index
+  (let [index (ensure-uniqueness (build-composite-key-index
+                                  schema :intersection/of
+                                  (conj lane-identifiers :street.lane.install/type)))]
+    (apply merge (filter (fn [[k _]]
+                           (= (:street.lane.install/type k) :egress))
+                         index))))
+
 (defn lane-catalog [intx street-name tag lane-name]
   (get lane-index
        {:intersection/of intx
