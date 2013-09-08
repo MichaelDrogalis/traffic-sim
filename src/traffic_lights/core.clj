@@ -17,12 +17,19 @@
                 {intersection (build-light-state-machine state-seq)})
               i/traffic-light-catalog)))
 
-(defn transform-ingress-lanes [old-lanes safety-fn]
+(defn transform-ingress-lanes [old-i-lanes old-e-lanes safety-fn]
+  (->> old-i-lanes
+       (maph #(q/ch->lane %2))
+       (maph #(q/mark-ripe %2))
+       (maph #(q/advance-cars-in-lane %2))
+       (maph #(q/harvest-ingress-lane %2 i/directions-index old-e-lanes safety-fn))))
+
+(defn transform-egress-lanes [old-lanes]
   (->> old-lanes
        (maph #(q/ch->lane %2))
        (maph #(q/mark-ripe %2))
        (maph #(q/advance-cars-in-lane %2))
-       (maph #(q/harvest-ingress-lane %2 i/directions-index old-lanes safety-fn))))
+       (maph #(q/harvest-egress-lane %2 i/directions-index old-lanes))))
 
 (defn transform-lights [old-lights]
   (->> old-lights
@@ -30,10 +37,14 @@
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (pprint old-i-lanes)
+  (pprint old-e-lanes)
   (pprint (maph #(:state %2) old-lights))
-  (let [new-i-lanes (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights))
-        new-lights  (transform-lights old-lights)]
-    (recur new-i-lanes old-e-lanes new-lights safety-fn)))
+  (let [new-e-lanes (transform-egress-lanes old-e-lanes)
+        new-lights  (transform-lights old-lights)
+        new-i-lanes (transform-ingress-lanes
+                     old-i-lanes old-e-lanes
+                     (partial safety-fn old-i-lanes old-lights))]
+    (recur new-i-lanes new-e-lanes new-lights safety-fn)))
 
 (def safety-f
   (partial r/safe-to-go?

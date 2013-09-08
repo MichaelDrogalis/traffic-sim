@@ -82,10 +82,9 @@
   (let [lane-id (dissoc src :street.lane.install/type)
         intx (:intersection/of lane-id)
         face (:street.lane.install/light (lane-idx lane-id))
-        light-state (getx (:state (light-state-idx intx)) face)
         rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
         applicable-rules (relevant-rules rules src dst)
+        light-state (getx (:state (light-state-idx intx)) face)
         matching (matching-lights applicable-rules light-state)]
-    (prn "app:" applicable-rules)
     (and (not (empty? matching)) (all-lanes-clear? old-lanes matching))))
 
