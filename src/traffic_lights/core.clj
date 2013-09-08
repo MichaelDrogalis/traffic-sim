@@ -6,7 +6,7 @@
             [traffic-lights.rules :as r]))
 
 (defn maph [f coll & args]
-  (apply merge (map (fn [[k v]] {k (apply f k v args)}) coll)))
+  (apply merge (map (fn [[k v]] {k (apply f v args)}) coll)))
 
 (defn build-light-state-machine [x]
   {:state (:state-diff (first x))
@@ -19,21 +19,21 @@
 
 (defn transform-ingress-lanes [old-i-lanes old-e-lanes safety-fn]
   (->> old-i-lanes
-       (maph #(q/ch->lane %2))
-       (maph #(q/mark-ripe %2))
-       (maph #(q/advance-cars-in-lane %2))
-       (maph #(q/harvest-ingress-lane %2 i/directions-index old-e-lanes safety-fn))))
+       (maph q/ch->lane)
+       (maph q/mark-ripe)
+       (maph q/advance-cars-in-lane)
+       (maph #(q/harvest-ingress-lane % i/directions-index old-e-lanes safety-fn))))
 
 (defn transform-egress-lanes [old-lanes]
   (->> old-lanes
-       (maph #(q/ch->lane %2))
-       (maph #(q/mark-ripe %2))
-       (maph #(q/advance-cars-in-lane %2))
-       (maph #(q/harvest-egress-lane %2 i/directions-index old-lanes))))
+       (maph q/ch->lane)
+       (maph q/mark-ripe)
+       (maph q/advance-cars-in-lane)
+       (maph #(q/harvest-egress-lane % i/directions-index old-lanes))))
 
 (defn transform-lights [old-lights]
   (->> old-lights
-       (maph #(q/next-light-state %2))))
+       (maph q/next-light-state)))
 
 (defn log-lanes! [idx]
   (pprint
@@ -44,7 +44,7 @@
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (log-lanes! old-i-lanes)
   (log-lanes! old-e-lanes)
-  (pprint (maph #(:state %2) old-lights))
+  (pprint (maph :state old-lights))
   (let [new-e-lanes (transform-egress-lanes old-e-lanes)
         new-lights  (transform-lights old-lights)
         new-i-lanes (transform-ingress-lanes
