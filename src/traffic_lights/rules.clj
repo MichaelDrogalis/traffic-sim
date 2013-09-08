@@ -11,24 +11,30 @@
       e
       (throw (ex-info "Missing required key" {:map m :key k})))))
 
-(defn to-index [coll k]
-  (reduce (fn [all x] (conj all {(k x) x})) {} coll))
-
 (defn without-ident [x]
   (dissoc x :street.lane.install/ident))
 
-(defn eval-yield
-  ([mapping src]
-     [(getx mapping src)])
-  ([mapping src dst]
-     [(getx mapping src)
-      (getx mapping dst)]))
+(defn compile-src [vtable rule]
+  (getx vtable (:src rule)))
 
-(defn eval-atom [{:keys [src dst yield] :as rule} mapping]
+(defn compile-dst [vtable rule]
+  (getx vtable (:dst rule)))
+
+(defn compile-yield-atom
+  ([vtable src]
+     [(getx vtable src)])
+  ([vtable src dst]
+     [(getx vtable src)
+      (getx vtable dst)]))
+
+(defn compile-yield [vtable rule]
+  (map (partial apply compile-yield-atom vtable) (:yield rule)))
+
+(defn compile-atom [vtable rule]
   (assoc rule
-    :src (getx mapping src)
-    :dst (getx mapping dst)
-    :yield (map (partial apply eval-yield mapping) yield)))
+    :src (compile-src vtable rule)
+    :dst (compile-dst vtable rule)
+    :yield (compile-yield vtable rule)))
 
 (defn local-var-index [lane var-catalog]
   (var-catalog (:intersection/of lane)))
@@ -39,25 +45,25 @@
 (defn eval-local-lane-subs [lane locals]
   (fmap #(getx locals %) (:street.lane.install/substitute lane)))
 
-(defn eval-binders [registered-rules evaled-lane-subs]
+(defn compile-binders [registered-rules evaled-lane-subs]
   (map #(assoc % :lane.rules/substitute
                (merge (:lane.rules/substitute %) evaled-lane-subs))
        registered-rules))
 
-(defn eval-atomic-rule [atomic-index evaled-binders]
-  (map #(eval-atom (atomic-index (:lane.rules/register %))
-                   (:lane.rules/substitute %)) evaled-binders))
+(defn eval-atomic-rule [atomic-index compiled-binders]
+  (map #(compile-atom (:lane.rules/substitute %)
+                      (atomic-index (:lane.rules/register %))) compiled-binders))
 
 (defn eval-all-atomic-rules [lane sub-index atomic-index var-catalog]
   (let [locals-index (local-var-index lane var-catalog)
         rule-set (rule-set-name lane)
-        registered-rules (getx sub-index rule-set)
+        bound-rules (getx sub-index rule-set)
         evaled-lane-subs (eval-local-lane-subs lane locals-index)
-        evaled-binders (eval-binders registered-rules evaled-lane-subs)
-        evaled-atomic-rules (eval-atomic-rule atomic-index evaled-binders)]
+        compiled-binders (compile-binders bound-rules evaled-lane-subs)
+        evaled-atomic-rules (eval-atomic-rule atomic-index compiled-binders)]
     evaled-atomic-rules))
 
-(defn relevant-rules [atomic-rules target-src target-dst]
+(defn matching-paths [atomic-rules target-src target-dst]
   (filter
    (fn [{:keys [src dst]}]
      (and (= (without-ident (first src)) target-src)
@@ -83,7 +89,7 @@
         intx (:intersection/of lane-id)
         face (:street.lane.install/light (lane-idx lane-id))
         rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
-        applicable-rules (relevant-rules rules src dst)
+        applicable-rules (matching-paths rules src dst)
         light-state (getx (:state (light-state-idx intx)) face)
         matching (matching-lights applicable-rules light-state)]
     (and (not (empty? matching)) (all-lanes-clear? old-lanes matching))))
