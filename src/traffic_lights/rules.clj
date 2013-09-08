@@ -4,13 +4,15 @@
             [clojure.pprint :refer [pprint]]))
 
 (defn getx
-  "Like two-argument get, but throws an exception if the key is
-   not found."
+  "Like two-argument get, but throws an exception if the key is not found."
   [m k]
   (let [e (get m k ::sentinel)]
     (if-not (= e ::sentinel)
       e
       (throw (ex-info "Missing required key" {:map m :key k})))))
+
+(defn to-index [coll k]
+  (reduce (fn [all x] (conj all {(k x) x})) {} coll))
 
 (defn without-ident [x]
   (dissoc x :street.lane.install/ident))
@@ -29,7 +31,7 @@
     :yield (map (partial apply eval-yield mapping) yield)))
 
 (defn local-var-index [lane var-catalog]
-  (getx var-catalog (:intersection/of lane)))
+  (var-catalog (:intersection/of lane)))
 
 (defn rule-set-name [lane]
   (:street.lane.install/rules lane))
@@ -75,11 +77,12 @@
 (defn all-lanes-clear? [lane-state-index lanes]
   (every? #(lane-clear? lane-state-index %) lanes))
 
-(defn safe-to-go? [lane-idx rule-sub-idx atomic-rule-idx old-lanes light-state-index var-catalog src dst]
+(defn safe-to-go? [lane-idx rule-sub-idx atomic-rule-idx var-catalog old-lanes light-state-catalog src dst]
   (let [lane-id (dissoc src :street.lane.install/type)
+        light-state-index (to-index light-state-catalog :intersection/of)
         light-state (light-state-index lane-id)
         rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
         applicable-rules (relevant-rules rules src dst)
         matching (matching-lights applicable-rules light-state)]
-    (all-lanes-clear? old-lanes matching)))
+    (and (not (empty? matching))) (all-lanes-clear? old-lanes matching)))
 

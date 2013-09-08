@@ -13,26 +13,15 @@
   (map build-light-state-machine i/traffic-light-catalog))
 
 (defn transform-ingress-lanes [old-lanes safety-fn]
-  (map q/harvest-ingress-lane
+  (map #(q/harvest-ingress-lane % i/directions-index i/ingress-lane-state-index safety-fn)
        (map q/advance-cars-in-lane
             (map q/mark-ripe
-                 (map q/ch->lane old-lanes)))
-       i/directions-index i/ingress-lane-state-catalog safety-fn))
-
-(defn transform-egress-lanes [old-lanes]
-  (map q/harvest-egress-lane
-       (map q/advance-cars-in-lane
-            (map q/mark-ripe
-                 (map q/ch->lane old-lanes)))
-       i/directions-index i/egress-lane-state-catalog))
+                 (map q/ch->lane old-lanes)))))
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
-  (pprint (map :state old-lights))
-  (let [new-i-lanes (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights))
-        new-e-lanes (transform-egress-lanes old-e-lanes)
-        new-lights  (map q/next-light-state old-lights)]
-    (Thread/sleep 1000)
-    (recur new-i-lanes new-e-lanes new-lights safety-fn)))
+  (pprint old-i-lanes)
+  (let [new-i-lanes (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights))]
+    (recur new-i-lanes old-e-lanes old-lights safety-fn)))
 
 (def safety-f
   (partial r/safe-to-go?
@@ -41,6 +30,10 @@
            i/atomic-rule-index
            i/lane-var-catalog))
 
-; (genesis! i/ingress-lane-state-catalog i/egress-lane-state-catalog light-state-machines safety-f)
+(q/enqueue-into-ch (:channel (nth i/ingress-lane-state-catalog 2)) {:id "Mike" :len 1 :buf 0})
 
+(genesis! i/ingress-lane-state-catalog
+          i/egress-lane-state-catalog
+          light-state-machines
+          safety-f)
 

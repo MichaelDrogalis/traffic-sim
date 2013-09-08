@@ -1,6 +1,9 @@
 (ns traffic-lights.queue
   (:require [clojure.core.reducers :as r]))
 
+(defn lane-id [lane]
+  (select-keys lane [:intersection/of :street/name :street/tag :street.lane.install/name]))
+
 (defn light-transition->fns [{:keys [state-diff ticks]}]
   (map (fn [_] (fn [light] (merge light state-diff))) (range ticks)))
 
@@ -36,44 +39,39 @@
   (assert (zero? (.size channel)))
   (.put channel car))
 
-(defn add-to-lane [{:keys [state length] :as lane} {:keys [len] :as car}]
-  (assoc lane :state (conj state (assoc car :front (- length len)))))
+(defn add-to-lane [{:keys [lane state] :as entity} {:keys [len] :as car}]
+  (let [street-len (:street.lane.install/length lane)]
+    (assoc entity :state (conj state (assoc car :front (- street-len len))))))
 
 (defn take-from-channel [channel]
   (assert (<= (.size channel) 1))
   (.take channel))
 
-(defn advance-cars-in-lane [{:keys [state] :as lane}]
-  (assoc lane :state (r/reduce (partial advance 1 state) [] state)))
+(defn advance-cars-in-lane [{:keys [state] :as entity}]
+  (assoc entity :state (r/reduce (partial advance 1 state) [] state)))
 
-(defn ch->lane [{:keys [channel state] :as lane}]
+(defn ch->lane [{:keys [channel state] :as entity}]
   (if-not (zero? (.size channel))
-    (add-to-lane lane (take-from-channel channel))
-    lane))
+    (add-to-lane entity (take-from-channel channel))
+    entity))
 
-(defn mark-ripe [{:keys [state] :as lane}]
+(defn mark-ripe [{:keys [state] :as entity}]
   (let [[head-car & more] state]
     (if head-car
-      (assoc lane :state (conj more (assoc head-car :ripe? (zero? (:front head-car)))))
-      lane)))
+      (assoc entity :state (conj more (assoc head-car :ripe? (zero? (:front head-car)))))
+      entity)))
 
-(defn harvest-ingress-lane [lane-id {:keys [state] :as lane} directions-index lane-index safe?]
-  (let [[head-car & more] state]
-    (if (and (:ripe? head-car) (safe? lane-id ((:directions (directions-index (:id head-car))) lane-id)))
-      (let [out-lane ((:directions (directions-index (:id head-car))) lane-id)
+(defn harvest-egress-lane [x & _]
+  x)
+
+(defn harvest-ingress-lane [{:keys [lane state] :as entity} directions-index lane-index safe?]
+  (let [[head-car & more] state
+        id (lane-id lane)]
+    (if (and (:ripe? head-car) (safe? id ((:directions (directions-index (:id head-car))) id)))
+      (let [out-lane ((:directions (directions-index (:id head-car))) id)
             ch (:channel (lane-index out-lane))]
         (when-not (nil? ch)
           (enqueue-into-ch ch (dissoc head-car :ripe?)))
-        (assoc lane :state (or more [])))
-      lane)))
-
-(defn harvest-egress-lane [lane-id {:keys [state] :as lane} directions-index lane-index]
-  (let [[head-car & more] state]
-    (if (:ripe? head-car)
-      (let [out-lane ((:directions (directions-index (:id head-car))) lane-id)
-            ch (:channel (lane-index out-lane))]
-        (when-not (nil? ch)
-          (enqueue-into-ch ch (dissoc head-car :ripe?)))
-        (assoc lane :state (or more [])))
-      lane)))
+        (assoc entity :state (or more [])))
+      entity)))
 

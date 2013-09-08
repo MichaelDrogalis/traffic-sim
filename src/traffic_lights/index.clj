@@ -70,6 +70,12 @@
 (defn initialize-lane [lanes]
   (map (fn [x] {:lane x :state [] :channel (LinkedBlockingQueue. 1)}) lanes))
 
+(defn to-index [coll k]
+  (reduce (fn [all x] (conj all {(k x) x})) {} coll))
+
+(defn to-comp-index [coll drill & ks]
+  (reduce (fn [all x] (conj all {(select-keys (drill x) ks) x})) {} coll))
+
 (def ingress-lane-catalog (filter #(= (:street.lane.install/type %) :ingress) lane-catalogv))
 
 (def egress-lane-catalog (filter #(= (:street.lane.install/type %) :egress) lane-catalogv))
@@ -77,6 +83,12 @@
 (def ingress-lane-state-catalog (initialize-lane ingress-lane-catalog))
 
 (def egress-lane-state-catalog (initialize-lane egress-lane-catalog))
+
+(def ingress-lane-state-index
+  (apply to-comp-index ingress-lane-state-catalog :lane lane-identifiers))
+
+(def egress-lane-state-index
+  (apply to-comp-index egress-lane-state-catalog :lane lane-identifiers))
 
 (defn lane-var-catalog [intx]
   (let [index-keys [:intersection/of :street/name :street/tag
