@@ -30,6 +30,7 @@
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (pprint old-i-lanes)
+  (pprint (maph #(:state %2) old-lights))
   (let [new-i-lanes (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights))
         new-lights  (transform-lights old-lights)]
     (recur new-i-lanes old-e-lanes new-lights safety-fn)))

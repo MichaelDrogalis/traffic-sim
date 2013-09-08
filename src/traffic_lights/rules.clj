@@ -60,13 +60,11 @@
 (defn relevant-rules [atomic-rules target-src target-dst]
   (filter
    (fn [{:keys [src dst]}]
-     (and (= (map without-ident src) target-src)
-          (= (map without-ident dst) target-dst)))
+     (and (= (without-ident (first src)) target-src)
+          (= (without-ident (first dst)) target-dst)))
    atomic-rules))
 
 (defn matching-lights [atomic-rules light-state]
-  (prn "Light is: " light-state)
-  (prn "Rules are: " atomic-rules)
   (filter #(subset? light-state (into #{} (:light %))) atomic-rules))
 
 (defn lane-clear?
@@ -88,5 +86,6 @@
         rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
         applicable-rules (relevant-rules rules src dst)
         matching (matching-lights applicable-rules light-state)]
+    (prn "app:" applicable-rules)
     (and (not (empty? matching)) (all-lanes-clear? old-lanes matching))))
 
