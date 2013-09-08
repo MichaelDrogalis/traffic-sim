@@ -13,10 +13,11 @@
   (map build-light-state-machine i/traffic-light-catalog))
 
 (defn transform-ingress-lanes [old-lanes safety-fn]
-  (map #(q/harvest-ingress-lane % i/directions-index i/ingress-lane-state-index safety-fn)
-       (map q/advance-cars-in-lane
-            (map q/mark-ripe
-                 (map q/ch->lane old-lanes)))))
+  (->> old-lanes
+       (map q/ch->lane)
+       (map q/mark-ripe)
+       (map q/advance-cars-in-lane)
+       (map #(q/harvest-ingress-lane % i/directions-index i/ingress-lane-state-index safety-fn))))
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (pprint old-i-lanes)
