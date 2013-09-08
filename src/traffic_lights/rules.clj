@@ -1,18 +1,17 @@
 (ns traffic-lights.rules
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.set :refer [subset?]]
-            [clojure.pprint :refer [pprint]]))
+            [clojure.pprint :refer [pprint]]
+            [traffic-lights.util :refer [getx without-ident]]))
 
-(defn getx
-  "Like two-argument get, but throws an exception if the key is not found."
-  [m k]
-  (let [e (get m k ::sentinel)]
-    (if-not (= e ::sentinel)
-      e
-      (throw (ex-info "Missing required key" {:map m :key k})))))
+(defn local-var-index [lane var-catalog]
+  (var-catalog (:intersection/of lane)))
 
-(defn without-ident [x]
-  (dissoc x :street.lane.install/ident))
+(defn rule-set-name [lane]
+  (:street.lane.install/rules lane))
+
+(defn find-atom-from-binder [atom-index binder]
+  (atom-index (:lane.rules/register binder)))
 
 (defn compile-src [vtable rule]
   (getx vtable (:src rule)))
@@ -32,36 +31,32 @@
 
 (defn compile-atom [vtable rule]
   (assoc rule
-    :src (compile-src vtable rule)
-    :dst (compile-dst vtable rule)
+    :src   (compile-src vtable rule)
+    :dst   (compile-dst vtable rule)
     :yield (compile-yield vtable rule)))
 
-(defn local-var-index [lane var-catalog]
-  (var-catalog (:intersection/of lane)))
+(defn compile-locals [vtable lane]
+  (fmap #(getx vtable %) (:street.lane.install/substitute lane)))
 
-(defn rule-set-name [lane]
-  (:street.lane.install/rules lane))
+(defn compile-binder [vtable binder]
+  (update-in binder [:lane.rules/substitute] (partial fmap (partial getx vtable))))
 
-(defn eval-local-lane-subs [lane locals]
-  (fmap #(getx locals %) (:street.lane.install/substitute lane)))
+(defn compile-binders [vtable binders]
+  (map (partial compile-binder vtable) binders))
 
-(defn compile-binders [registered-rules evaled-lane-subs]
-  (map #(assoc % :lane.rules/substitute
-               (merge (:lane.rules/substitute %) evaled-lane-subs))
-       registered-rules))
-
-(defn eval-atomic-rule [atomic-index compiled-binders]
+(defn compile-atoms [compiled-binders atomic-index]
   (map #(compile-atom (:lane.rules/substitute %)
-                      (atomic-index (:lane.rules/register %))) compiled-binders))
+                      (find-atom-from-binder atomic-index %))
+       compiled-binders))
 
-(defn eval-all-atomic-rules [lane sub-index atomic-index var-catalog]
+(defn compile-rules [lane sub-index atomic-index var-catalog]
   (let [locals-index (local-var-index lane var-catalog)
         rule-set (rule-set-name lane)
-        bound-rules (getx sub-index rule-set)
-        evaled-lane-subs (eval-local-lane-subs lane locals-index)
-        compiled-binders (compile-binders bound-rules evaled-lane-subs)
-        evaled-atomic-rules (eval-atomic-rule atomic-index compiled-binders)]
-    evaled-atomic-rules))
+        bound-rules (getx sub-index rule-set)]
+    (-> locals-index
+        (compile-locals lane)
+        (compile-binders bound-rules)
+        (compile-atoms atomic-index))))
 
 (defn matching-paths [atomic-rules target-src target-dst]
   (filter
@@ -88,7 +83,7 @@
   (let [lane-id (dissoc src :street.lane.install/type)
         intx (:intersection/of lane-id)
         face (:street.lane.install/light (lane-idx lane-id))
-        rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
+        rules (compile-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
         applicable-rules (matching-paths rules src dst)
         light-state (getx (:state (light-state-idx intx)) face)
         matching (matching-lights applicable-rules light-state)]
