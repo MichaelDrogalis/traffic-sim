@@ -84,5 +84,5 @@
         rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
         applicable-rules (relevant-rules rules src dst)
         matching (matching-lights applicable-rules light-state)]
-    (and (not (empty? matching))) (all-lanes-clear? old-lanes matching)))
+    (and (not (empty? matching)) (all-lanes-clear? old-lanes matching))))
 
