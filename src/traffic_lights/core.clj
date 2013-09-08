@@ -5,19 +5,24 @@
             [traffic-lights.index :as i]
             [traffic-lights.rules :as r]))
 
+(defn maph [f coll & args]
+  (apply merge (map (fn [[k v]] {k (apply f k v args)}) coll)))
+
 (defn build-light-state-machine [x]
-  {:state (:state-diff (first (:state-seq x)))
-   :fns (mapcat q/light-transition->fns (:state-seq x))})
+  {:state (:state-diff (first x))
+   :fns (mapcat q/light-transition->fns x)})
 
 (def light-state-machines
-  (map build-light-state-machine i/traffic-light-catalog))
+  (apply merge (map (fn [{:keys [intersection state-seq]}]
+                {intersection (build-light-state-machine state-seq)})
+              i/traffic-light-catalog)))
 
 (defn transform-ingress-lanes [old-lanes safety-fn]
   (->> old-lanes
-       (map q/ch->lane)
-       (map q/mark-ripe)
-       (map q/advance-cars-in-lane)
-       (map #(q/harvest-ingress-lane % i/directions-index i/ingress-lane-state-index safety-fn))))
+       (maph q/ch->lane)
+       (maph q/mark-ripe)
+       (maph q/advance-cars-in-lane)
+       (maph #(q/harvest-ingress-lane %2 i/directions-index i/ingress-lane-state-index safety-fn))))
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (pprint old-i-lanes)
@@ -32,10 +37,11 @@
            i/atomic-rule-index
            i/lane-var-catalog))
 
-(q/enqueue-into-ch (:channel (nth i/ingress-lane-state-catalog 2)) {:id "Mike" :len 1 :buf 0})
+(comment
+  (q/enqueue-into-ch (:channel (nth i/ingress-lane-state-catalog 2)) {:id "Mike" :len 1 :buf 0})
 
-(genesis! i/ingress-lane-state-catalog
-          i/egress-lane-state-catalog
-          light-state-machines
-          safety-f)
+  (genesis! i/ingress-lane-state-index
+            i/egress-lane-state-index
+            light-state-machines
+            safety-f))
 
