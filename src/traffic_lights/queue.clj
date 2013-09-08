@@ -28,7 +28,7 @@
       (let [target (nth old (dec my-slot))]
         (conj new-lane (drive-watching-forward car target speed))))))
 
-(defn next-light-state [_ {:keys [state fns]}]
+(defn next-light-state [{:keys [state fns]}]
   (let [[f & more] fns]
     {:state (f state) :fns (conj (vec more) f)}))
 
@@ -43,15 +43,15 @@
   (assert (<= (.size channel) 1))
   (.take channel))
 
-(defn advance-cars-in-lane [_ {:keys [state] :as lane}]
+(defn advance-cars-in-lane [{:keys [state] :as lane}]
   (assoc lane :state (r/reduce (partial advance 1 state) [] state)))
 
-(defn ch->lane [_ {:keys [channel state] :as lane}]
+(defn ch->lane [{:keys [channel state] :as lane}]
   (if-not (zero? (.size channel))
     (add-to-lane lane (take-from-channel channel))
     lane))
 
-(defn mark-ripe [_ {:keys [state] :as lane}]
+(defn mark-ripe [{:keys [state] :as lane}]
   (let [[head-car & more] state]
     (if head-car
       (assoc lane :state (conj more (assoc head-car :ripe? (zero? (:front head-car)))))

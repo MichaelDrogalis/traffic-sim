@@ -27,10 +27,12 @@
        i/directions-index i/egress-lane-state-catalog))
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
-  (let [new-i-lanes (future (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights)))
-        new-e-lanes (future (transform-egress-lanes old-e-lanes))
-        new-lights  (future (par-map-merge q/next-light-state old-lights))]
-    (recur @new-i-lanes @new-e-lanes @new-lights safety-fn)))
+  (pprint (map :state old-lights))
+  (let [new-i-lanes (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights))
+        new-e-lanes (transform-egress-lanes old-e-lanes)
+        new-lights  (map q/next-light-state old-lights)]
+    (Thread/sleep 1000)
+    (recur new-i-lanes new-e-lanes new-lights safety-fn)))
 
 (def safety-f
   (partial r/safe-to-go?
@@ -38,4 +40,7 @@
            i/lanes-rules-substitution-index
            i/atomic-rule-index
            i/lane-var-catalog))
+
+; (genesis! i/ingress-lane-state-catalog i/egress-lane-state-catalog light-state-machines safety-f)
+
 
