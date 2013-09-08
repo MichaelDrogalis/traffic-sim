@@ -35,9 +35,15 @@
   (->> old-lights
        (maph #(q/next-light-state %2))))
 
+(defn log-lanes! [idx]
+  (pprint
+   (map (fn [[k v]]
+          {[(:intersection/of k) (:street/tag k)]
+           [(:state v) (:channel v)]}) idx)))
+
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
-  (pprint old-i-lanes)
-  (pprint old-e-lanes)
+  (log-lanes! old-i-lanes)
+  (log-lanes! old-e-lanes)
   (pprint (maph #(:state %2) old-lights))
   (let [new-e-lanes (transform-egress-lanes old-e-lanes)
         new-lights  (transform-lights old-lights)
@@ -52,11 +58,4 @@
            i/lanes-rules-substitution-index
            i/atomic-rule-index
            i/lane-var-catalog))
-
-(q/enqueue-into-ch (:channel (nth i/ingress-lane-state-catalog 2)) {:id "Mike" :len 1 :buf 0})
-
-(genesis! i/ingress-lane-state-index
-          i/egress-lane-state-index
-          light-state-machines
-          safety-f)
 

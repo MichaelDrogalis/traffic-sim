@@ -66,6 +66,17 @@
     (or (not tail-car)
         (>= (- (:len lane) (back-of-car tail-car)) (:len car)))))
 
+(defn harvest-ingress-lane [{:keys [lane state] :as entity} directions-index elane-snapshot safe?]
+  (let [[head-car & more] state
+        id (lane-id lane)]
+    (if (and (:ripe? head-car) (safe? id ((:directions (directions-index (:id head-car))) id)))
+      (let [out-lane ((:directions (directions-index (:id head-car))) id)
+            ch (:channel (elane-snapshot out-lane))]
+        (when-not (nil? ch)
+          (enqueue-into-ch ch (dissoc head-car :ripe? :front)))
+        (assoc entity :state (or more [])))
+      entity)))
+
 (defn harvest-egress-lane [{:keys [lane state] :as entity} directions-index lane-index]
   (let [[head-car & more] state]
     (if (:ripe? head-car)
@@ -78,16 +89,5 @@
               (prn head-car "is done driving."))
             (assoc entity :state (or more [])))
           entity))
-      entity)))
-
-(defn harvest-ingress-lane [{:keys [lane state] :as entity} directions-index elane-snapshot safe?]
-  (let [[head-car & more] state
-        id (lane-id lane)]
-    (if (and (:ripe? head-car) (safe? id ((:directions (directions-index (:id head-car))) id)))
-      (let [out-lane ((:directions (directions-index (:id head-car))) id)
-            ch (:channel (elane-snapshot out-lane))]
-        (when-not (nil? ch)
-          (enqueue-into-ch ch (dissoc head-car :ripe?)))
-        (assoc entity :state (or more [])))
       entity)))
 
