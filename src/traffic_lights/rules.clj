@@ -80,12 +80,11 @@
 (defn all-lanes-clear? [lane-state-index lanes]
   (every? #(lane-clear? lane-state-index %) lanes))
 
-(defn safe-to-go? [lane-idx rule-sub-idx atomic-rule-idx var-catalog old-lanes light-state-catalog src dst]
-  (prn "~~~")
+(defn safe-to-go? [lane-idx rule-sub-idx atomic-rule-idx var-catalog old-lanes light-state-idx src dst]
   (let [lane-id (dissoc src :street.lane.install/type)
-        light-state-index (to-index light-state-catalog :intersection/of)
-        _   (prn light-state-index)
-        light-state (light-state-index lane-id)
+        intx (:intersection/of lane-id)
+        face (:street.lane.install/light (lane-idx lane-id))
+        light-state (getx (:state (light-state-idx intx)) face)
         rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
         applicable-rules (relevant-rules rules src dst)
         matching (matching-lights applicable-rules light-state)]

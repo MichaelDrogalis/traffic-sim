@@ -24,10 +24,14 @@
        (maph #(q/advance-cars-in-lane %2))
        (maph #(q/harvest-ingress-lane %2 i/directions-index old-lanes safety-fn))))
 
+(defn transform-lights [old-lights]
+  (->> old-lights
+       (maph #(q/next-light-state %2))))
+
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (pprint old-i-lanes)
   (let [new-i-lanes (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights))
-        new-lights (maph #(q/next-light-state %2) old-lights)]
+        new-lights  (transform-lights old-lights)]
     (recur new-i-lanes old-e-lanes new-lights safety-fn)))
 
 (def safety-f
