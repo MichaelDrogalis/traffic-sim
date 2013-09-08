@@ -60,10 +60,13 @@
 (defn relevant-rules [atomic-rules target-src target-dst]
   (filter
    (fn [{:keys [src dst]}]
-     (and (= src target-src) (= dst target-dst)))
+     (and (= (map without-ident src) target-src)
+          (= (map without-ident dst) target-dst)))
    atomic-rules))
 
 (defn matching-lights [atomic-rules light-state]
+  (prn "Light is: " light-state)
+  (prn "Rules are: " atomic-rules)
   (filter #(subset? light-state (into #{} (:light %))) atomic-rules))
 
 (defn lane-clear?
@@ -78,8 +81,10 @@
   (every? #(lane-clear? lane-state-index %) lanes))
 
 (defn safe-to-go? [lane-idx rule-sub-idx atomic-rule-idx var-catalog old-lanes light-state-catalog src dst]
+  (prn "~~~")
   (let [lane-id (dissoc src :street.lane.install/type)
         light-state-index (to-index light-state-catalog :intersection/of)
+        _   (prn light-state-index)
         light-state (light-state-index lane-id)
         rules (eval-all-atomic-rules (lane-idx lane-id) rule-sub-idx atomic-rule-idx var-catalog)
         applicable-rules (relevant-rules rules src dst)

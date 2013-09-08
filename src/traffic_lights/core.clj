@@ -21,8 +21,9 @@
 
 (defn genesis! [old-i-lanes old-e-lanes old-lights safety-fn]
   (pprint old-i-lanes)
-  (let [new-i-lanes (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights))]
-    (recur new-i-lanes old-e-lanes old-lights safety-fn)))
+  (let [new-i-lanes (transform-ingress-lanes old-i-lanes (partial safety-fn old-i-lanes old-lights))
+        new-lights (pmap q/next-light-state old-lights)]
+    (recur new-i-lanes old-e-lanes new-lights safety-fn)))
 
 (def safety-f
   (partial r/safe-to-go?
