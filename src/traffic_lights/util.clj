@@ -8,6 +8,9 @@
       e
       (throw (ex-info "Missing required key" {:map m :key k})))))
 
+(defn maph [f coll & args]
+  (apply merge (map (fn [[k v]] {k (apply f v args)}) coll)))
+
 (defn without-ident [x]
   (dissoc x :street.lane.install/ident))
 

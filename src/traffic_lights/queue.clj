@@ -35,17 +35,17 @@
   (let [[f & more] fns]
     {:state (f state) :fns (conj (vec more) f)}))
 
-(defn enqueue-into-ch [channel car]
+(defn put-into-ch [channel car]
   (assert (zero? (.size channel)))
   (.put channel car))
-
-(defn add-to-lane [{:keys [lane state] :as entity} {:keys [len] :as car}]
-  (let [street-len (:street.lane.install/length lane)]
-    (assoc entity :state (conj state (assoc car :front (- street-len len))))))
 
 (defn take-from-channel [channel]
   (assert (<= (.size channel) 1))
   (.take channel))
+
+(defn add-to-lane [{:keys [lane state] :as entity} {:keys [len] :as car}]
+  (let [street-len (:street.lane.install/length lane)]
+    (assoc entity :state (conj state (assoc car :front (- street-len len))))))
 
 (defn advance-cars-in-lane [{:keys [state] :as entity}]
   (assoc entity :state (r/reduce (partial advance 1 state) [] state)))
@@ -73,7 +73,7 @@
       (let [out-lane ((:directions (directions-index (:id head-car))) id)
             ch (:channel (elane-snapshot out-lane))]
         (when-not (nil? ch)
-          (enqueue-into-ch ch (dissoc head-car :ripe? :front)))
+          (put-into-ch ch (dissoc head-car :ripe? :front)))
         (assoc entity :state (or more [])))
       entity)))
 
@@ -85,7 +85,7 @@
         (if (room-in-lane? in-lane head-car)
           (let [ch (:channel (lane-index in-lane))]
             (if-not (nil? ch)
-              (enqueue-into-ch ch (dissoc head-car :ripe?))
+              (put-into-ch ch (dissoc head-car :ripe?))
               (prn head-car "is done driving."))
             (assoc entity :state (or more [])))
           entity))

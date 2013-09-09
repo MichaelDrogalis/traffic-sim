@@ -54,27 +54,12 @@
 (def lanes-rules-substitution-index (build-non-unique-index schema :lane.rules/of))
 
 (def lane-index
-  (ensure-uniqueness (build-composite-key-index
-                      schema :intersection/of
-                      lane-identifiers)))
+  (ensure-uniqueness
+   (build-composite-key-index
+    schema :intersection/of
+    lane-identifiers)))
 
 (def lane-catalogv (build-catalog schema :intersection/of))
-
-(defn lane-catalog [intx street-name tag lane-name]
-  (get lane-index
-       {:intersection/of intx
-        :street/name street-name
-        :street/tag tag
-        :street.lane.install/name lane-name}))
-
-(defn initialize-lane [lanes]
-  (map (fn [x] {:lane x :state [] :channel (LinkedBlockingQueue. 1)}) lanes))
-
-(defn to-index [coll k]
-  (reduce (fn [all x] (conj all {(k x) x})) {} coll))
-
-(defn to-comp-index [coll drill & ks]
-  (reduce (fn [all x] (conj all {(select-keys (drill x) ks) x})) {} coll))
 
 (def ingress-lane-catalog (filter #(= (:street.lane.install/type %) :ingress) lane-catalogv))
 
@@ -96,19 +81,6 @@
     (group-by :street.lane.install/ident
               (map #(select-keys % index-keys)
                    (intx-index intx)))))
-
-(defn build-light-for-schedule [schedule light-catalog]
-  (fmap #(:light-face/init (light-face-index %)) (:schedule/substitute schedule)))
-
-(defn build-light-sequence [schedule]
-  (:schedule/sequence (light-group-schedule-index schedule)))
-
-(defn initial-light-state [intx]
-  {:state-diff (-> (intx-registration-index intx)
-                   :intersection.install/schedule
-                   light-group-schedule-index
-                   (build-light-for-schedule light-face-index))
-   :ticks 0})
 
 (def traffic-light-catalog
   (map (fn [x]
