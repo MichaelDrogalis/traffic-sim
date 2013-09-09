@@ -11,4 +11,12 @@
 (defn without-ident [x]
   (dissoc x :street.lane.install/ident))
 
+(defn local-var-index [lane var-catalog]
+  (var-catalog (:intersection/of lane)))
+
+(defn rule-set-name [lane]
+  (:street.lane.install/rules lane))
+
+(defn find-rule-from-binder [rule-index binder]
+  (rule-index (:lane.rules/register binder)))
 
