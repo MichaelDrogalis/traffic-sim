@@ -49,3 +49,22 @@
         (resolve-binders bound-rules)
         (resolve-rules rule-idx))))
 
+(defn resolve-light-init [vtable template]
+  (fmap #(:light-face/init (vtable %)) template))
+
+(defn resolve-template [vtable schedule]
+  (:schedule/substitute (getx vtable schedule)))
+
+(defn resolve-schedule [intersection]
+  (:intersection.install/schedule intersection))
+
+(defn resolve-intersection [vtable intersection]
+  (getx vtable intersection))
+
+(defn resolve-initial-light [intx intx-idx group-idx face-idx]
+  (->> intx
+       (resolve-intersection intx-idx)
+       (resolve-schedule)
+       (resolve-template group-idx)
+       (resolve-light-init face-idx)))
+
