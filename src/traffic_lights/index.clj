@@ -1,6 +1,7 @@
 (ns traffic-lights.index
   (:require [clojure.algo.generic.functor :refer [fmap]]
-            [clojure.pprint :refer [pprint]])
+            [clojure.pprint :refer [pprint]]
+            [traffic-lights.boot :as b])
   (:import [java.util.concurrent LinkedBlockingQueue]))
 
 (def schema
@@ -35,6 +36,9 @@
 (defn build-composite-key-index [schema id-kw kws]
   (group-by #(select-keys % kws) (filter #(contains? % id-kw) schema)))
 
+(defn to-comp-index [coll drill & ks]
+  (reduce (fn [all x] (conj all {(select-keys (drill x) ks) x})) {} coll))
+
 (def drivers-index (build-index drivers :id))
 
 (def directions-index (build-index directions :id))
@@ -65,15 +69,15 @@
 
 (def egress-lane-catalog (filter #(= (:street.lane.install/type %) :egress) lane-catalogv))
 
-;(def ingress-lane-state-catalog (initialize-lane ingress-lane-catalog))
+(def ingress-lane-state-catalog (map b/boot-lane ingress-lane-catalog))
 
-;(def egress-lane-state-catalog (initialize-lane egress-lane-catalog))
+(def egress-lane-state-catalog (map b/boot-lane egress-lane-catalog))
 
-#_(def ingress-lane-state-index
-    (apply to-comp-index ingress-lane-state-catalog :lane lane-identifiers))
+(def ingress-lane-state-index
+  (apply to-comp-index ingress-lane-state-catalog :lane lane-identifiers))
 
-#_(def egress-lane-state-index
-    (apply to-comp-index egress-lane-state-catalog :lane lane-identifiers))
+(def egress-lane-state-index
+  (apply to-comp-index egress-lane-state-catalog :lane lane-identifiers))
 
 (defn lane-var-catalog [intx]
   (let [index-keys [:intersection/of :street/name :street/tag

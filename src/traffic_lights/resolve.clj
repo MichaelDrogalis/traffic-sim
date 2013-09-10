@@ -52,14 +52,17 @@
 (defn resolve-light-init [vtable template]
   (fmap #(:light-face/init (vtable %)) template))
 
-(defn resolve-template [vtable schedule]
-  (:schedule/substitute (getx vtable schedule)))
+(defn resolve-intersection [vtable intersection]
+  (getx vtable intersection))
 
 (defn resolve-schedule [intersection]
   (:intersection.install/schedule intersection))
 
-(defn resolve-intersection [vtable intersection]
-  (getx vtable intersection))
+(defn resolve-template [vtable schedule]
+  (:schedule/substitute (getx vtable schedule)))
+
+(defn resolve-sequence [vtable schedule]
+  (:schedule/sequence (getx vtable schedule)))
 
 (defn resolve-initial-light [intx intx-idx group-idx face-idx]
   (->> intx
@@ -68,3 +71,8 @@
        (resolve-template group-idx)
        (resolve-light-init face-idx)))
 
+(defn resolve-light-sequence [intx intx-idx group-idx]
+  (->> intx
+       (resolve-intersection intx-idx)
+       (resolve-schedule)
+       (resolve-sequence group-idx)))

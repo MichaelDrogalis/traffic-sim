@@ -1,29 +1,28 @@
 (ns traffic-lights.boot
-  (:require [clojure.algo.generic.functor :refer [fmap]])
+  (:require [clojure.algo.generic.functor :refer [fmap]]
+            [traffic-lights.resolve :as r]
+            [traffic-lights.queue :as q]
+            [traffic-lights.util :refer [maph]])
   (:import [java.util.concurrent LinkedBlockingQueue]))
 
-(defn build-lane [id]
+(defn boot-lane [id]
   {:lane id :state [] :channel (LinkedBlockingQueue. 1)})
 
-(defn build-light-for-schedule [schedule light-catalog]
-  (fmap #(:light-face/init (light-face-index %)) (:schedule/substitute schedule)))
-
-(defn build-light-sequence [schedule]
-  (:schedule/sequence (light-group-schedule-index schedule)))
-
-(defn initial-light-state [intx]
-  {:state-diff (-> (intx-registration-index intx)
-                   :intersection.install/schedule
-                   light-group-schedule-index
-                   (build-light-for-schedule light-face-index))
+(defn light-init-state [intx intx-reg-idx group-idx face-idx]
+  {:diff (r/resolve-initial-light intx intx-reg-idx group-idx face-idx)
    :ticks 0})
 
-(defn build-light-state-machine [x]
-  {:state (:state-diff (first x))
-   :fns (mapcat q/light-transition->fns x)})
+(defn light-subsequent-states [intx intx-reg-idx group-idx]
+  (r/resolve-light-sequence intx intx-reg-idx group-idx))
 
-(def light-state-machines
-  (apply merge (map (fn [{:keys [intersection state-seq]}]
-                {intersection (build-light-state-machine state-seq)})
-              i/traffic-light-catalog)))
+(defn to-light-sm [light]
+  {:state (:diff (first light))
+   :fns (mapcat q/light-transition->fns light)})
+
+(defn form-full-light-seq [intx intx-reg-idx group-idx face-idx]
+  {intx (cons (light-init-state intx intx-reg-idx group-idx face-idx)
+              (light-subsequent-states intx intx-reg-idx group-idx))})
+
+(defn boot-light [intx-reg-idx schedule-idx face-idx intx]
+  (maph to-light-sm (form-full-light-seq intx intx-reg-idx schedule-idx face-idx)))
 
