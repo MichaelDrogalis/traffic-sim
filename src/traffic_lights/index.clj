@@ -90,5 +90,5 @@
                    (intx-index intx)))))
 
 
-(p/initial-light (p/memory-storage spec-source)
-                 ["10th Street" "Chesnut Street"])
+(p/light-sequence (p/memory-storage spec-source)
+                  ["10th Street" "Chestnut Street"])

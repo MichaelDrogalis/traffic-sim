@@ -76,8 +76,8 @@
 (defn resolve-substitute [template]
   (:schedule/substitute template))
 
-(defn resolve-sequence [vtable schedule]
-  (:schedule/sequence (getx vtable schedule)))
+(defn resolve-sequence [template]
+  (:schedule/sequence template))
 
 (defn resolve-initial-light [schema intx]
   (->> intx
@@ -87,9 +87,10 @@
        (resolve-substitute)
        (resolve-light-init (light-face-index schema))))
 
-(defn resolve-light-sequence [intx intx-idx group-idx]
+(defn resolve-light-sequence [schema intx]
   (->> intx
-       (find-intersection intx-idx)
+       (find-intersection (intersection-index schema))
        (resolve-schedule)
-       (resolve-sequence group-idx)))
+       (find-light-template (light-group-index schema))
+       (resolve-sequence)))
 
