@@ -89,6 +89,3 @@
               (map #(select-keys % index-keys)
                    (intx-index intx)))))
 
-
-(p/light-sequence (p/memory-storage spec-source)
-                  ["10th Street" "Chestnut Street"])

@@ -2,27 +2,28 @@
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [traffic-lights.resolve :as r]
             [traffic-lights.queue :as q]
+            [traffic-lights.protocols :as p]
             [traffic-lights.util :refer [maph]])
   (:import [java.util.concurrent LinkedBlockingQueue]))
 
 (defn boot-lane [id]
   {:lane id :state [] :channel (LinkedBlockingQueue. 1)})
 
-(defn light-init-state [intx intx-reg-idx group-idx face-idx]
-  {:diff (r/resolve-initial-light intx intx-reg-idx group-idx face-idx)
+(defn light-init-state [schema intx]
+  {:diff (p/initial-light schema intx)
    :ticks 0})
 
-(defn light-subsequent-states [intx intx-reg-idx group-idx]
-  (r/resolve-light-sequence intx intx-reg-idx group-idx))
+(defn light-subsequent-states [schema intx]
+  (p/light-sequence schema intx))
 
 (defn to-light-sm [light]
   {:state (:diff (first light))
    :fns (mapcat q/light-transition->fns light)})
 
-(defn form-full-light-seq [intx intx-reg-idx group-idx face-idx]
-  {intx (cons (light-init-state intx intx-reg-idx group-idx face-idx)
-              (light-subsequent-states intx intx-reg-idx group-idx))})
+(defn form-full-light-seq [schema intx]
+  {intx (cons (light-init-state schema intx)
+              (light-subsequent-states schema intx))})
 
-(defn boot-light [intx-reg-idx schedule-idx face-idx intx]
-  (maph to-light-sm (form-full-light-seq intx intx-reg-idx schedule-idx face-idx)))
+(defn boot-light [schema intx]
+  (maph to-light-sm (form-full-light-seq schema intx)))
 
