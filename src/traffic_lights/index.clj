@@ -1,7 +1,8 @@
 (ns traffic-lights.index
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.pprint :refer [pprint]]
-            [traffic-lights.boot :as b])
+            [traffic-lights.boot :as b]
+            [traffic-lights.protocols :as p])
   (:import [java.util.concurrent LinkedBlockingQueue]))
 
 (def schema
@@ -15,6 +16,8 @@
 
 (def directions
   (read-string (slurp (clojure.java.io/resource "directions.edn"))))
+
+(def spec-source (concat schema connections drivers directions))
 
 (def lane-identifiers [:intersection/of :street/name :street/tag :street.lane.install/name])
 
@@ -86,11 +89,6 @@
               (map #(select-keys % index-keys)
                    (intx-index intx)))))
 
-#_(def traffic-light-catalog
-    (map (fn [x]
-           (let [intx-reg (intx-registration-index x)
-                 initial (initial-light-state x)
-                 subsequent (build-light-sequence (:intersection.install/schedule intx-reg))]
-             {:intersection x :state-seq (cons initial subsequent)}))
-         (keys intx-index)))
 
+(p/initial-light (p/memory-storage spec-source)
+                 ["10th Street" "Chesnut Street"])
