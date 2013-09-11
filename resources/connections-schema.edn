@@ -1,18 +1,18 @@
-{{:src.intersection/of ["10th Street" "Chestnut Street"]
-  :src.street/name "10th Street"
-  :src.street/tag "north"
-  :src.lane/name "out"}
- {:dst.intersection/of ["10th Street" "Market Street"]
-  :dst.street/name "10th Street"
-  :dst.street/tag "south"
-  :dst.lane/name "in"}
+[{:connection/src {:intersection/of ["10th Street" "Chestnut Street"]
+                   :street/name "10th Street"
+                   :street/tag "north"
+                   :lane/name "out"}
+  :connection/dst {:intersection/of ["10th Street" "Market Street"]
+                   :street/name "10th Street"
+                   :street/tag "south"
+                   :lane/name "in"}}
 
- {:src.intersection/of ["10th Street" "Market Street"]
-  :src.street/name "10th Street"
-  :src.street/tag "south"
-  :src.lane/name "out"}
- {:dst.intersection/of ["10th Street" "Chestnut Street"]
-  :dst.street/name "10th Street"
-  :dst.street/tag "north"
-  :dst.lane/name "in"}}
+ {:connection/src {:intersection/of ["10th Street" "Market Street"]
+                   :street/name "10th Street"
+                   :street/tag "south"
+                   :lane/name "out"}
+  :connection/dst {:intersection/of ["10th Street" "Chestnut Street"]
+                   :street/name "10th Street"
+                   :street/tag "north"
+                   :lane/name "in"}}]
 
