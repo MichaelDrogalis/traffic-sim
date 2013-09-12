@@ -26,20 +26,22 @@
     :dst   (resolve-dst vtable rule)
     :yield (resolve-yield vtable rule)))
 
-(defn resolve-locals [vtable lane]
+(defn resolve-locals [lane vtable]
   (fmap #(getx vtable %) (:street.lane.install/substitute lane)))
 
 (defn resolve-binder [vtable binder]
   (update-in binder [:lane.rules/substitute] (partial fmap (partial getx vtable))))
 
-(defn resolve-binders [vtable binders]
+(defn resolve-binders [binders vtable]
   (map (partial resolve-binder vtable) binders))
 
-(defn resolve-rules [resolved-binders rule-index]
-  (map #(resolve-rule (:lane.rules/substitute %)
-                      (u/find-rule-from-binder rule-index %))
-       resolved-binders))
+(defn find-rule-by-binder [rule-index binder]
+  (first (filter #(= (:lane.rules/register binder) (:rule/ident %)) rule-index)))
 
+(defn resolve-rules [rule-index resolved-binders]
+  (map #(resolve-rule (:lane.rules/substitute %)
+                      (find-rule-by-binder rule-index %))
+       resolved-binders))
 
 (defn intersection-index [schema]
   (filter #(contains? % :intersection/ident) schema))
@@ -47,10 +49,10 @@
 (defn lane-index [schema]
   (filter #(contains? % :intersection/of) schema))
 
-(defn binders-index [schema]
+(defn binder-index [schema]
   (filter #(contains? % :lane.rules/of) schema))
 
-(defn rules-index [schema]
+(defn rule-index [schema]
   (filter #(contains? % :rule/ident) schema))
 
 (defn light-group-index [schema]
@@ -58,6 +60,10 @@
 
 (defn light-face-index [schema]
   (filter #(contains? % :light-face/init) schema))
+
+(defn var->lane-index [schema intx]
+  (group-by :street.lane.install/ident
+            (filter #(= intx (:intersection/of %)) (lane-index schema))))
 
 (defn find-intersection [vtable intersection]
   (first (filter #(= (get % :intersection/ident) intersection) vtable)))
@@ -83,6 +89,9 @@
 
 (defn match-rules [rules binders]
   (map #(find-rule rules (:lane.rules/register %)) binders))
+
+(defn resolve-intersection [lane]
+  (:intersection/of lane))
 
 (defn resolve-rule-set-name [lane]
   (:street.lane.install/rules lane))
@@ -118,9 +127,13 @@
        (resolve-sequence)))
 
 (defn resolve-all-rules [schema lane-id]
-  (->> lane-id
-       (find-lane (lane-index schema))
-       (resolve-rule-set-name)
-       (match-binders (binders-index schema))
-       (match-rules (rules-index schema))))
+  (let [lane (find-lane schema lane-id)
+        intx (resolve-intersection lane-id)
+        local-vtable (var->lane-index schema intx)
+        rule-set (resolve-rule-set-name lane)
+        binders (match-binders schema rule-set)]
+    (->> local-vtable
+        (resolve-locals lane)
+        (resolve-binders binders)
+        (resolve-rules (rule-index schema)))))
 
