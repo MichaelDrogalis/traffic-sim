@@ -128,12 +128,11 @@
 
 (defn resolve-all-rules [schema lane-id]
   (let [lane (find-lane schema lane-id)
-        intx (resolve-intersection lane-id)
-        local-vtable (var->lane-index schema intx)
         rule-set (resolve-rule-set-name lane)
         binders (match-binders schema rule-set)]
-    (->> local-vtable
-        (resolve-locals lane)
-        (resolve-binders binders)
-        (resolve-rules (rule-index schema)))))
+    (->> (resolve-intersection lane-id)
+         (var->lane-index schema)
+         (resolve-locals lane)
+         (resolve-binders binders)
+         (resolve-rules (rule-index schema)))))
 
