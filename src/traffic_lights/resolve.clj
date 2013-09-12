@@ -78,10 +78,10 @@
 (defn find-light-template [vtable schedule]
   (first (filter #(= (get % :schedule/ident) schedule) vtable)))
 
-(defn matching-binders [vtable binder]
+(defn match-binders [vtable binder]
   (filter #(= binder (:lane.rules/of %)) vtable))
 
-(defn matching-rules [rules binders]
+(defn match-rules [rules binders]
   (map #(find-rule rules (:lane.rules/register %)) binders))
 
 (defn resolve-rule-set-name [lane]
@@ -121,6 +121,6 @@
   (->> lane-id
        (find-lane (lane-index schema))
        (resolve-rule-set-name)
-       (matching-binders (binders-index schema))
-       (matching-rules (rules-index schema))))
+       (match-binders (binders-index schema))
+       (match-rules (rules-index schema))))
 
