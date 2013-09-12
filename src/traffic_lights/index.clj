@@ -2,7 +2,8 @@
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.pprint :refer [pprint]]
             [traffic-lights.boot :as b]
-            [traffic-lights.protocols :as p])
+            [traffic-lights.protocols :as p]
+            [traffic-lights.resolve :as r])
   (:import [java.util.concurrent LinkedBlockingQueue]))
 
 (def schema
