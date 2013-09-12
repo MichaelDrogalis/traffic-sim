@@ -2,7 +2,7 @@
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]
-            [traffic-lights.resolve :as r]
+            [traffic-lights.protocols :as p]
             [traffic-lights.util :refer [getx] :as u]))
 
 (defn lane-clear?
@@ -26,12 +26,12 @@
 (defn matches-yield? [lane-idx rule]
   (map (partial apply lane-clear? lane-idx) (:yield rule)))
 
-(defn safe-to-go? [lane-idx binder-idx rule-idx vtable old-lanes light-state-idx src dst]
+(defn safe-to-go? [storage lane-idx old-lanes old-lights src dst]
   (let [lane-id (dissoc src :street.lane.install/type)
         intx (:intersection/of lane-id)
         face (:street.lane.install/light (lane-idx lane-id))
-        light (getx (:state (light-state-idx intx)) face)
-        rules (r/resolve-all-rules (lane-idx lane-id) binder-idx rule-idx vtable)
+        light (getx (:state (old-lights intx)) face)
+        rules (p/resolve-rules storage (lane-idx lane-id))
         match-f (every-pred (partial matches-src? src)
                             (partial matches-dst? dst)
                             (partial matches-light? light)

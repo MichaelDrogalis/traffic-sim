@@ -9,21 +9,21 @@
 (defn boot-lane [id]
   {:lane id :state [] :channel (LinkedBlockingQueue. 1)})
 
-(defn light-init-state [schema intx]
-  {:diff (p/initial-light schema intx)
+(defn light-init-state [storage intx]
+  {:diff (p/initial-light storage intx)
    :ticks 0})
 
-(defn light-subsequent-states [schema intx]
-  (p/light-sequence schema intx))
+(defn light-subsequent-states [storage intx]
+  (p/light-sequence storage intx))
 
 (defn to-light-sm [light]
   {:state (:diff (first light))
    :fns (mapcat q/light-transition->fns light)})
 
-(defn form-full-light-seq [schema intx]
-  {intx (cons (light-init-state schema intx)
-              (light-subsequent-states schema intx))})
+(defn form-full-light-seq [storage intx]
+  {intx (cons (light-init-state storage intx)
+              (light-subsequent-states storage intx))})
 
-(defn boot-light [schema intx]
-  (maph to-light-sm (form-full-light-seq schema intx)))
+(defn boot-light [storage intx]
+  (maph to-light-sm (form-full-light-seq storage intx)))
 
