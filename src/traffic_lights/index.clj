@@ -51,20 +51,6 @@
                             directions))]
     (:directions/dst lane)))
 
-(def light-face-index (build-index schema :light-face/ident))
-
-(def light-group-schedule-index (build-index schema :schedule/ident))
-
-(def intx-registration-index (build-index schema :intersection/ident))
-
-(def intx-index (build-non-unique-index schema :intersection/of))
-
-(def atomic-rule-index (build-index schema :rule/ident))
-
-(def lane-rules-index (build-index schema :lane.rules/ident))
-
-(def lanes-rules-substitution-index (build-non-unique-index schema :lane.rules/of))
-
 (def lane-index
   (ensure-uniqueness
    (build-composite-key-index
@@ -86,11 +72,4 @@
 
 (def egress-lane-state-index
   (apply to-comp-index egress-lane-state-catalog :lane lane-identifiers))
-
-(defn lane-var-catalog [intx]
-  (let [index-keys [:intersection/of :street/name :street/tag
-                    :street.lane.install/name :street.lane.install/ident]]
-    (group-by :street.lane.install/ident
-              (map #(select-keys % index-keys)
-                   (intx-index intx)))))
 
