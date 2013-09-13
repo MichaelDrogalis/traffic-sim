@@ -5,7 +5,7 @@
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
             [traffic-lights.queue :as q]
-            [traffic-lights.util :refer [maph]]))
+            [traffic-lights.util :refer [maph index-by-lane-id]]))
 
 (def schema
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
@@ -25,29 +25,37 @@
 
 (def safety-fn (partial r/safe-to-go? storage))
 
-(def lights (map (partial b/boot-light storage) (p/intersections storage)))
+(def lights (into {} (map (partial b/boot-light storage) (p/intersections storage))))
 
-(def ingress-lanes (map b/boot-lane (p/ingress-lanes storage)))
+(def ingress-lanes 
+  (->> storage
+       (p/ingress-lanes)
+       (map index-by-lane-id)
+       (into {})
+       (maph b/boot-lane)))
 
-(def egress-lanes (map b/boot-lane (p/egress-lanes storage)))
+(def egress-lanes
+  (->> storage
+       (p/egress-lanes)
+       (map index-by-lane-id)
+       (into {})
+       (maph b/boot-lane)))
 
 (defn log! [idx]
   (pprint (maph :state idx)))
 
-(defn genesis! [old-lights old-ingress-lanes old-egress-lanes safety-f]
-  (log! old-lights)
-  (log! old-ingress-lanes)
-  (log! old-egress-lanes)
-  
-  (let [new-lights        (t/transform-lights old-lights)
-        new-egress-lanes  (t/transform-egress-lanes old-egress-lanes)
-        new-ingress-lanes (t/transform-ingress-lanes
-                           old-ingress-lanes
-                           old-egress-lanes
-                           (partial safety-fn old-ingress-lanes old-lights))]
-    (recur new-lights new-ingress-lanes new-egress-lanes safety-f)))
+(defn genesis! [o-lights o-ilanes o-elanes safety-f]
+  (log! o-lights)
+  (log! o-ilanes)
+  (log! o-elanes)
+  (let [n-lights (t/transform-lights o-lights)
+        n-elanes (t/transform-egress-lanes o-elanes)
+        n-ilanes (t/transform-ingress-lanes o-ilanes o-elanes (partial safety-fn o-ilanes o-lights))]
+    (Thread/sleep 1000)
+    (recur n-lights n-ilanes n-elanes safety-f)))
 
-;(q/put-into-ch (:channel (second (second i/ingress-lane-state-index))) {:id "Mike" :len 3 :buf 0})
+;(q/put-into-ch (:channel (second (second ingress-lanes))) {:id "Mike" :len 3 :buf 0})
 
-;(genesis! lights i/ingress-lane-state-index i/egress-lane-state-index safety-fn)
+;(genesis! lights ingress-lanes egress-lanes safety-fn)
+
 

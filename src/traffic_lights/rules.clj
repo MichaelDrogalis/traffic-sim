@@ -28,7 +28,7 @@
 
 (defn safe-to-go? [storage old-lanes old-lights src dst]
   (let [lane-id (dissoc src :street.lane.install/type)
-        lane-idx (p/lanes storage)
+        lane-idx (into {} (map u/index-by-lane-id (p/lanes storage)))
         intx (:intersection/of lane-id)
         face (:street.lane.install/light (lane-idx lane-id))
         light (getx (:state (old-lights intx)) face)
