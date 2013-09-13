@@ -19,6 +19,9 @@
 (defn resolve-intersection [lane]
   (:intersection/of lane))
 
+(defn resolve-intersection-id [registration]
+  (:intersection/ident registration))
+
 (defn resolve-street-name [lane]
   (:street/name lane))
 
@@ -65,11 +68,20 @@
 (defn find-rule-by-binder [rule-index binder]
   (first (filter #(= (:lane.rules/register binder) (:rule/ident %)) rule-index)))
 
-(defn intersection-index [schema]
+(defn intersection-registration-index [schema]
   (filter #(contains? % :intersection/ident) schema))
+
+(defn intersection-index [schema]
+  (map resolve-intersection-id (intersection-registration-index schema)))
 
 (defn lane-index [schema]
   (filter #(contains? % :intersection/of) schema))
+
+(defn ingress-lane-index [schema]
+  (filter #(= :ingress (:street.lane.install/type %)) (lane-index schema)))
+
+(defn egress-lane-index [schema]
+  (filter #(= :egress (:street.lane.install/type %)) (lane-index schema)))
 
 (defn binder-index [schema]
   (filter #(contains? % :lane.rules/of) schema))
@@ -123,7 +135,7 @@
 
 (defn resolve-initial-light [schema intx]
   (->> intx
-       (find-intersection (intersection-index schema))
+       (find-intersection (intersection-registration-index schema))
        (resolve-schedule)
        (find-light-template (light-group-index schema))
        (resolve-substitute)
@@ -131,7 +143,7 @@
 
 (defn resolve-light-sequence [schema intx]
   (->> intx
-       (find-intersection (intersection-index schema))
+       (find-intersection (intersection-registration-index schema))
        (resolve-schedule)
        (find-light-template (light-group-index schema))
        (resolve-sequence)))

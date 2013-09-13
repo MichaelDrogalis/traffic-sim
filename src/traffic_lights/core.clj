@@ -1,6 +1,5 @@
 (ns traffic-lights.core
   (:require [clojure.pprint :refer [pprint]]
-            [traffic-lights.index :as i]
             [traffic-lights.transform :as t]
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]
@@ -8,14 +7,29 @@
             [traffic-lights.queue :as q]
             [traffic-lights.util :refer [maph]]))
 
-(def storage (p/memory-storage i/spec-source))
+(def schema
+  (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
 
-(def indexed-boot-light (partial b/boot-light storage))
+(def connections
+  (read-string (slurp (clojure.java.io/resource "connections-schema.edn"))))
 
-(def safety-fn (partial r/safe-to-go? storage i/lane-index))
+(def drivers
+  (read-string (slurp (clojure.java.io/resource "drivers.edn"))))
 
-(def lights
-  (apply merge (map indexed-boot-light (keys i/intx-registration-index))))
+(def directions
+  (read-string (slurp (clojure.java.io/resource "directions.edn"))))
+
+(def spec-source (concat schema connections drivers directions))
+
+(def storage (p/memory-storage spec-source))
+
+(def safety-fn (partial r/safe-to-go? storage))
+
+(def lights (map (partial b/boot-light storage) (p/intersections storage)))
+
+(def ingress-lanes (map b/boot-lane (p/ingress-lanes storage)))
+
+(def egress-lanes (map b/boot-lane (p/egress-lanes storage)))
 
 (defn log! [idx]
   (pprint (maph :state idx)))
@@ -33,7 +47,7 @@
                            (partial safety-fn old-ingress-lanes old-lights))]
     (recur new-lights new-ingress-lanes new-egress-lanes safety-f)))
 
-(q/put-into-ch (:channel (second (second i/ingress-lane-state-index))) {:id "Mike" :len 3 :buf 0})
+;(q/put-into-ch (:channel (second (second i/ingress-lane-state-index))) {:id "Mike" :len 3 :buf 0})
 
-(genesis! lights i/ingress-lane-state-index i/egress-lane-state-index safety-fn)
+;(genesis! lights i/ingress-lane-state-index i/egress-lane-state-index safety-fn)
 

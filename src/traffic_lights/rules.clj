@@ -26,8 +26,9 @@
 (defn matches-yield? [lane-idx rule]
   (map (partial apply lane-clear? lane-idx) (:yield rule)))
 
-(defn safe-to-go? [storage lane-idx old-lanes old-lights src dst]
+(defn safe-to-go? [storage old-lanes old-lights src dst]
   (let [lane-id (dissoc src :street.lane.install/type)
+        lane-idx (p/lanes storage)
         intx (:intersection/of lane-id)
         face (:street.lane.install/light (lane-idx lane-id))
         light (getx (:state (old-lights intx)) face)
