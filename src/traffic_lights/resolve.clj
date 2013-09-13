@@ -4,6 +4,33 @@
             [clojure.pprint :refer [pprint]]
             [traffic-lights.util :refer [getx] :as u]))
 
+(defn resolve-schedule [intersection]
+  (:intersection.install/schedule intersection))
+
+(defn resolve-substitute [template]
+  (:schedule/substitute template))
+
+(defn resolve-sequence [template]
+  (:schedule/sequence template))
+
+(defn resolve-lane-var [lane]
+  (:street.lane.install/ident lane))
+
+(defn resolve-intersection [lane]
+  (:intersection/of lane))
+
+(defn resolve-street-name [lane]
+  (:street/name lane))
+
+(defn resolve-tag [lane]
+  (:street/tag lane))
+
+(defn resolve-lane-name [lane]
+  (:street.lane.install/name lane))
+
+(defn resolve-rule-set-name [lane]
+  (:street.lane.install/rules lane))
+
 (defn resolve-src [vtable rule]
   (getx vtable (:src rule)))
 
@@ -38,11 +65,6 @@
 (defn find-rule-by-binder [rule-index binder]
   (first (filter #(= (:lane.rules/register binder) (:rule/ident %)) rule-index)))
 
-(defn resolve-rules [rule-index resolved-binders]
-  (map #(resolve-rule (:lane.rules/substitute %)
-                      (find-rule-by-binder rule-index %))
-       resolved-binders))
-
 (defn intersection-index [schema]
   (filter #(contains? % :intersection/ident) schema))
 
@@ -69,11 +91,12 @@
   (first (filter #(= (get % :intersection/ident) intersection) vtable)))
 
 (defn find-lane [vtable lane-id]
-  (first (filter #(and (= (get % :intersection/of) (:intersection/of lane-id))
-                       (= (get % :street/name) (:street/name lane-id))
-                       (= (get % :street/tag) (:street/tag lane-id))
-                       (= (get % :street.lane.install/name) (:street.lane.install/name lane-id)))
-                 vtable)))
+  (first
+   (filter #(and (= (resolve-intersection %) (resolve-intersection lane-id))
+                 (= (resolve-street-name %)  (resolve-street-name lane-id))
+                 (= (resolve-tag %)          (resolve-tag lane-id))
+                 (= (resolve-lane-name %)    (resolve-lane-name lane-id)))
+           vtable)))
 
 (defn find-rule [vtable rule]
   (first (filter #(= (get % :rule/ident) rule) vtable)))
@@ -90,26 +113,13 @@
 (defn match-rules [rules binders]
   (map #(find-rule rules (:lane.rules/register %)) binders))
 
-(defn resolve-intersection [lane]
-  (:intersection/of lane))
-
-(defn resolve-rule-set-name [lane]
-  (:street.lane.install/rules lane))
-
-(defn resolve-lane-var [lane]
-  (:street.lane.install/ident lane))
+(defn resolve-rules [rule-index resolved-binders]
+  (map #(resolve-rule (:lane.rules/substitute %)
+                      (find-rule-by-binder rule-index %))
+       resolved-binders))
 
 (defn resolve-light-init [vtable template]
   (fmap #(:light-face/init (find-light-init vtable %)) template))
-
-(defn resolve-schedule [intersection]
-  (:intersection.install/schedule intersection))
-
-(defn resolve-substitute [template]
-  (:schedule/substitute template))
-
-(defn resolve-sequence [template]
-  (:schedule/sequence template))
 
 (defn resolve-initial-light [schema intx]
   (->> intx
