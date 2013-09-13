@@ -1,3 +1,4 @@
 [{:driver/id "Mike"
+  :driver/buf 3
   :vehicle/len 10}]
 

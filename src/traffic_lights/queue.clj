@@ -69,8 +69,8 @@
 (defn harvest-ingress-lane [{:keys [lane state] :as entity} directions-index elane-snapshot safe?]
   (let [[head-car & more] state
         id (lane-id lane)]
-    (if (and (:ripe? head-car) (safe? id ((:directions (directions-index (:id head-car))) id)))
-      (let [out-lane ((:directions (directions-index (:id head-car))) id)
+    (if (and (:ripe? head-car) (safe? id (directions-index (:id head-car) id)))
+      (let [out-lane (directions-index (:id head-car) id)
             ch (:channel (elane-snapshot out-lane))]
         (when-not (nil? ch)
           (put-into-ch ch (dissoc head-car :ripe? :front)))
@@ -81,7 +81,7 @@
   (let [[head-car & more] state]
     (if (:ripe? head-car)
       (let [id (lane-id lane)
-            in-lane ((:directions (directions-index (:id head-car))) id)]
+            in-lane (directions-index (:id head-car) id)]
         (if (room-in-lane? in-lane head-car)
           (let [ch (:channel (lane-index in-lane))]
             (if-not (nil? ch)

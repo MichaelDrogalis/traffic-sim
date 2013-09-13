@@ -84,7 +84,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :street.lane.install/name "in"
-  :street.lane.install/length 100
+  :street.lane.install/length 20
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?b
@@ -126,7 +126,7 @@
   :street/name "Chestnut Street"
   :street/tag "west"
   :street.lane.install/name "in"
-  :street.lane.install/length 100
+  :street.lane.install/length 20
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?d
@@ -173,7 +173,7 @@
   :street/name "Market Street"
   :street/tag "east"
   :street.lane.install/name "in"
-  :street.lane.install/length 100
+  :street.lane.install/length 20
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?b
@@ -215,7 +215,7 @@
   :street/name "Market Street"
   :street/tag "west"
   :street.lane.install/name "in"
-  :street.lane.install/length 100
+  :street.lane.install/length 20
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
   :street.lane.install/ident ?d

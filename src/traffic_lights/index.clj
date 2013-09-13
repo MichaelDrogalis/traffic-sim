@@ -45,7 +45,11 @@
 
 (def drivers-index (build-index drivers :id))
 
-(def directions-index (build-index directions :id))
+(defn directions-index [id src]
+  (let [lane (first (filter #(and (= (:directions/for %) id)
+                                  (= (:directions/src %) src))
+                            directions))]
+    (:directions/dst lane)))
 
 (def light-face-index (build-index schema :light-face/ident))
 
