@@ -1,6 +1,5 @@
 (ns traffic-lights.boot
   (:require [clojure.algo.generic.functor :refer [fmap]]
-            [traffic-lights.resolve :as r]
             [traffic-lights.queue :as q]
             [traffic-lights.protocols :as p]
             [traffic-lights.util :refer [maph]])

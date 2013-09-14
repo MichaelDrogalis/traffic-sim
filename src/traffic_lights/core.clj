@@ -1,13 +1,13 @@
 (ns traffic-lights.core
   (:require [clojure.pprint :refer [pprint]]
             [traffic-lights.boot :as b]
-            [traffic-lights.transform :as t]
+            [traffic-lights.succession :as s]
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
             [traffic-lights.queue :as q]
             [traffic-lights.util :refer [maph index-by-lane-id]]))
 
-(def schema
+(def intersections
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
 
 (def connections
@@ -19,13 +19,15 @@
 (def directions
   (read-string (slurp (clojure.java.io/resource "directions.edn"))))
 
-(def spec-source (concat schema connections drivers))
+(def schema (concat intersections connections drivers))
 
-(def storage (p/memory-storage spec-source))
+(def storage (p/memory-storage schema))
 
 (def dir-fn (r/find-dst directions))
 
 (def safety-fn (partial r/safe-to-go? storage))
+
+(def transform-world (s/transform-world-fn dir-fn safety-fn))
 
 (def lights (into {} (map (partial b/boot-light storage) (p/intersections storage))))
 
@@ -46,16 +48,14 @@
 (defn log! [idx]
   (pprint (maph :state idx)))
 
-(defn genesis! [o-lights o-ilanes o-elanes d-fn safety-f]
-  (log! o-lights)
-  (log! o-ilanes)
-  (log! o-elanes)
-  (let [n-lights (t/transform-lights o-lights)
-        n-elanes (t/transform-egress-lanes o-elanes d-fn)
-        n-ilanes (t/transform-ingress-lanes o-ilanes o-elanes d-fn (partial safety-fn o-ilanes o-lights))]
-    (recur n-lights n-ilanes n-elanes d-fn safety-f)))
+(defn genesis! [lights ingress egress t-fn]
+  (log! lights)
+  (log! ingress)
+  (log! egress)
+  (let [successor (t-fn {:lights lights :ingress ingress :egress egress})]
+    (recur (:lights successor) (:ingress successor) (:egress successor) t-fn)))
 
 (q/put-into-ch (:channel (second (second ingress-lanes))) {:id "Mike" :len 3 :buf 0})
 
-(genesis! lights ingress-lanes egress-lanes dir-fn safety-fn)
+(genesis! lights ingress-lanes egress-lanes transform-world)
 

@@ -1,8 +1,8 @@
-(ns traffic-lights.resolve
+(ns traffic-lights.memory
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]
-            [traffic-lights.util :refer [getx] :as u]))
+            [traffic-lights.util :refer [getx]]))
 
 (defn resolve-schedule [intersection]
   (:intersection.install/schedule intersection))

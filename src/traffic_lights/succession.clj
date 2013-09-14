@@ -1,4 +1,4 @@
-(ns traffic-lights.transform
+(ns traffic-lights.succession
   (:require [traffic-lights.queue :as q]
             [traffic-lights.util :refer [maph]]))
 
@@ -19,4 +19,10 @@
 (defn transform-lights [old-lights]
   (->> old-lights
        (maph q/next-light-state)))
+
+(defn transform-world-fn [directions-fn safety-fn]
+  (fn [{:keys [lights egress ingress]}]
+    {:lights (transform-lights lights)
+     :ingress (transform-ingress-lanes ingress egress directions-fn (partial safety-fn ingress lights))
+     :egress (transform-egress-lanes egress directions-fn)}))
 

@@ -1,5 +1,5 @@
 (ns traffic-lights.protocols
-  (:require [traffic-lights.resolve :as r]))
+  (:require [traffic-lights.memory :as m]))
 
 (defprotocol ILight
   (initial-light [this intx])
@@ -18,19 +18,19 @@
 
 (deftype MemoryStorage [schema]
   ILight
-  (initial-light [this intx] (r/resolve-initial-light schema intx))
-  (light-sequence [this intx] (r/resolve-light-sequence schema intx))
+  (initial-light [this intx] (m/resolve-initial-light schema intx))
+  (light-sequence [this intx] (m/resolve-light-sequence schema intx))
 
   IIntersection
-  (intersections [this] (r/intersection-index schema))
+  (intersections [this] (m/intersection-index schema))
   
   ILane
-  (lanes [this] (r/lane-index schema))
-  (ingress-lanes [this] (r/ingress-lane-index schema))
-  (egress-lanes [this] (r/egress-lane-index schema))
+  (lanes [this] (m/lane-index schema))
+  (ingress-lanes [this] (m/ingress-lane-index schema))
+  (egress-lanes [this] (m/egress-lane-index schema))
   
   IResolve
-  (resolve-rules [this lane-id] (r/resolve-all-rules schema lane-id)))
+  (resolve-rules [this lane-id] (m/resolve-all-rules schema lane-id)))
 
 (defn memory-storage [schema]
   (MemoryStorage. schema))
