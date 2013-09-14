@@ -115,13 +115,13 @@
   (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 6)))
 
 (def six-ingress-iterations
-  (map (comp first vals) (map :ingress result)))
+  (map (comp first vals) (map :ingress six-iterations)))
 
 (def six-egress-iterations
-  (map (comp first vals) (map :egress result)))
+  (map (comp first vals) (map :egress six-iterations)))
 
 (def six-light-iterations
-  (map (comp :state first vals) (map :lights result)))
+  (map (comp :state first vals) (map :lights six-iterations)))
 
 (fact (every? #(empty? (:state %)) six-ingress-iterations) => true)
 (fact (every? #(empty? (:channel %)) six-ingress-iterations) => true)
