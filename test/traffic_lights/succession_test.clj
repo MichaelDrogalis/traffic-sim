@@ -1,4 +1,4 @@
-(ns traffic-lights.sucession-test
+(ns traffic-lights.succession-test
   (:require [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]
