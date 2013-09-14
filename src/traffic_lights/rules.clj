@@ -3,7 +3,13 @@
             [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]
             [traffic-lights.protocols :as p]
-            [traffic-lights.util :refer [getx] :as u]))
+            [traffic-lights.util :refer [getx lane-id] :as u]))
+
+(defn find-dst [directions-catalog]
+  (fn [id src]
+    (:directions/dst (first (filter #(and (= (:directions/for %) id)
+                                          (= (:directions/src %) src))
+                                    directions-catalog)))))
 
 (defn lane-clear?
   ([lane-idx src]
@@ -15,10 +21,10 @@
        (not= (:dst head-car) dst))))
 
 (defn matches-src? [target-src rule]
-  (= (u/without-ident (first (:src rule))) target-src))
+  (= (lane-id (first (:src rule))) target-src))
 
 (defn matches-dst? [target-dst rule]
-  (= (u/without-ident (first (:dst rule))) target-dst))
+  (= (lane-id (first (:dst rule))) target-dst))
 
 (defn matches-light? [light-state rule]
   (subset? light-state (into #{} (:light rule))))

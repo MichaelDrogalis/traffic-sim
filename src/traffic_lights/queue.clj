@@ -1,8 +1,6 @@
 (ns traffic-lights.queue
-  (:require [clojure.core.reducers :as r]))
-
-(defn lane-id [lane]
-  (select-keys lane [:intersection/of :street/name :street/tag :street.lane.install/name]))
+  (:require [clojure.core.reducers :as r]
+            [traffic-lights.util :refer [lane-id]]))
 
 (defn light-transition->fns [{:keys [state-diff ticks]}]
   (map (fn [_] (fn [light] (merge light state-diff))) (range ticks)))

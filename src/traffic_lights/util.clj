@@ -14,6 +14,9 @@
 (defn without-ident [x]
   (dissoc x :street.lane.install/ident))
 
+(defn lane-id [lane]
+  (select-keys lane [:intersection/of :street/name :street/tag :street.lane.install/name]))
+
 (defn index-by-lane-id [x]
-  {(select-keys x [:intersection/of :street/name :street/tag :street.lane.install/name])
-   x})
+  {(lane-id x) x})
+

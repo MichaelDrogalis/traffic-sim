@@ -1,7 +1,7 @@
 (ns traffic-lights.core
   (:require [clojure.pprint :refer [pprint]]
-            [traffic-lights.transform :as t]
             [traffic-lights.boot :as b]
+            [traffic-lights.transform :as t]
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
             [traffic-lights.queue :as q]
@@ -19,9 +19,11 @@
 (def directions
   (read-string (slurp (clojure.java.io/resource "directions.edn"))))
 
-(def spec-source (concat schema connections drivers directions))
+(def spec-source (concat schema connections drivers))
 
 (def storage (p/memory-storage spec-source))
+
+(def dir-fn (r/find-dst directions))
 
 (def safety-fn (partial r/safe-to-go? storage))
 
@@ -44,18 +46,16 @@
 (defn log! [idx]
   (pprint (maph :state idx)))
 
-(defn genesis! [o-lights o-ilanes o-elanes safety-f]
+(defn genesis! [o-lights o-ilanes o-elanes d-fn safety-f]
   (log! o-lights)
   (log! o-ilanes)
   (log! o-elanes)
   (let [n-lights (t/transform-lights o-lights)
-        n-elanes (t/transform-egress-lanes o-elanes)
-        n-ilanes (t/transform-ingress-lanes o-ilanes o-elanes (partial safety-fn o-ilanes o-lights))]
-    (Thread/sleep 1000)
-    (recur n-lights n-ilanes n-elanes safety-f)))
+        n-elanes (t/transform-egress-lanes o-elanes d-fn)
+        n-ilanes (t/transform-ingress-lanes o-ilanes o-elanes d-fn (partial safety-fn o-ilanes o-lights))]
+    (recur n-lights n-ilanes n-elanes d-fn safety-f)))
 
-;(q/put-into-ch (:channel (second (second ingress-lanes))) {:id "Mike" :len 3 :buf 0})
+(q/put-into-ch (:channel (second (second ingress-lanes))) {:id "Mike" :len 3 :buf 0})
 
-;(genesis! lights ingress-lanes egress-lanes safety-fn)
-
+(genesis! lights ingress-lanes egress-lanes dir-fn safety-fn)
 
