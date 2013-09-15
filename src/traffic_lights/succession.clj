@@ -11,9 +11,9 @@
 
 (defn transform-egress-lanes [old-lanes d-fn]
   (->> old-lanes
-       (maph q/ch->lane)
        (maph q/mark-ripe)
        (maph q/advance-cars-in-lane)
+       (maph q/ch->lane)
        (maph #(q/harvest-egress-lane % d-fn old-lanes))))
 
 (defn transform-lights [old-lights]

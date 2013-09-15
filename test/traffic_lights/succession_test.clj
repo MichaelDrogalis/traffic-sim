@@ -147,13 +147,13 @@
 (q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
 
 (def twenty-iterations
-  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 20)))
+  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 21)))
 
 (def twenty-ingress-iterations
   (map (comp first vals) (map :ingress twenty-iterations)))
 
 (def twenty-egress-iterations
-  (map (comp first vals) (map :egress twenty-iterations)))
+  (map (comp second vals) (map :egress twenty-iterations)))
 
 (def twenty-light-iterations
   (map (comp :state first vals) (map :lights twenty-iterations)))
@@ -188,6 +188,41 @@
 (fact (:state (nth twenty-ingress-iterations 10))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
 
+(fact ('?y (nth twenty-light-iterations 10)) => [:green])
+
 (fact (:state (nth twenty-ingress-iterations 11))
+      => [])
+
+(fact (:state (nth twenty-egress-iterations 11))
+      => [{:id "Mike" :len 1 :buf 0 :front 9}])
+
+(fact (:state (nth twenty-egress-iterations 12))
+      => [{:id "Mike" :len 1 :buf 0 :front 8 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 13))
+      => [{:id "Mike" :len 1 :buf 0 :front 7 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 14))
+      => [{:id "Mike" :len 1 :buf 0 :front 6 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 15))
+      => [{:id "Mike" :len 1 :buf 0 :front 5 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 16))
+      => [{:id "Mike" :len 1 :buf 0 :front 4 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 17))
+      => [{:id "Mike" :len 1 :buf 0 :front 3 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 18))
+      => [{:id "Mike" :len 1 :buf 0 :front 2 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 19))
+      => [{:id "Mike" :len 1 :buf 0 :front 1 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 20))
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
+
+(fact (:state (nth twenty-egress-iterations 21))
       => [])
 
