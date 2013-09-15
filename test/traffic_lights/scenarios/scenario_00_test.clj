@@ -1,4 +1,5 @@
 (ns traffic-lights.scenarios.scenario-00-test
+  "Sanity scenario of iterating a few times with no traffic."
   (:require [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]

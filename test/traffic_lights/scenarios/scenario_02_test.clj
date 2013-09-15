@@ -1,4 +1,5 @@
 (ns traffic-lights.scenarios.scenario-02-test
+  "Driving one car up south street, halting for a red light & no other traffic."
   (:require [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]
