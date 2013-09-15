@@ -21,10 +21,10 @@
        (not= (:dst head-car) dst))))
 
 (defn matches-src? [target-src rule]
-  (= (lane-id (first (:src rule))) target-src))
+  (= (lane-id (lane-id (first (:src rule)))) target-src))
 
 (defn matches-dst? [target-dst rule]
-  (= (lane-id (first (:dst rule))) target-dst))
+  (= (lane-id (lane-id (first (:dst rule)))) target-dst))
 
 (defn matches-light? [light-state rule]
   (subset? light-state (into #{} (:light rule))))

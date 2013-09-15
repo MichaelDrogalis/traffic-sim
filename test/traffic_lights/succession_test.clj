@@ -3,6 +3,7 @@
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
+            [traffic-lights.queue :as q]
             [traffic-lights.util :as u]
             [traffic-lights.succession :refer :all]))
 
@@ -11,7 +12,7 @@
      :light-face/halt [:red]
      :light-face/proceed [:yellow :green]
      :light-face/init [:red]}
-   
+    
     {:schedule/ident :intx-schedule
      :schedule/substitute {?x :standard ?y :standard}
      :schedule/sequence [{:state-diff {?x [:green]} :ticks 1}
@@ -20,15 +21,15 @@
                          {:state-diff {?y [:green]} :ticks 1}
                          {:state-diff {?y [:yellow]} :ticks 1}
                          {:state-diff {?y [:red]} :ticks 1}]}
-   
+    
     {:rule/ident :straight
      :src ?origini
      :dst ?straighte
      :light [:green :yellow]}
-   
+    
     {:lane.rules/ident :no-turns
      :lane.rules/vars [?origini ?origine ?straighti ?straighte]}
-   
+    
     {:lane.rules/of :no-turns
      :lane.rules/register :straight
      :lane.rules/substitute {?origini ?origini ?straighte ?straighte}}
@@ -49,7 +50,7 @@
                                       ?origine ?A
                                       ?straighti ?b
                                       ?straighte ?B}}
-   
+    
     {:intersection/of ["Maple Street"]
      :street/name "Maple Street"
      :street/tag "south"
@@ -71,7 +72,7 @@
      :street.lane.install/ident ?A
      :street.lane.install/type :egress
      :street.lane.install/length 10}
-   
+    
     {:intersection/of ["Maple Street"]
      :street/name "Maple Street"
      :street/tag "south"
@@ -86,8 +87,8 @@
 
 (def dir-fn
   (constantly
-   {:intersection/of ["10th Street" "Chestnut Street"]
-    :street/name "10th Street"
+   {:intersection/of ["Maple Street"]
+    :street/name "Maple Street"
     :street/tag "north"
     :street.lane.install/name "out"}))
 
@@ -136,4 +137,57 @@
 (fact (nth six-light-iterations 4) => '{?x [:red] ?y [:green]})
 (fact (nth six-light-iterations 5) => '{?x [:red] ?y [:yellow]})
 (fact (nth six-light-iterations 6) => '{?x [:red] ?y [:red]})
+
+(def south-in
+  {:intersection/of ["Maple Street"]
+   :street/name "Maple Street"
+   :street/tag "south"
+   :street.lane.install/name "in"})
+
+(q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
+
+(def twenty-iterations
+  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 20)))
+
+(def twenty-ingress-iterations
+  (map (comp first vals) (map :ingress twenty-iterations)))
+
+(def twenty-egress-iterations
+  (map (comp first vals) (map :egress twenty-iterations)))
+
+(def twenty-light-iterations
+  (map (comp :state first vals) (map :lights twenty-iterations)))
+
+(fact (:state (nth twenty-ingress-iterations 1))
+      => [{:id "Mike" :len 1 :buf 0 :front 9}])
+
+(fact (:state (nth twenty-ingress-iterations 2))
+      => [{:id "Mike" :len 1 :buf 0 :front 8 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 3))
+      => [{:id "Mike" :len 1 :buf 0 :front 7 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 4))
+      => [{:id "Mike" :len 1 :buf 0 :front 6 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 5))
+      => [{:id "Mike" :len 1 :buf 0 :front 5 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 6))
+      => [{:id "Mike" :len 1 :buf 0 :front 4 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 7))
+      => [{:id "Mike" :len 1 :buf 0 :front 3 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 8))
+      => [{:id "Mike" :len 1 :buf 0 :front 2 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 9))
+      => [{:id "Mike" :len 1 :buf 0 :front 1 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 10))
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
+
+(fact (:state (nth twenty-ingress-iterations 11))
+      => [])
 
