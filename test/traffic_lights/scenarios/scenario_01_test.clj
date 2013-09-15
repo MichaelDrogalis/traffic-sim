@@ -1,4 +1,4 @@
-(ns traffic-lights.succession-test
+(ns traffic-lights.scenarios.scenario-01-test
   (:require [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]
@@ -34,7 +34,7 @@
      :lane.rules/register :straight
      :lane.rules/substitute {?origini ?origini ?straighte ?straighte}}
 
-    {:intersection/ident ["Maple Street"],
+    {:intersection/ident ["Maple Street"]
      :intersection.install/schedule :intx-schedule}
 
     {:intersection/of ["Maple Street"]
@@ -112,32 +112,6 @@
 
 (def initial-world {:lights lights :ingress ingress-lanes :egress egress-lanes})
 
-(def six-iterations
-  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 6)))
-
-(def six-ingress-iterations
-  (map (comp first vals) (map :ingress six-iterations)))
-
-(def six-egress-iterations
-  (map (comp first vals) (map :egress six-iterations)))
-
-(def six-light-iterations
-  (map (comp :state first vals) (map :lights six-iterations)))
-
-(fact (every? #(empty? (:state %)) six-ingress-iterations) => true)
-(fact (every? #(empty? (:channel %)) six-ingress-iterations) => true)
-
-(fact (every? #(empty? (:state %)) six-egress-iterations) => true)
-(fact (every? #(empty? (:channel %)) six-egress-iterations) => true)
-
-(fact (nth six-light-iterations 0) => '{?x [:red] ?y [:red]})
-(fact (nth six-light-iterations 1) => '{?x [:green] ?y [:red]})
-(fact (nth six-light-iterations 2) => '{?x [:yellow] ?y [:red]})
-(fact (nth six-light-iterations 3) => '{?x [:red] ?y [:red]})
-(fact (nth six-light-iterations 4) => '{?x [:red] ?y [:green]})
-(fact (nth six-light-iterations 5) => '{?x [:red] ?y [:yellow]})
-(fact (nth six-light-iterations 6) => '{?x [:red] ?y [:red]})
-
 (def south-in
   {:intersection/of ["Maple Street"]
    :street/name "Maple Street"
@@ -146,83 +120,83 @@
 
 (q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
 
-(def twenty-iterations
+(def iterations
   (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 21)))
 
-(def twenty-ingress-iterations
-  (map (comp first vals) (map :ingress twenty-iterations)))
+(def ingress-iterations
+  (map (comp first vals) (map :ingress iterations)))
 
-(def twenty-egress-iterations
-  (map (comp second vals) (map :egress twenty-iterations)))
+(def egress-iterations
+  (map (comp second vals) (map :egress iterations)))
 
-(def twenty-light-iterations
-  (map (comp :state first vals) (map :lights twenty-iterations)))
+(def light-iterations
+  (map (comp :state first vals) (map :lights iterations)))
 
-(fact (:state (nth twenty-ingress-iterations 1))
+(fact (:state (nth ingress-iterations 1))
       => [{:id "Mike" :len 1 :buf 0 :front 9}])
 
-(fact (:state (nth twenty-ingress-iterations 2))
+(fact (:state (nth ingress-iterations 2))
       => [{:id "Mike" :len 1 :buf 0 :front 8 :ripe? false}])
 
-(fact (:state (nth twenty-ingress-iterations 3))
+(fact (:state (nth ingress-iterations 3))
       => [{:id "Mike" :len 1 :buf 0 :front 7 :ripe? false}])
 
-(fact (:state (nth twenty-ingress-iterations 4))
+(fact (:state (nth ingress-iterations 4))
       => [{:id "Mike" :len 1 :buf 0 :front 6 :ripe? false}])
 
-(fact (:state (nth twenty-ingress-iterations 5))
+(fact (:state (nth ingress-iterations 5))
       => [{:id "Mike" :len 1 :buf 0 :front 5 :ripe? false}])
 
-(fact (:state (nth twenty-ingress-iterations 6))
+(fact (:state (nth ingress-iterations 6))
       => [{:id "Mike" :len 1 :buf 0 :front 4 :ripe? false}])
 
-(fact (:state (nth twenty-ingress-iterations 7))
+(fact (:state (nth ingress-iterations 7))
       => [{:id "Mike" :len 1 :buf 0 :front 3 :ripe? false}])
 
-(fact (:state (nth twenty-ingress-iterations 8))
+(fact (:state (nth ingress-iterations 8))
       => [{:id "Mike" :len 1 :buf 0 :front 2 :ripe? false}])
 
-(fact (:state (nth twenty-ingress-iterations 9))
+(fact (:state (nth ingress-iterations 9))
       => [{:id "Mike" :len 1 :buf 0 :front 1 :ripe? false}])
 
-(fact (:state (nth twenty-ingress-iterations 10))
+(fact (:state (nth ingress-iterations 10))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
 
-(fact ('?y (nth twenty-light-iterations 10)) => [:green])
+(fact ('?y (nth light-iterations 10)) => [:green])
 
-(fact (:state (nth twenty-ingress-iterations 11))
+(fact (:state (nth ingress-iterations 11))
       => [])
 
-(fact (:state (nth twenty-egress-iterations 11))
+(fact (:state (nth egress-iterations 11))
       => [{:id "Mike" :len 1 :buf 0 :front 9}])
 
-(fact (:state (nth twenty-egress-iterations 12))
+(fact (:state (nth egress-iterations 12))
       => [{:id "Mike" :len 1 :buf 0 :front 8 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 13))
+(fact (:state (nth egress-iterations 13))
       => [{:id "Mike" :len 1 :buf 0 :front 7 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 14))
+(fact (:state (nth egress-iterations 14))
       => [{:id "Mike" :len 1 :buf 0 :front 6 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 15))
+(fact (:state (nth egress-iterations 15))
       => [{:id "Mike" :len 1 :buf 0 :front 5 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 16))
+(fact (:state (nth egress-iterations 16))
       => [{:id "Mike" :len 1 :buf 0 :front 4 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 17))
+(fact (:state (nth egress-iterations 17))
       => [{:id "Mike" :len 1 :buf 0 :front 3 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 18))
+(fact (:state (nth egress-iterations 18))
       => [{:id "Mike" :len 1 :buf 0 :front 2 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 19))
+(fact (:state (nth egress-iterations 19))
       => [{:id "Mike" :len 1 :buf 0 :front 1 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 20))
+(fact (:state (nth egress-iterations 20))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
 
-(fact (:state (nth twenty-egress-iterations 21))
+(fact (:state (nth egress-iterations 21))
       => [])
 
