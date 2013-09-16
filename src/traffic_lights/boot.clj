@@ -2,7 +2,7 @@
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [traffic-lights.queue :as q]
             [traffic-lights.protocols :as p]
-            [traffic-lights.util :refer [maph]])
+            [traffic-lights.util :refer [maph] :as u])
   (:import [java.util.concurrent LinkedBlockingQueue]))
 
 (defn boot-lane [id]
@@ -25,4 +25,17 @@
 
 (defn boot-light [storage intx]
   (maph to-light-sm (form-full-light-seq storage intx)))
+
+(defn load-lanes [storage f]
+  (->> storage
+       (f)
+       (map u/index-by-lane-id)
+       (into {})
+       (maph boot-lane)))
+
+(defn ingress-lanes [storage]
+  (load-lanes storage p/ingress-lanes))
+
+(defn egress-lanes [storage]
+  (load-lanes storage p/egress-lanes))
 
