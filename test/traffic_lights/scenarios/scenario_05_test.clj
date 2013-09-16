@@ -220,3 +220,9 @@
 (fact (:state (nth ingress-south-iterations 8))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
 
+(fact (:state (nth ingress-south-iterations 9))
+      => [])
+
+(fact (:state (nth egress-west-iterations 9))
+      => [{:id "Mike" :len 1 :buf 0 :front 2}])
+

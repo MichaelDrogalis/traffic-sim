@@ -13,9 +13,9 @@
 
 (defn lane-clear?
   ([lane-idx src]
-     (empty? (:state (lane-idx src))))
+     (empty? (:state (lane-idx (lane-id (first src))))))
   ([lane-idx src dst]
-     (let [head-car (first (:state (lane-idx src)))]
+     (let [head-car (first (:state (lane-idx (lane-id (first src)))))]
        (when (nil? (:dst head-car))
          (throw (ex-info "Head car dst not implemented." {:car head-car})))
        (not= (:dst head-car) dst))))
@@ -30,7 +30,7 @@
   (subset? light-state (into #{} (:light rule))))
 
 (defn matches-yield? [lane-idx rule]
-  (map (partial apply lane-clear? lane-idx) (:yield rule)))
+  (every? true? (map (partial apply lane-clear? lane-idx) (:yield rule))))
 
 (defn safe-to-go? [storage old-lanes old-lights src dst]
   (let [lane-id (dissoc src :street.lane.install/type)
@@ -42,6 +42,6 @@
         match-f (every-pred (partial matches-src? src)
                             (partial matches-dst? dst)
                             (partial matches-light? light)
-                            (partial matches-yield? lane-idx))]
+                            (partial matches-yield? old-lanes))]
     (not (empty? (filter match-f rules)))))
 
