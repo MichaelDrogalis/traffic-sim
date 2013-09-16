@@ -1,4 +1,4 @@
-(ns traffic-lights.scenarios.scenario-02-test
+(ns traffic-lights.scenarios.scenario-04-test
   "Driving one car up south street taking a left, no traffic."
   (:require [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
@@ -151,7 +151,7 @@
   (map (comp (partial find-lane south-in) vals) (map :ingress iterations)))
 
 (def egress-west-iterations
-  (map (comp (partial find-lane east-out) vals) (map :egress iterations)))
+  (map (comp (partial find-lane west-out) vals) (map :egress iterations)))
 
 (fact (:state (nth ingress-south-iterations 1))
       => [{:id "Mike" :len 1 :buf 0 :front 9}])

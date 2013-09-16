@@ -1,4 +1,4 @@
-(ns traffic-lights.scenarios.scenario-02-test
+(ns traffic-lights.scenarios.scenario-03-test
   "Driving one car up south street and one car down north street.
    The light is constantly green, and symmetric to both streets."
   (:require [midje.sweet :refer :all]
