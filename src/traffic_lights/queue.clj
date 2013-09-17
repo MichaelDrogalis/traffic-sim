@@ -41,16 +41,19 @@
   (assert (<= (.size channel) 1))
   (.take channel))
 
-(defn add-to-lane [{:keys [lane state] :as entity} {:keys [len] :as car}]
+(defn add-to-lane [{:keys [lane state] :as entity} {:keys [id len] :as car} d-fn]
   (let [street-len (:street.lane.install/length lane)]
-    (assoc entity :state (conj state (assoc car :front (- street-len len))))))
+    (assoc entity
+      :state (conj state (assoc car
+                           :front (- street-len len)
+                           :dst (d-fn id lane))))))
 
 (defn advance-cars-in-lane [{:keys [state] :as entity}]
   (assoc entity :state (r/reduce (partial advance 1 state) [] state)))
 
-(defn ch->lane [{:keys [channel state] :as entity}]
+(defn ch->lane [{:keys [channel state] :as entity} d-fn]
   (if-not (zero? (.size channel))
-    (add-to-lane entity (take-from-channel channel))
+    (add-to-lane entity (take-from-channel channel) d-fn)
     entity))
 
 (defn mark-ripe [{:keys [state] :as entity}]
@@ -64,22 +67,22 @@
     (or (not tail-car)
         (>= (- (:len lane) (back-of-car tail-car)) (:len car)))))
 
-(defn harvest-ingress-lane [{:keys [lane state] :as entity} directions-index elane-snapshot safe?]
+(defn harvest-ingress-lane [{:keys [lane state] :as entity} d-fn elane-snapshot safe?]
   (let [[head-car & more] state
         id (lane-id lane)]
-    (if (and (:ripe? head-car) (safe? id (directions-index (:id head-car) id)))
-      (let [out-lane (directions-index (:id head-car) id)
+    (if (and (:ripe? head-car) (safe? id (d-fn (:id head-car) id)))
+      (let [out-lane (d-fn (:id head-car) id)
             ch (:channel (elane-snapshot out-lane))]
         (when-not (nil? ch)
-          (put-into-ch ch (dissoc head-car :ripe? :front)))
+          (put-into-ch ch (dissoc head-car :ripe? :front :dst)))
         (assoc entity :state (or more [])))
       entity)))
 
-(defn harvest-egress-lane [{:keys [lane state] :as entity} directions-index lane-index]
+(defn harvest-egress-lane [{:keys [lane state] :as entity} d-fn lane-index]
   (let [[head-car & more] state]
     (if (:ripe? head-car)
       (let [id (lane-id lane)
-            in-lane (directions-index (:id head-car) id)]
+            in-lane (d-fn (:id head-car) id)]
         (if (room-in-lane? in-lane head-car)
           (let [ch (:channel (lane-index in-lane))]
             (if-not (nil? ch)

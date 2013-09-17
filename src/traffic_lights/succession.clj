@@ -6,14 +6,14 @@
   (->> old-i-lanes
        (maph q/mark-ripe)
        (maph q/advance-cars-in-lane)
-       (maph q/ch->lane)
+       (maph #(q/ch->lane % d-fn))
        (maph #(q/harvest-ingress-lane % d-fn old-e-lanes s-fn))))
 
 (defn transform-egress-lanes [old-lanes d-fn]
   (->> old-lanes
        (maph q/mark-ripe)
        (maph q/advance-cars-in-lane)
-       (maph q/ch->lane)
+       (maph #(q/ch->lane % d-fn))
        (maph #(q/harvest-egress-lane % d-fn old-lanes))))
 
 (defn transform-lights [old-lights]

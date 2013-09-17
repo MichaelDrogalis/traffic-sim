@@ -1,5 +1,6 @@
 (ns traffic-lights.scenarios.scenario-06-test
-  "Driving one car up south street taking a right on red."
+  "Driving one car up south street taking a right on red, yielding
+   to traffic from the west."
   (:require [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]
@@ -53,7 +54,7 @@
      :street.lane.install/ident ?a
      :street.lane.install/rules :right-only
      :street.lane.install/type :ingress
-     :street.lane.install/length 3
+     :street.lane.install/length 5
      :street.lane.install/light ?y
      :street.lane.install/substitute {?origini ?a
                                       ?righte ?B
@@ -77,17 +78,18 @@
      :street.lane.install/name "out"
      :street.lane.install/ident ?B
      :street.lane.install/type :egress
-     :street.lane.install/length 3}])
+     :street.lane.install/length 5}])
 
 (def storage (p/memory-storage schema))
 
 (def safety-fn (partial r/safe-to-go? storage))
 
-(defn dir-fn [id _]
-  {:intersection/of ["Maple Street" "Leaf Street"]
-   :street/name "Leaf Street"
-   :street/tag "east"
-   :street.lane.install/name "out"})
+(def dir-fn
+  (constantly
+   {:intersection/of ["Maple Street" "Leaf Street"]
+    :street/name "Leaf Street"
+    :street/tag "east"
+    :street.lane.install/name "out"}))
 
 (def t-fn (transform-world-fn dir-fn safety-fn))
 
@@ -111,18 +113,18 @@
    :street/tag "west"
    :street.lane.install/name "in"})
 
-(def west-out
+(def east-out
   {:intersection/of ["Maple Street" "Leaf Street"]
    :street/name "Leaf Street"
    :street/tag "east"
-   :street.lane.install/name "in"})
+   :street.lane.install/name "out"})
 
 (q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
 
 (q/put-into-ch (:channel (get ingress-lanes west-in)) {:id "Kristen" :len 1 :buf 0})
 
 (def iterations
-  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 21)))
+  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 20)))
 
 (defn find-lane [target lanes]
   (first (filter (fn [x] (= (lane-id (:lane x)) target)) lanes)))
@@ -130,15 +132,40 @@
 (def ingress-south-iterations
   (map (comp (partial find-lane south-in) vals) (map :ingress iterations)))
 
-(def ingress-north-iterations
-  (map (comp (partial find-lane north-in) vals) (map :ingress iterations)))
+(def ingress-west-iterations
+  (map (comp (partial find-lane west-in) vals) (map :ingress iterations)))
 
-(def egress-south-iterations
-  (map (comp (partial find-lane south-out) vals) (map :egress iterations)))
-
-(def egress-west-iterations
-  (map (comp (partial find-lane west-out) vals) (map :egress iterations)))
+(def egress-east-iterations
+  (map (comp (partial find-lane east-out) vals) (map :egress iterations)))
 
 (def light-iterations
   (map (comp :state first vals) (map :lights iterations)))
+
+(fact (:state (nth ingress-south-iterations 1))
+      => [{:id "Mike" :len 1 :buf 0 :front 4 :dst east-out}])
+
+(fact (:state (nth ingress-west-iterations 1))
+      => [{:id "Kristen" :len 1 :buf 0 :front 4 :dst east-out}])
+
+(fact (:state (nth ingress-south-iterations 5))
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst east-out :ripe? false}])
+
+(fact (:state (nth ingress-west-iterations 5))
+      => [{:id "Kristen" :len 1 :buf 0 :front 0 :dst east-out :ripe? false}])
+
+(fact (:state (nth ingress-west-iterations 6))
+      => [])
+
+(fact (:state (nth egress-east-iterations 6))
+      => [{:id "Kristen" :len 1 :buf 0 :front 4 :dst east-out}])
+
+(fact (:state (nth ingress-south-iterations 6))
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst east-out :ripe? true}])
+
+(fact (:state (nth ingress-south-iterations 7))
+      => [])
+
+(fact (:state (nth egress-east-iterations 7))
+      => [{:id "Kristen" :len 1 :buf 0 :front 3 :dst east-out :ripe? false}
+          {:id "Mike" :len 1 :buf 0 :front 4 :dst east-out}])
 

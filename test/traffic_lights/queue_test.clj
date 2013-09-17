@@ -73,11 +73,12 @@
 (let [light {:state 0 :fns [inc dec]}]
   (fact (next-light-state light) => {:state 1 :fns [dec inc]}))
 
-(fact (add-to-lane {:state [] :lane {:street.lane.install/length 10}} {:len 5})
-      => {:state [{:front 5 :len 5}] :lane {:street.lane.install/length 10}})
+(fact (add-to-lane
+       {:state [] :lane {:street.lane.install/length 10}} {:len 5} (constantly "dst"))
+      => {:state [{:front 5 :len 5 :dst "dst"}] :lane {:street.lane.install/length 10}})
 
-(fact (add-to-lane {:state [] :lane {:street.lane.install/length 10}} {:len 1})
-      => {:state [{:front 9 :len 1}] :lane {:street.lane.install/length 10}})
+(fact (add-to-lane {:state [] :lane {:street.lane.install/length 10}} {:len 1} (constantly "dst"))
+      => {:state [{:front 9 :len 1 :dst "dst"}] :lane {:street.lane.install/length 10}})
 
 (fact (mark-ripe {:state []}) => {:state []})
 
