@@ -20,3 +20,6 @@
 (defn index-by-lane-id [x]
   {(lane-id x) x})
 
+(defn find-lane [target lanes]
+  (first (filter (fn [x] (= (lane-id (:lane x)) target)) lanes)))
+

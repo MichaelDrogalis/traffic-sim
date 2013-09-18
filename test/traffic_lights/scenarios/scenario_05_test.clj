@@ -152,17 +152,14 @@
 (def iterations
   (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 21)))
 
-(defn find-lane [target lanes]
-  (first (filter (fn [x] (= (lane-id (:lane x)) target)) lanes)))
-
 (def ingress-south-iterations
-  (map (comp (partial find-lane south-in) vals) (map :ingress iterations)))
+  (map (comp (partial u/find-lane south-in) vals) (map :ingress iterations)))
 
 (def ingress-north-iterations
-  (map (comp (partial find-lane north-in) vals) (map :ingress iterations)))
+  (map (comp (partial u/find-lane north-in) vals) (map :ingress iterations)))
 
 (def egress-south-iterations
-  (map (comp (partial find-lane south-out) vals) (map :egress iterations)))
+  (map (comp (partial u/find-lane south-out) vals) (map :egress iterations)))
 
 (def egress-west-iterations
   (map (comp (partial find-lane west-out) vals) (map :egress iterations)))
@@ -171,48 +168,48 @@
   (map (comp :state first vals) (map :lights iterations)))
 
 (fact (:state (nth ingress-south-iterations 1))
-      => [{:id "Mike" :len 1 :buf 0 :front 2}])
+      => [{:id "Mike" :len 1 :buf 0 :front 2 :dst west-out}])
 
 (fact (:state (nth ingress-south-iterations 2))
-      => [{:id "Mike" :len 1 :buf 0 :front 1 :ripe? false}])
+      => [{:id "Mike" :len 1 :buf 0 :front 1 :dst west-out :ripe? false}])
 
 (fact (:state (nth ingress-south-iterations 3))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst west-out :ripe? false}])
 
 (fact (:state (nth ingress-south-iterations 4))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst west-out :ripe? true}])
 
 (fact (:state (nth ingress-south-iterations 5))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst west-out :ripe? true}])
 
 (fact ('?y (nth light-iterations 6)) => [:red])
 
 (fact (:state (nth ingress-south-iterations 6))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst west-out :ripe? true}])
 
 (fact (:state (nth ingress-north-iterations 6))
-      => [{:id "Kristen" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Kristen" :len 1 :buf 0 :front 0 :dst south-out :ripe? true}])
 
 (fact ('?y (nth light-iterations 7)) => [:green])
 
 (fact (:state (nth ingress-south-iterations 7))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst west-out :ripe? true}])
 
 (fact (:state (nth ingress-north-iterations 7))
-      => [{:id "Kristen" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Kristen" :len 1 :buf 0 :front 0 :dst south-out :ripe? true}])
 
 (fact (:state (nth ingress-north-iterations 8))
       => [])
 
 (fact (:state (nth egress-south-iterations 8))
-      => [{:id "Kristen" :len 1 :buf 0 :front 2}])
+      => [{:id "Kristen" :len 1 :buf 0 :dst south-out :front 2}])
 
 (fact (:state (nth ingress-south-iterations 8))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst west-out :ripe? true}])
 
 (fact (:state (nth ingress-south-iterations 9))
       => [])
 
 (fact (:state (nth egress-west-iterations 9))
-      => [{:id "Mike" :len 1 :buf 0 :front 2}])
+      => [{:id "Mike" :len 1 :buf 0 :dst west-out :front 2}])
 

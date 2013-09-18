@@ -144,14 +144,14 @@
   (map (comp (partial find-lane west-out) vals) (map :egress iterations)))
 
 (fact (:state (nth ingress-south-iterations 1))
-      => [{:id "Mike" :len 1 :buf 0 :front 9}])
+      => [{:id "Mike" :len 1 :buf 0 :dst west-out :front 9}])
 
 (fact (:state (nth ingress-south-iterations 10))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
+      => [{:id "Mike" :len 1 :buf 0 :dst west-out :front 0 :ripe? false}])
 
 (fact (:state (nth ingress-south-iterations 11))
       => [])
 
 (fact (:state (nth egress-west-iterations 11))
-      => [{:id "Mike" :len 1 :buf 0 :front 9}])
+      => [{:id "Mike" :len 1 :buf 0 :dst west-out :front 9}])
 

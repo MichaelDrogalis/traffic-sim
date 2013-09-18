@@ -126,17 +126,14 @@
 (def iterations
   (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 20)))
 
-(defn find-lane [target lanes]
-  (first (filter (fn [x] (= (lane-id (:lane x)) target)) lanes)))
-
 (def ingress-south-iterations
-  (map (comp (partial find-lane south-in) vals) (map :ingress iterations)))
+  (map (comp (partial u/find-lane south-in) vals) (map :ingress iterations)))
 
 (def ingress-west-iterations
-  (map (comp (partial find-lane west-in) vals) (map :ingress iterations)))
+  (map (comp (partial u/find-lane west-in) vals) (map :ingress iterations)))
 
 (def egress-east-iterations
-  (map (comp (partial find-lane east-out) vals) (map :egress iterations)))
+  (map (comp (partial u/find-lane east-out) vals) (map :egress iterations)))
 
 (def light-iterations
   (map (comp :state first vals) (map :lights iterations)))

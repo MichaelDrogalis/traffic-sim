@@ -119,42 +119,48 @@
    :street/tag "south"
    :street.lane.install/name "in"})
 
+(def north-out
+  {:intersection/of ["Maple Street"]
+   :street/name "Maple Street"
+   :street/tag "north"
+   :street.lane.install/name "out"})
+
 (q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
 
 (def iterations
   (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 19)))
 
 (def ingress-iterations
-  (map (comp first vals) (map :ingress iterations)))
+  (map (comp (partial u/find-lane south-in) vals) (map :ingress iterations)))
 
 (def egress-iterations
-  (map (comp second vals) (map :egress iterations)))
+  (map (comp (partial u/find-lane north-out) vals) (map :egress iterations)))
 
 (def light-iterations
   (map (comp :state first vals) (map :lights iterations)))
 
 (fact (:state (nth ingress-iterations 1))
-      => [{:id "Mike" :len 1 :buf 0 :front 9}])
+      => [{:id "Mike" :len 1 :buf 0 :front 9 :dst north-out}])
 
 (fact ('?y (nth light-iterations 10)) => [:red])
 
 (fact (:state (nth ingress-iterations 10))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
 
 (fact ('?y (nth light-iterations 11)) => [:red])
 
 (fact (:state (nth ingress-iterations 11))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
+ => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
 
 (fact ('?y (nth light-iterations 17)) => [:red])
 
 (fact (:state (nth ingress-iterations 17))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
 
 (fact ('?y (nth light-iterations 18)) => [:green])
 
 (fact (:state (nth ingress-iterations 18))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
 
 (fact ('?y (nth light-iterations 19)) => [:yellow])
 
@@ -162,5 +168,5 @@
       => [])
 
 (fact (:state (nth egress-iterations 19))
-      => [{:id "Mike" :len 1 :buf 0 :front 9}])
+      => [{:id "Mike" :len 1 :buf 0 :dst north-out :front 9}])
 

@@ -115,6 +115,18 @@
    :street/tag "north"
    :street.lane.install/name "in"})
 
+(def south-out
+  {:intersection/of ["Maple Street"]
+   :street/name "Maple Street"
+   :street/tag "south"
+   :street.lane.install/name "out"})
+
+(def north-out
+  {:intersection/of ["Maple Street"]
+   :street/name "Maple Street"
+   :street/tag "north"
+   :street.lane.install/name "out"})
+
 (q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
 (q/put-into-ch (:channel (get ingress-lanes north-in)) {:id "Kristen" :len 1 :buf 0})
 
@@ -137,22 +149,22 @@
   (map (comp :state first vals) (map :lights iterations)))
 
 (fact (:state (nth ingress-south-iterations 1))
-      => [{:id "Mike" :len 1 :buf 0 :front 9}])
+      => [{:id "Mike" :len 1 :buf 0 :dst north-out :front 9}])
 
 (fact (:state (nth ingress-north-iterations 1))
-      => [{:id "Kristen" :len 1 :buf 0 :front 9}])
+      => [{:id "Kristen" :len 1 :buf 0 :dst south-out :front 9}])
 
 (fact (:state (nth ingress-south-iterations 9))
-      => [{:id "Mike" :len 1 :buf 0 :front 1 :ripe? false}])
+      => [{:id "Mike" :len 1 :buf 0 :front 1 :dst north-out :ripe? false}])
 
 (fact (:state (nth ingress-north-iterations 9))
-      => [{:id "Kristen" :len 1 :buf 0 :front 1 :ripe? false}])
+      => [{:id "Kristen" :len 1 :buf 0 :front 1 :dst south-out :ripe? false}])
 
 (fact (:state (nth ingress-south-iterations 10))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
 
 (fact (:state (nth ingress-north-iterations 10))
-      => [{:id "Kristen" :len 1 :buf 0 :front 0 :ripe? false}])
+      => [{:id "Kristen" :len 1 :buf 0 :front 0 :dst south-out :ripe? false}])
 
 (fact (:state (nth ingress-south-iterations 11))
       => [])
@@ -161,16 +173,16 @@
       => [])
 
 (fact (:state (nth egress-south-iterations 11))
-      => [{:id "Kristen" :len 1 :buf 0 :front 9}])
+      => [{:id "Kristen" :len 1 :buf 0 :dst south-out :front 9}])
 
 (fact (:state (nth egress-north-iterations 11))
-      => [{:id "Mike" :len 1 :buf 0 :front 9}])
+      => [{:id "Mike" :len 1 :buf 0 :front 9 :dst north-out}])
 
 (fact (:state (nth egress-south-iterations 20))
-      => [{:id "Kristen" :len 1 :buf 0 :front 0 :ripe? false}])
+      => [{:id "Kristen" :len 1 :buf 0 :front 0 :dst south-out :ripe? false}])
 
 (fact (:state (nth egress-north-iterations 20))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false}])
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
 
 (fact (:state (nth egress-south-iterations 21))
       => [])
