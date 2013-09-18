@@ -96,8 +96,9 @@
   (filter #(contains? % :light-face/init) schema))
 
 (defn var->lane-index [schema intx]
-  (group-by :street.lane.install/ident
-            (filter #(= intx (:intersection/of %)) (lane-index schema))))
+  (fmap first
+        (group-by :street.lane.install/ident
+                  (filter #(= intx (:intersection/of %)) (lane-index schema)))))
 
 (defn find-intersection [vtable intersection]
   (first (filter #(= (get % :intersection/ident) intersection) vtable)))

@@ -5,7 +5,6 @@
             [traffic-lights.protocols :as p]
             [traffic-lights.util :refer [getx lane-id] :as u]))
 
-
 (defn find-dst [directions-catalog]
   (fn [id src]
     (:directions/dst (first (filter #(and (= (:directions/for %) id)
@@ -14,16 +13,16 @@
 
 (defn lane-clear?
   ([lane-idx src]
-     (empty? (:state (lane-idx (lane-id (first src))))))
+     (empty? (:state (lane-idx (lane-id src)))))
   ([lane-idx src dst]
-     (let [head-car (first (:state (lane-idx (lane-id (first src)))))]
-       (not= (:dst head-car) (lane-id (first dst))))))
+     (let [head-car (first (:state (lane-idx (lane-id src))))]
+       (not= (:dst head-car) (lane-id dst)))))
 
 (defn matches-src? [target-src rule]
-  (= (lane-id (lane-id (first (:src rule)))) target-src))
+  (= (lane-id (lane-id (:src rule))) target-src))
 
 (defn matches-dst? [target-dst rule]
-  (= (lane-id (lane-id (first (:dst rule)))) target-dst))
+  (= (lane-id (lane-id (:dst rule))) target-dst))
 
 (defn matches-light? [light-state rule]
   (subset? light-state (into #{} (:light rule))))
