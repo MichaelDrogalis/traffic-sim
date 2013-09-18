@@ -162,7 +162,7 @@
   (map (comp (partial u/find-lane south-out) vals) (map :egress iterations)))
 
 (def egress-west-iterations
-  (map (comp (partial find-lane west-out) vals) (map :egress iterations)))
+  (map (comp (partial u/find-lane west-out) vals) (map :egress iterations)))
 
 (def light-iterations
   (map (comp :state first vals) (map :lights iterations)))
