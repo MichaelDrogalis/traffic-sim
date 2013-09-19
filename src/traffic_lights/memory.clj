@@ -2,7 +2,7 @@
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]
-            [traffic-lights.util :refer [getx]]))
+            [traffic-lights.util :refer [getx only]]))
 
 (defn resolve-schedule [intersection]
   (:intersection.install/schedule intersection))
@@ -66,7 +66,7 @@
   (map (partial resolve-binder vtable) binders))
 
 (defn find-rule-by-binder [rule-index binder]
-  (first (filter #(= (:lane.rules/register binder) (:rule/ident %)) rule-index)))
+  (only (filter #(= (:lane.rules/register binder) (:rule/ident %)) rule-index)))
 
 (defn intersection-registration-index [schema]
   (filter #(contains? % :intersection/ident) schema))
@@ -96,15 +96,15 @@
   (filter #(contains? % :light-face/init) schema))
 
 (defn var->lane-index [schema intx]
-  (fmap first
+  (fmap only
         (group-by :street.lane.install/ident
                   (filter #(= intx (:intersection/of %)) (lane-index schema)))))
 
 (defn find-intersection [vtable intersection]
-  (first (filter #(= (get % :intersection/ident) intersection) vtable)))
+  (only (filter #(= (get % :intersection/ident) intersection) vtable)))
 
 (defn find-lane [vtable lane-id]
-  (first
+  (only
    (filter #(and (= (resolve-intersection %) (resolve-intersection lane-id))
                  (= (resolve-street-name %)  (resolve-street-name lane-id))
                  (= (resolve-tag %)          (resolve-tag lane-id))
@@ -112,13 +112,13 @@
            vtable)))
 
 (defn find-rule [vtable rule]
-  (first (filter #(= (get % :rule/ident) rule) vtable)))
+  (only (filter #(= (get % :rule/ident) rule) vtable)))
 
 (defn find-light-init [vtable light]
-  (first (filter #(= (get % :light-face/ident) light) vtable)))
+  (only (filter #(= (get % :light-face/ident) light) vtable)))
 
 (defn find-light-template [vtable schedule]
-  (first (filter #(= (get % :schedule/ident) schedule) vtable)))
+  (only (filter #(= (get % :schedule/ident) schedule) vtable)))
 
 (defn match-binders [vtable binder]
   (filter #(= binder (:lane.rules/of %)) vtable))
