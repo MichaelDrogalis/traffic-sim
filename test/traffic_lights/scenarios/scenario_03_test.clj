@@ -184,9 +184,3 @@
 (fact (:state (nth egress-north-iterations 20))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
 
-(fact (:state (nth egress-south-iterations 21))
-      => [])
-
-(fact (:state (nth egress-north-iterations 21))
-      => [])
-
