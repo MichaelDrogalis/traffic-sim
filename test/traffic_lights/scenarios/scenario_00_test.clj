@@ -82,7 +82,7 @@
 
 (def storage (p/memory-storage schema))
 
-(def safety-fn (partial r/safe-to-go? storage))
+(def safety-fn (r/safe-to-go? storage))
 
 (def dir-fn
   (constantly

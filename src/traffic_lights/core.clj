@@ -25,7 +25,7 @@
 
 (def dir-fn (d/find-dst directions))
 
-(def safety-fn (partial r/safe-to-go? storage))
+(def safety-fn (r/safe-to-go? storage))
 
 (def transform-world (s/transform-world-fn dir-fn safety-fn))
 

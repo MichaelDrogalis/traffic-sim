@@ -80,7 +80,7 @@
 
 (def storage (p/memory-storage schema))
 
-(def safety-fn (partial r/safe-to-go? storage))
+(def safety-fn (r/safe-to-go? storage))
 
 (defn dir-fn [id _]
   (if (= id "Mike")
