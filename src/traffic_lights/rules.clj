@@ -8,8 +8,8 @@
 (defn find-dst [directions-catalog]
   (fn [id src]
     (:directions/dst (only (filter #(and (= (:directions/for %) id)
-                                          (= (:directions/src %) src))
-                                    directions-catalog)))))
+                                         (= (:directions/src %) src))
+                                   directions-catalog)))))
 
 (defn lane-clear?
   ([lane-idx src]

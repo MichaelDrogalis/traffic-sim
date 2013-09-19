@@ -15,7 +15,7 @@
   (assert (not (next coll)))
   (if-let [result (first coll)]
     result
-        (assert false)))
+    (assert false)))
 
 (defn maph [f coll & args]
   (into {} (r/reduce (fn [a k v] (conj a {k (apply f v args)})) [] coll)))
