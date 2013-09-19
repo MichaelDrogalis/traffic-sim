@@ -27,5 +27,5 @@
   {(quad x) x})
 
 (defn find-lane [target lanes]
-  (first (filter (fn [x] (= (quad (:lane x)) target)) lanes)))
+  (only (filter (fn [x] (= (quad (:lane x)) target)) lanes)))
 

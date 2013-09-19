@@ -5,12 +5,6 @@
             [traffic-lights.protocols :as p]
             [traffic-lights.util :refer [getx only quad] :as u]))
 
-(defn find-dst [directions-catalog]
-  (fn [id src]
-    (:directions/dst (only (filter #(and (= (:directions/for %) id)
-                                         (= (:directions/src %) src))
-                                   directions-catalog)))))
-
 (defn lane-clear?
   ([lane-idx src]
      (empty? (:state (lane-idx (quad src)))))

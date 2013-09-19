@@ -4,7 +4,7 @@
             [traffic-lights.succession :as s]
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
-            [traffic-lights.queue :as q]
+            [traffic-lights.directions :as d]
             [traffic-lights.util :refer [maph index-by-quad]]))
 
 (def intersections
@@ -23,7 +23,7 @@
 
 (def storage (p/memory-storage schema))
 
-(def dir-fn (r/find-dst directions))
+(def dir-fn (d/find-dst directions))
 
 (def safety-fn (partial r/safe-to-go? storage))
 
