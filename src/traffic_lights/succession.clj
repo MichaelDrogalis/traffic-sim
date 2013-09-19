@@ -20,9 +20,10 @@
 
 (defn transform-world-fn [d-fn s-fn]
   (fn [{:keys [lights egress ingress]}]
-    (let [pushed-ingress (transform-ingress-lanes ingress egress d-fn (partial s-fn ingress lights))
-          pushed-egress (transform-egress-lanes egress d-fn)]
-      {:lights (transform-lights lights)
-       :ingress (maph #(q/ch->lane % d-fn) pushed-ingress)
-       :egress (maph #(q/ch->lane % d-fn) pushed-egress)})))
+    (let [pulled-ingress (future (transform-ingress-lanes ingress egress d-fn (partial s-fn ingress lights)))
+          pulled-egress (future (transform-egress-lanes egress d-fn))
+          new-lights (future (transform-lights lights))]
+      {:lights  @new-lights
+       :ingress (maph #(q/ch->lane % d-fn) @pulled-ingress)
+       :egress  (maph #(q/ch->lane % d-fn) @pulled-egress)})))
 
