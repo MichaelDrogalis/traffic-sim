@@ -130,7 +130,7 @@
   (map (comp :state first vals) (map :lights iterations)))
 
 (fact (:state (nth ingress-iterations 1))
-      => [{:id "Mike" :len 1 :buf 0 :front 9 :dst north-out}])
+      => [{:id "Mike" :len 1 :buf 0 :dst north-out :front 9}])
 
 (fact (:state (nth ingress-iterations 2))
       => [{:id "Mike" :len 1 :buf 0 :front 8 :dst north-out :ripe? false}])

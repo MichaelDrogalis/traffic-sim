@@ -48,21 +48,14 @@
 (defn log! [idx]
   (pprint (maph :state idx)))
 
-(def n (atom 0))
-
 (defn genesis! [lights ingress egress t-fn]
-  (swap! n inc)
-;  (log! lights)
-;  (log! ingress)
-;  (log! egress)
+  (log! lights)
+  (log! ingress)
+  (log! egress)
   (let [successor (t-fn {:lights lights :ingress ingress :egress egress})]
     (recur (:lights successor) (:ingress successor) (:egress successor) t-fn)))
 
 ;(q/put-into-ch (:channel (second (second ingress-lanes))) {:id "Mike" :len 3 :buf 0})
 
-;(future (genesis! lights ingress-lanes egress-lanes transform-world))
-
-
-;@n
-
+;(genesis! lights ingress-lanes egress-lanes transform-world)
 
