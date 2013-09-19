@@ -20,15 +20,12 @@
 (defn maph [f coll & args]
   (into {} (r/reduce (fn [a k v] (conj a {k (apply f v args)})) [] coll)))
 
-(defn without-ident [x]
-  (dissoc x :street.lane.install/ident))
-
-(defn lane-id [lane]
+(defn quad [lane]
   (select-keys lane [:intersection/of :street/name :street/tag :street.lane.install/name]))
 
-(defn index-by-lane-id [x]
-  {(lane-id x) x})
+(defn index-by-quad [x]
+  {(quad x) x})
 
 (defn find-lane [target lanes]
-  (first (filter (fn [x] (= (lane-id (:lane x)) target)) lanes)))
+  (first (filter (fn [x] (= (quad (:lane x)) target)) lanes)))
 

@@ -5,7 +5,7 @@
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
             [traffic-lights.queue :as q]
-            [traffic-lights.util :refer [maph index-by-lane-id]]))
+            [traffic-lights.util :refer [maph index-by-quad]]))
 
 (def intersections
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))
@@ -29,21 +29,11 @@
 
 (def transform-world (s/transform-world-fn dir-fn safety-fn))
 
-(def lights (into {} (map (partial b/boot-light storage) (p/intersections storage))))
+(def lights (b/lights storage))
 
-(def ingress-lanes 
-  (->> storage
-       (p/ingress-lanes)
-       (map index-by-lane-id)
-       (into {})
-       (maph b/boot-lane)))
+(def ingress-lanes (b/ingress-lanes storage))
 
-(def egress-lanes
-  (->> storage
-       (p/egress-lanes)
-       (map index-by-lane-id)
-       (into {})
-       (maph b/boot-lane)))
+(def egress-lanes (b/egress-lanes storage))
 
 (defn log! [idx]
   (pprint (maph :state idx)))

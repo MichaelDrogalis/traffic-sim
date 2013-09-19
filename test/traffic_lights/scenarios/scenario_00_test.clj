@@ -4,8 +4,6 @@
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
-            [traffic-lights.queue :as q]
-            [traffic-lights.util :as u]
             [traffic-lights.succession :refer :all]))
 
 (def schema
@@ -95,7 +93,7 @@
 
 (def t-fn (transform-world-fn dir-fn safety-fn))
 
-(def lights (into {} (map (partial b/boot-light storage) (p/intersections storage))))
+(def lights (b/lights storage))
 
 (def ingress-lanes (b/ingress-lanes storage))
 

@@ -5,7 +5,7 @@
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
             [traffic-lights.queue :as q]
-            [traffic-lights.util :refer [lane-id] :as u]
+            [traffic-lights.util :as u]
             [traffic-lights.succession :refer :all]))
 
 (def schema
@@ -109,7 +109,7 @@
 
 (def t-fn (transform-world-fn dir-fn safety-fn))
 
-(def lights (into {} (map (partial b/boot-light storage) (p/intersections storage))))
+(def lights (b/lights storage))
 
 (def ingress-lanes (b/ingress-lanes storage))
 
@@ -134,14 +134,11 @@
 (def iterations
   (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 21)))
 
-(defn find-lane [target lanes]
-  (first (filter (fn [x] (= (lane-id (:lane x)) target)) lanes)))
-
 (def ingress-south-iterations
-  (map (comp (partial find-lane south-in) vals) (map :ingress iterations)))
+  (map (comp (partial u/find-lane south-in) vals) (map :ingress iterations)))
 
 (def egress-west-iterations
-  (map (comp (partial find-lane west-out) vals) (map :egress iterations)))
+  (map (comp (partial u/find-lane west-out) vals) (map :egress iterations)))
 
 (fact (:state (nth ingress-south-iterations 1))
       => [{:id "Mike" :len 1 :buf 0 :dst west-out :front 9}])

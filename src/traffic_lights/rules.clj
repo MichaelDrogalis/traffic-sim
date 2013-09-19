@@ -3,7 +3,7 @@
             [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]
             [traffic-lights.protocols :as p]
-            [traffic-lights.util :refer [getx only lane-id] :as u]))
+            [traffic-lights.util :refer [getx only quad] :as u]))
 
 (defn find-dst [directions-catalog]
   (fn [id src]
@@ -13,16 +13,16 @@
 
 (defn lane-clear?
   ([lane-idx src]
-     (empty? (:state (lane-idx (lane-id src)))))
+     (empty? (:state (lane-idx (quad src)))))
   ([lane-idx src dst]
-     (let [head-car (first (:state (lane-idx (lane-id src))))]
-       (not= (:dst head-car) (lane-id dst)))))
+     (let [head-car (first (:state (lane-idx (quad src))))]
+       (not= (:dst head-car) (quad dst)))))
 
 (defn matches-src? [target-src rule]
-  (= (lane-id (lane-id (:src rule))) target-src))
+  (= (quad (:src rule)) target-src))
 
 (defn matches-dst? [target-dst rule]
-  (= (lane-id (lane-id (:dst rule))) target-dst))
+  (= (quad (:dst rule)) target-dst))
 
 (defn matches-light? [light-state rule]
   (subset? light-state (into #{} (:light rule))))
@@ -32,7 +32,7 @@
 
 (defn safe-to-go? [storage old-lanes old-lights src dst]
   (let [lane-id (dissoc src :street.lane.install/type)
-        lane-idx (into {} (map u/index-by-lane-id (p/lanes storage)))
+        lane-idx (into {} (map u/index-by-quad (p/lanes storage)))
         intx (:intersection/of lane-id)
         face (:street.lane.install/light (lane-idx lane-id))
         light (getx (:state (old-lights intx)) face)

@@ -29,7 +29,7 @@
 (defn load-lanes [storage f]
   (->> storage
        (f)
-       (map u/index-by-lane-id)
+       (map u/index-by-quad)
        (into {})
        (maph boot-lane)))
 
@@ -38,4 +38,7 @@
 
 (defn egress-lanes [storage]
   (load-lanes storage p/egress-lanes))
+
+(defn lights [storage]
+  (into {} (map (partial boot-light storage) (p/intersections storage))))
 

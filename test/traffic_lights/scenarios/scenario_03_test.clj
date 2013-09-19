@@ -95,7 +95,7 @@
 
 (def t-fn (transform-world-fn dir-fn safety-fn))
 
-(def lights (into {} (map (partial b/boot-light storage) (p/intersections storage))))
+(def lights (b/lights storage))
 
 (def ingress-lanes (b/ingress-lanes storage))
 

@@ -95,21 +95,11 @@
 
 (def t-fn (transform-world-fn dir-fn safety-fn))
 
-(def lights (into {} (map (partial b/boot-light storage) (p/intersections storage))))
+(def lights (b/lights storage))
 
-(def ingress-lanes 
-  (->> storage
-       (p/ingress-lanes)
-       (map u/index-by-lane-id)
-       (into {})
-       (u/maph b/boot-lane)))
+(def ingress-lanes (b/ingress-lanes storage))
 
-(def egress-lanes
-  (->> storage
-       (p/egress-lanes)
-       (map u/index-by-lane-id)
-       (into {})
-       (u/maph b/boot-lane)))
+(def egress-lanes (b/egress-lanes storage))
 
 (def initial-world {:lights lights :ingress ingress-lanes :egress egress-lanes})
 

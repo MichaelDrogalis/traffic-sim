@@ -1,6 +1,6 @@
 (ns traffic-lights.queue
   (:require [clojure.core.reducers :as r]
-            [traffic-lights.util :refer [lane-id]]))
+            [traffic-lights.util :refer [quad]]))
 
 (defn light-transition->fns [{:keys [state-diff ticks]}]
   (map (fn [_] (fn [light] (merge light state-diff))) (range ticks)))
@@ -69,7 +69,7 @@
 
 (defn harvest-ingress-lane [{:keys [lane state] :as entity} d-fn elane-snapshot safe?]
   (let [[head-car & more] state
-        id (lane-id lane)]
+        id (quad lane)]
     (if (and (:ripe? head-car) (safe? id (d-fn (:id head-car) id)))
       (let [out-lane (d-fn (:id head-car) id)
             ch (:channel (elane-snapshot out-lane))]
@@ -81,7 +81,7 @@
 (defn harvest-egress-lane [{:keys [lane state] :as entity} d-fn lane-index]
   (let [[head-car & more] state]
     (if (:ripe? head-car)
-      (let [id (lane-id lane)
+      (let [id (quad lane)
             in-lane (d-fn (:id head-car) id)]
         (if (room-in-lane? in-lane head-car)
           (let [ch (:channel (lane-index in-lane))]
