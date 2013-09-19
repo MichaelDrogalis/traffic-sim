@@ -3,11 +3,11 @@
             [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]
             [traffic-lights.protocols :as p]
-            [traffic-lights.util :refer [getx lane-id] :as u]))
+            [traffic-lights.util :refer [getx only lane-id] :as u]))
 
 (defn find-dst [directions-catalog]
   (fn [id src]
-    (:directions/dst (first (filter #(and (= (:directions/for %) id)
+    (:directions/dst (only (filter #(and (= (:directions/for %) id)
                                           (= (:directions/src %) src))
                                     directions-catalog)))))
 

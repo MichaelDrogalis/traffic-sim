@@ -55,7 +55,3 @@
   (let [successor (t-fn {:lights lights :ingress ingress :egress egress})]
     (recur (:lights successor) (:ingress successor) (:egress successor) t-fn)))
 
-;(q/put-into-ch (:channel (second (second ingress-lanes))) {:id "Mike" :len 3 :buf 0})
-
-;(genesis! lights ingress-lanes egress-lanes transform-world)
-
