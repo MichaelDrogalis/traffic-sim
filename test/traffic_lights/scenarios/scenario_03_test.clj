@@ -134,16 +134,16 @@
   (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 21)))
 
 (def ingress-south-iterations
-  (map (comp first vals) (map :ingress iterations)))
+  (map (comp (partial u/find-lane south-in) vals) (map :ingress iterations)))
 
 (def ingress-north-iterations
-  (map (comp second vals) (map :ingress iterations)))
+  (map (comp (partial u/find-lane north-in) vals) (map :ingress iterations)))
 
 (def egress-south-iterations
-  (map (comp first vals) (map :egress iterations)))
+  (map (comp (partial u/find-lane south-out) vals) (map :egress iterations)))
 
 (def egress-north-iterations
-  (map (comp second vals) (map :egress iterations)))
+  (map (comp (partial u/find-lane north-out) vals) (map :egress iterations)))
 
 (def light-iterations
   (map (comp :state first vals) (map :lights iterations)))

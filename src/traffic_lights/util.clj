@@ -1,4 +1,5 @@
-(ns traffic-lights.util)
+(ns traffic-lights.util
+  (:require [clojure.core.reducers :as r]))
 
 (defn getx
   "Like two-argument get, but throws an exception if the key is not found."
@@ -17,7 +18,7 @@
         (assert false)))
 
 (defn maph [f coll & args]
-  (apply merge (map (fn [[k v]] {k (apply f v args)}) coll)))
+  (into {} (r/reduce (fn [a k v] (conj a {k (apply f v args)})) [] coll)))
 
 (defn without-ident [x]
   (dissoc x :street.lane.install/ident))
