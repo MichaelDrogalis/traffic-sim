@@ -22,8 +22,10 @@
   (fn [{:keys [lights egress ingress]}]
     (let [pulled-ingress (future (transform-ingress-lanes ingress egress d-fn (partial s-fn ingress lights)))
           pulled-egress (future (transform-egress-lanes egress d-fn))
-          new-lights (future (transform-lights lights))]
+          new-lights (future (transform-lights lights))
+          new-ingress @pulled-ingress
+          new-egress @pulled-egress]
       {:lights  @new-lights
-       :ingress (maph #(q/ch->lane % d-fn) @pulled-ingress)
-       :egress  (maph #(q/ch->lane % d-fn) @pulled-egress)})))
+       :ingress (maph #(q/ch->lane % d-fn) new-ingress)
+       :egress  (maph #(q/ch->lane % d-fn) new-egress)})))
 
