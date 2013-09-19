@@ -65,9 +65,6 @@
 (defn resolve-binders [binders vtable]
   (map (partial resolve-binder vtable) binders))
 
-(defn find-rule-by-binder [rule-index binder]
-  (only (filter #(= (:lane.rules/register binder) (:rule/ident %)) rule-index)))
-
 (defn intersection-registration-index [schema]
   (filter #(contains? % :intersection/ident) schema))
 
@@ -96,20 +93,34 @@
   (filter #(contains? % :light-face/init) schema))
 
 (defn var->lane-index [schema intx]
-  (fmap only
-        (group-by :street.lane.install/ident
-                  (filter #(= intx (:intersection/of %)) (lane-index schema)))))
+  (let [match-f #(= intx (resolve-intersection %))
+        matches (filter match-f (lane-index schema))]
+    (fmap only (group-by :street.lane.install/ident matches))))
 
 (defn find-intersection [vtable intersection]
-  (only (filter #(= (get % :intersection/ident) intersection) vtable)))
+  (only (filter #(= (resolve-intersection-id %) intersection) vtable)))
 
-(defn find-lane [vtable lane-id]
-  (only
-   (filter #(and (= (resolve-intersection %) (resolve-intersection lane-id))
-                 (= (resolve-street-name %)  (resolve-street-name lane-id))
-                 (= (resolve-tag %)          (resolve-tag lane-id))
-                 (= (resolve-lane-name %)    (resolve-lane-name lane-id)))
-           vtable)))
+(defn find-rule-by-binder [rule-index binder]
+  (only (filter #(= (:lane.rules/register binder) (:rule/ident %)) rule-index)))
+
+(defn matches-intersection? [quad candidate]
+  (= (resolve-intersection candidate) (resolve-intersection quad)))
+
+(defn matches-street-name? [quad candidate]
+  (= (resolve-street-name candidate) (resolve-street-name quad)))
+
+(defn matches-tag? [quad candidate]
+  (= (resolve-tag candidate) (resolve-tag quad)))
+
+(defn matches-lane-name? [quad candidate]
+  (= (resolve-lane-name candidate) (resolve-lane-name quad)))
+
+(defn find-lane [vtable quad]
+  (let [match-f (every-pred (partial matches-intersection? quad)
+                            (partial matches-street-name? quad)
+                            (partial matches-tag? quad)
+                            (partial matches-lane-name? quad))]
+    (only (filter match-f vtable))))
 
 (defn find-rule [vtable rule]
   (only (filter #(= (get % :rule/ident) rule) vtable)))
@@ -127,9 +138,9 @@
   (map #(find-rule rules (:lane.rules/register %)) binders))
 
 (defn resolve-rules [rule-index resolved-binders]
-  (map #(resolve-rule (:lane.rules/substitute %)
-                      (find-rule-by-binder rule-index %))
-       resolved-binders))
+  (let [resolution #(resolve-rule (:lane.rules/substitute %)
+                                  (find-rule-by-binder rule-index %))]    
+    (map resolution resolved-binders)))
 
 (defn resolve-light-init [vtable template]
   (fmap #(:light-face/init (find-light-init vtable %)) template))
