@@ -1,0 +1,117 @@
+[{:light-face/ident :standard
+  :light-face/halt [:red]
+  :light-face/proceed [:yellow :green]
+  :light-face/init [:red]}
+
+ {:schedule/ident :ring-schedule
+  :schedule/substitute {?x :standard}
+  :schedule/sequence [{:state-diff {?x [:green]} :ticks 1}]}
+
+ {:rule/ident :left
+  :src ?origini
+  :dst ?lefte
+  :light [:green :yellow]}
+
+ {:lane.rules/ident :left-only
+  :lane.rules/vars [?origini ?lefte]}
+
+ {:lane.rules/of :left-only
+  :lane.rules/register :left
+  :lane.rules/substitute {?origini ?origini ?lefte ?lefte}}
+
+;;; 10th & Chestnut
+
+ {:intersection/ident ["10th Street" "Chestnut Street"]
+  :intersection.install/schedule :ring-schedule}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :street/tag "north"
+  :street.lane.install/name "in"
+  :street.lane.install/length 20
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :left-only
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?a ?lefte ?B}}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "Chestnut Street"
+  :street/tag "east"
+  :street.lane.install/name "out"
+  :street.lane.install/length 20
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+
+;;; 9th & Chestnut
+ 
+ {:intersection/ident ["9th Street" "Chestnut Street"]
+  :intersection.install/schedule :ring-schedule}
+
+ {:intersection/of ["9th Street" "Chestnut Street"]
+  :street/name "Chestnut Street"
+  :street/tag "west"
+  :street.lane.install/name "in"
+  :street.lane.install/length 20
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :left-only
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?a ?lefte ?B}}
+
+ {:intersection/of ["9th Street" "Chestnut Street"]
+  :street/name "9th Street"
+  :street/tag "north"
+  :street.lane.install/name "out"
+  :street.lane.install/length 20
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+
+;;; 9th & Market
+ 
+ {:intersection/ident ["9th Street" "Market Street"]
+  :intersection.install/schedule :ring-schedule}
+
+ {:intersection/of ["9th Street" "Market Street"]
+  :street/name "9th Street"
+  :street/tag "south"
+  :street.lane.install/name "in"
+  :street.lane.install/length 20
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :left-only
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?a ?lefte ?B}}
+
+ {:intersection/of ["9th Street" "Chestnut Street"]
+  :street/name "Market Street"
+  :street/tag "west"
+  :street.lane.install/name "out"
+  :street.lane.install/length 20
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+
+;;; 10th & Market
+ 
+ {:intersection/ident ["10th Street" "Market Street"]
+  :intersection.install/schedule :ring-schedule}
+
+ {:intersection/of ["10th Street" "Market Street"]
+  :street/name "Market Street"
+  :street/tag "east"
+  :street.lane.install/name "in"
+  :street.lane.install/length 20
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :left-only
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?a ?lefte ?B}}
+
+ {:intersection/of ["10th Street" "Chestnut Street"]
+  :street/name "10th Street"
+  :street/tag "south"
+  :street.lane.install/name "out"
+  :street.lane.install/length 20
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}]
+
