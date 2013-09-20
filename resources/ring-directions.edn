@@ -73,7 +73,7 @@
                    :street/name "10th Street"
                    :street/tag "south"
                    :street.lane.install/name "out"}
-  :directions/dst {:intersection/of ["10th Street" "Market Street"]
+  :directions/dst {:intersection/of ["10th Street" "Chestnut Street"]
                    :street/name "10th Street"
                    :street/tag "north"
                    :street.lane.install/name "in"}}]

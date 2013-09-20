@@ -78,13 +78,13 @@
         (assoc entity :state (or more [])))
       entity)))
 
-(defn harvest-egress-lane [{:keys [lane state] :as entity} d-fn lane-index]
+(defn harvest-egress-lane [{:keys [lane state] :as entity} d-fn ilane-snapshot]
   (let [[head-car & more] state]
     (if (:ripe? head-car)
       (let [id (quad lane)
             in-lane (d-fn (:id head-car) id)]
         (if (room-in-lane? in-lane head-car)
-          (let [ch (:channel (lane-index in-lane))]
+          (let [ch (:channel (ilane-snapshot in-lane))]
             (if-not (nil? ch)
               (put-into-ch ch (dissoc head-car :ripe?))
               (prn head-car "is done driving."))
