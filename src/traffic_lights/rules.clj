@@ -1,7 +1,7 @@
 (ns traffic-lights.rules
   (:require [clojure.set :refer [subset?]]
             [traffic-lights.protocols :as p]
-            [traffic-lights.util :refer [getx only quad] :as u]))
+            [traffic-lights.util :refer [getx quad] :as u]))
 
 (defn lane-clear?
   ([lane-idx src]

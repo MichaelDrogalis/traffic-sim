@@ -83,7 +83,7 @@
   :street.lane.install/light ?x
   :street.lane.install/substitute {?origini ?a ?lefte ?B}}
 
- {:intersection/of ["9th Street" "Chestnut Street"]
+ {:intersection/of ["9th Street" "Market Street"]
   :street/name "Market Street"
   :street/tag "west"
   :street.lane.install/name "out"
@@ -107,7 +107,7 @@
   :street.lane.install/light ?x
   :street.lane.install/substitute {?origini ?a ?lefte ?B}}
 
- {:intersection/of ["10th Street" "Chestnut Street"]
+ {:intersection/of ["10th Street" "Market Street"]
   :street/name "10th Street"
   :street/tag "south"
   :street.lane.install/name "out"

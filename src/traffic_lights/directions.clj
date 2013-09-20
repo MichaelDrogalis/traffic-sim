@@ -1,5 +1,5 @@
 (ns traffic-lights.directions
-  (:require [traffic-lights.util :refer [only]]))
+  (:require [traffic-lights.util :refer [only quad]]))
 
 (defn matching-driver? [driver candidate]
   (= (:directions/for candidate) driver))
@@ -13,6 +13,6 @@
 
 (defn find-dst [d-catalog]
   (fn [id src]
-    (let [match-fn (partial matching-candidate? id src)]
+    (let [match-fn (partial matching-candidate? id (quad src))]
       (:directions/dst (only (filter match-fn d-catalog))))))
 
