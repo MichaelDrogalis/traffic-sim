@@ -8,7 +8,8 @@
   (= (:directions/src candidate) src))
 
 (defn matching-candidate? [id src candidate]
-  (and (matching-driver? id) (matching-src? src)))
+  (and (matching-driver? id candidate)
+       (matching-src? src candidate)))
 
 (defn find-dst [d-catalog]
   (fn [id src]
