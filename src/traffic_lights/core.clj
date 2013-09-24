@@ -5,7 +5,8 @@
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
             [traffic-lights.directions :as d]
-            [traffic-lights.util :refer [maph index-by-quad]]))
+            [traffic-lights.util :refer [maph index-by-quad]]
+            [traffic-lights.consumers.logger :as log]))
 
 (def intersections
   (read-string (slurp (clojure.java.io/resource "ring-schema.edn"))))
@@ -35,14 +36,15 @@
 
 (def egress-lanes (b/egress-lanes storage))
 
-(defn log! [idx]
-  (pprint (maph :state idx)))
+(def starting-state {:lights lights :ingress ingress-lanes :egress egress-lanes})
 
-(defn genesis! [lights ingress egress t-fn]
-  (log! ingress)
-  (log! egress)
-  (let [successor (t-fn {:lights lights :ingress ingress :egress egress})]
-    (recur (:lights successor) (:ingress successor) (:egress successor) t-fn)))
+(def queue (agent starting-state))
+
+(defn genesis! [snapshot t-fn queue]
+  (let [successor (t-fn snapshot)]
+    (send-off queue (constantly successor))
+    (Thread/sleep 5000)    
+    (recur successor t-fn queue)))
 
 (def chestnut-10-north-in
   {:intersection/of ["10th Street" "Chestnut Street"]
@@ -50,9 +52,11 @@
    :street/tag "north"
    :street.lane.install/name "in"})
 
+(log/watch-queue queue)
+
 (traffic-lights.queue/put-into-ch
  (:channel (get ingress-lanes chestnut-10-north-in))
  {:id "Mike" :len 1 :buf 0})
 
-(genesis! lights ingress-lanes egress-lanes transform-world)
+(genesis! starting-state transform-world queue)
 
