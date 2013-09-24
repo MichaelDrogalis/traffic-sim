@@ -8,11 +8,11 @@
        (maph q/advance-cars-in-lane)
        (maph #(q/harvest-ingress-lane % d-fn old-e-lanes s-fn))))
 
-(defn transform-egress-lanes [old-lanes d-fn]
-  (->> old-lanes
+(defn transform-egress-lanes [old-e-lanes old-i-lanes d-fn]
+  (->> old-e-lanes
        (maph q/mark-ripe)
        (maph q/advance-cars-in-lane)
-       (maph #(q/harvest-egress-lane % d-fn old-lanes))))
+       (maph #(q/harvest-egress-lane % d-fn old-i-lanes))))
 
 (defn transform-lights [old-lights]
   (->> old-lights
@@ -21,7 +21,7 @@
 (defn transform-world-fn [d-fn s-fn]
   (fn [{:keys [lights egress ingress]}]
     (let [pulled-ingress (future (transform-ingress-lanes ingress egress d-fn (partial s-fn ingress lights)))
-          pulled-egress (future (transform-egress-lanes egress d-fn))
+          pulled-egress (future (transform-egress-lanes egress ingress d-fn))
           new-lights (future (transform-lights lights))
           new-ingress @pulled-ingress
           new-egress @pulled-egress]
