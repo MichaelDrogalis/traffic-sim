@@ -6,7 +6,8 @@
             [traffic-lights.rules :as r]
             [traffic-lights.directions :as d]
             [traffic-lights.util :refer [maph index-by-quad]]
-            [traffic-lights.consumers.logger :as log]))
+            [traffic-lights.consumers.logger :as log]
+            [traffic-lights.consumers.socket :as socket]))
 
 (def intersections
   (read-string (slurp (clojure.java.io/resource "ring-schema.edn"))))
@@ -52,11 +53,13 @@
    :street/tag "north"
    :street.lane.install/name "in"})
 
-(log/watch-queue queue)
+;(log/watch-queue queue)
+
+(socket/watch-queue queue)
 
 (traffic-lights.queue/put-into-ch
- (:channel (get ingress-lanes chestnut-10-north-in))
- {:id "Mike" :len 1 :buf 0})
+   (:channel (get ingress-lanes chestnut-10-north-in))
+   {:id "Mike" :len 1 :buf 0})
 
 (genesis! starting-state transform-world queue)
 
