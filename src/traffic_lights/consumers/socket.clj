@@ -1,6 +1,6 @@
 (ns traffic-lights.consumers.socket
-  (:require [traffic-lights.util :refer [maph]]
-            [org.httpkit.server :refer [send! with-channel] :as s]))
+  (:require [traffic-lights.util :refer [maph]])
+  (:import [org.webbitserver WebServer WebServers WebSocketHandler]))
 
 (def listeners (atom #{}))
 
@@ -10,13 +10,8 @@
    :egress  (maph :state egress)})
 
 (defn push-to-clients [snapshot]
-  (doseq [client @listeners]
-    (send! client (pr-str (strip-snapshot snapshot)))))
-
-(defn handler [request]
-  (with-channel request channel
-    (s/on-close channel (fn [status] (println "channel closed: " status)))
-    (s/on-receive channel (fn [_] (swap! listeners conj channel)))))
+  (doseq [channel @listeners]
+    (.send channel (pr-str {:snapshot (strip-snapshot snapshot)}))))
 
 (defn watch-queue [queue]
   (add-watch
@@ -25,5 +20,11 @@
      (prn listeners)
      (push-to-clients snapshot))))
 
-(s/run-server handler {:port 9090})
+(doto (WebServers/createWebServer 9090)
+    (.add "/rush-hour/stream/edn"
+          (proxy [WebSocketHandler] []
+            (onOpen [chan] (swap! listeners conj chan))
+            (onClose [chan] (swap! listeners disj chan))
+            (onMessage [_])))
+    (.start))
 
