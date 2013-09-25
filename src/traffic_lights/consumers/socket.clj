@@ -21,7 +21,7 @@
      (push-to-clients snapshot))))
 
 (doto (WebServers/createWebServer 9090)
-    (.add "/rush-hour/stream/edn"
+    (.add "/rush-hour/streaming/edn"
           (proxy [WebSocketHandler] []
             (onOpen [chan] (swap! listeners conj chan))
             (onClose [chan] (swap! listeners disj chan))
