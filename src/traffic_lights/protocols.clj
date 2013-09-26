@@ -16,6 +16,9 @@
 (defprotocol IResolve
   (resolve-rules [this lane-id]))
 
+(defprotocol ILink
+  (links [this quad]))
+
 (deftype MemoryStorage [schema]
   ILight
   (initial-light [this intx] (m/resolve-initial-light schema intx))
@@ -30,7 +33,10 @@
   (egress-lanes [this] (m/egress-lane-index schema))
   
   IResolve
-  (resolve-rules [this lane-id] (m/resolve-all-rules schema lane-id)))
+  (resolve-rules [this lane-id] (m/resolve-all-rules schema lane-id))
+
+  ILink
+  (links [this quad] (m/match-links schema quad)))
 
 (defn memory-storage [schema]
   (MemoryStorage. schema))

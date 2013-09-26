@@ -80,6 +80,9 @@
 (defn egress-lane-index [schema]
   (filter #(= :egress (:street.lane.install/type %)) (lane-index schema)))
 
+(defn links-index [schema]
+  (filter #(contains? % :connection/src) schema))
+
 (defn binder-index [schema]
   (filter #(contains? % :lane.rules/of) schema))
 
@@ -136,6 +139,10 @@
 
 (defn match-rules [rules binders]
   (map #(find-rule rules (:lane.rules/register %)) binders))
+
+(defn match-links [schema quad]
+  (let [links (links-index schema)]
+    (map :connection/dst (filter #(= quad (:connection/src %)) links))))
 
 (defn resolve-rules [rule-index resolved-binders]
   (let [resolution #(resolve-rule (:lane.rules/substitute %)
