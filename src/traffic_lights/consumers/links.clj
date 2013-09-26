@@ -8,10 +8,13 @@
             [traffic-lights.core :refer [storage]]))
 
 (defroutes routes
-  (GET "/rush-hour/api/links" {:keys [params]}
-       (pr-str {:dsts (p/links storage (read-string (get params "src")))})))
+  (GET "/rush-hour/api/links/edn" {:keys [body]}
+       (pr-str {:dsts (p/links storage (read-string (slurp body)))}))
+  (GET "/rush-hour/api/reverse-links/edn" {:keys [body]}
+       (let [quad (read-string (slurp body))]
+         (pr-str {:srcs (p/reverse-links storage quad)}))))
 
-(def app (wrap-params routes))
+(def app (wrap-params #'routes))
 
 (defonce jetty (run-jetty #'app {:port 9091 :join? false}))
 
