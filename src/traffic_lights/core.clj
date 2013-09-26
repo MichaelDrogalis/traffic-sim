@@ -55,5 +55,5 @@
    (:channel (get ingress-lanes chestnut-10-north-in))
    {:id "Mike" :len 1 :buf 0})
 
-;;(genesis! starting-state transform-world queue)
+(future (genesis! starting-state transform-world queue))
 

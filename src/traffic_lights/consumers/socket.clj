@@ -15,7 +15,7 @@
     (.send channel (pr-str {:snapshot (strip-snapshot snapshot)}))))
 
 (add-watch
- queue :logger
+ queue :socket
  (fn [_ _ _ snapshot]
    (prn listeners)
    (push-to-clients snapshot)))
