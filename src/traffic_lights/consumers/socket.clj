@@ -1,5 +1,6 @@
 (ns traffic-lights.consumers.socket
-  (:require [traffic-lights.util :refer [maph]])
+  (:require [traffic-lights.util :refer [maph]]
+            [traffic-lights.core :refer [queue]])
   (:import [org.webbitserver WebServer WebServers WebSocketHandler]))
 
 (def listeners (atom #{}))
@@ -13,12 +14,11 @@
   (doseq [channel @listeners]
     (.send channel (pr-str {:snapshot (strip-snapshot snapshot)}))))
 
-(defn watch-queue [queue]
-  (add-watch
-   queue :logger
-   (fn [_ _ _ snapshot]
-     (prn listeners)
-     (push-to-clients snapshot))))
+(add-watch
+ queue :logger
+ (fn [_ _ _ snapshot]
+   (prn listeners)
+   (push-to-clients snapshot)))
 
 (doto (WebServers/createWebServer 9090)
     (.add "/rush-hour/streaming/edn"
