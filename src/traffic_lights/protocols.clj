@@ -17,7 +17,8 @@
   (resolve-rules [this lane-id]))
 
 (defprotocol ILink
-  (links [this quad]))
+  (links [this quad])
+  (reverse-links [this quad]))
 
 (deftype MemoryStorage [schema]
   ILight
@@ -36,7 +37,8 @@
   (resolve-rules [this lane-id] (m/resolve-all-rules schema lane-id))
 
   ILink
-  (links [this quad] (m/match-links schema quad)))
+  (links [this quad] (m/match-links schema quad))
+  (reverse-links [this quad] (m/match-reverse-links schema quad)))
 
 (defn memory-storage [schema]
   (MemoryStorage. schema))

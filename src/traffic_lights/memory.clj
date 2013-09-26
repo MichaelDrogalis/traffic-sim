@@ -144,6 +144,10 @@
   (let [links (links-index schema)]
     (map :connection/dst (filter #(= quad (:connection/src %)) links))))
 
+(defn match-reverse-links [schema quad]
+  (let [links (links-index schema)]
+    (map :connection/src (filter #(= quad (:connection/dst %)) links))))
+
 (defn resolve-rules [rule-index resolved-binders]
   (let [resolution #(resolve-rule (:lane.rules/substitute %)
                                   (find-rule-by-binder rule-index %))]    
