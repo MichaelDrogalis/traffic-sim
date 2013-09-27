@@ -2,79 +2,79 @@
   :directions/src {:intersection/of ["10th Street" "Chestnut Street"]
                    :street/name "10th Street"
                    :street/tag "north"
-                   :street.lane.install/name "in"}
+                   :lane/name "in"}
   :directions/dst {:intersection/of ["10th Street" "Chestnut Street"]
                    :street/name "Chestnut Street"
                    :street/tag "east"
-                   :street.lane.install/name "out"}}
+                   :lane/name "out"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["10th Street" "Chestnut Street"]
                    :street/name "Chestnut Street"
                    :street/tag "east"
-                   :street.lane.install/name "out"}
+                   :lane/name "out"}
   :directions/dst {:intersection/of ["9th Street" "Chestnut Street"]
                    :street/name "Chestnut Street"
                    :street/tag "west"
-                   :street.lane.install/name "in"}}
+                   :lane/name "in"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["9th Street" "Chestnut Street"]
                    :street/name "Chestnut Street"
                    :street/tag "west"
-                   :street.lane.install/name "in"}
+                   :lane/name "in"}
   :directions/dst {:intersection/of ["9th Street" "Chestnut Street"]
                    :street/name "9th Street"
                    :street/tag "north"
-                   :street.lane.install/name "out"}}
+                   :lane/name "out"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["9th Street" "Chestnut Street"]
                    :street/name "9th Street"
                    :street/tag "north"
-                   :street.lane.install/name "out"}
+                   :lane/name "out"}
   :directions/dst {:intersection/of ["9th Street" "Market Street"]
                    :street/name "9th Street"
                    :street/tag "south"
-                   :street.lane.install/name "in"}}
+                   :lane/name "in"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["9th Street" "Market Street"]
                    :street/name "9th Street"
                    :street/tag "south"
-                   :street.lane.install/name "in"}
+                   :lane/name "in"}
   :directions/dst {:intersection/of ["9th Street" "Market Street"]
                    :street/name "Market Street"
                    :street/tag "west"
-                   :street.lane.install/name "out"}}
+                   :lane/name "out"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["9th Street" "Market Street"]
                    :street/name "Market Street"
                    :street/tag "west"
-                   :street.lane.install/name "out"}
+                   :lane/name "out"}
   :directions/dst {:intersection/of ["10th Street" "Market Street"]
                    :street/name "Market Street"
                    :street/tag "east"
-                   :street.lane.install/name "in"}}
+                   :lane/name "in"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["10th Street" "Market Street"]
                    :street/name "Market Street"
                    :street/tag "east"
-                   :street.lane.install/name "in"}
+                   :lane/name "in"}
   :directions/dst {:intersection/of ["10th Street" "Market Street"]
                    :street/name "10th Street"
                    :street/tag "south"
-                   :street.lane.install/name "out"}}
+                   :lane/name "out"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["10th Street" "Market Street"]
                    :street/name "10th Street"
                    :street/tag "south"
-                   :street.lane.install/name "out"}
+                   :lane/name "out"}
   :directions/dst {:intersection/of ["10th Street" "Chestnut Street"]
                    :street/name "10th Street"
                    :street/tag "north"
-                   :street.lane.install/name "in"}}]
+                   :lane/name "in"}}]
 

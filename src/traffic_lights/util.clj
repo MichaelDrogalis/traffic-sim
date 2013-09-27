@@ -21,7 +21,7 @@
   (into {} (r/reduce (fn [a k v] (conj a {k (apply f v args)})) [] coll)))
 
 (defn quad [lane]
-  (select-keys lane [:intersection/of :street/name :street/tag :street.lane.install/name]))
+  (select-keys lane [:intersection/of :street/name :street/tag :lane/name]))
 
 (defn index-by-quad [x]
   {(quad x) x})

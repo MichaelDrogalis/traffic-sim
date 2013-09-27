@@ -2,29 +2,29 @@
   :directions/src {:intersection/of ["10th Street" "Chestnut Street"]
                    :street/name "10th Street"
                    :street/tag "south"
-                   :street.lane.install/name "in"}
+                   :lane/name "in"}
   :directions/dst {:intersection/of ["10th Street" "Chestnut Street"]
                    :street/name "10th Street"
                    :street/tag "north"
-                   :street.lane.install/name "out"}}
+                   :lane/name "out"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["10th Street" "Chestnut Street"]
                    :street/name "10th Street"
                    :street/tag "north"
-                   :street.lane.install/name "out"}
+                   :lane/name "out"}
   :directions/dst {:intersection/of ["10th Street" "Market Street"]
                    :street/name "10th Street"
                    :street/tag "south"
-                   :street.lane.install/name "in"}}
+                   :lane/name "in"}}
 
  {:directions/for "Mike"
   :directions/src {:intersection/of ["10th Street" "Market Street"]
                    :street/name "10th Street"
                    :street/tag "south"
-                   :street.lane.install/name "in"}
+                   :lane/name "in"}
   :directions/dst {:intersection/of ["10th Street" "Market Street"]
                    :street/name "10th Street"
                    :street/tag "north"
-                   :street.lane.install/name "out"}}]
+                   :lane/name "out"}}]
 

@@ -42,14 +42,14 @@
 (defn genesis! [snapshot t-fn queue]
   (let [successor (t-fn snapshot)]
     (send-off queue (constantly successor))
-    (Thread/sleep 200)
+    (Thread/sleep 3000)
     (recur successor t-fn queue)))
 
 (def chestnut-10-north-in
   {:intersection/of ["10th Street" "Chestnut Street"]
    :street/name "10th Street"
    :street/tag "north"
-   :street.lane.install/name "in"})
+   :lane/name "in"})
 
 (traffic-lights.queue/put-into-ch
    (:channel (get ingress-lanes chestnut-10-north-in))

@@ -62,7 +62,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "north"
-  :street.lane.install/name "in"
+  :lane/name "in"
   :street.lane.install/length 200
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
@@ -75,7 +75,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "north"
-  :street.lane.install/name "out"
+  :lane/name "out"
   :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
@@ -83,7 +83,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
   :street/tag "east"
-  :street.lane.install/name "in"
+  :lane/name "in"
   :street.lane.install/length 20
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
@@ -96,7 +96,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
   :street/tag "east"
-  :street.lane.install/name "out"
+  :lane/name "out"
   :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
@@ -104,7 +104,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "south"
-  :street.lane.install/name "in"
+  :lane/name "in"
   :street.lane.install/length 30
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
@@ -117,7 +117,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "10th Street"
   :street/tag "south"
-  :street.lane.install/name "out"
+  :lane/name "out"
   :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
@@ -125,7 +125,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
   :street/tag "west"
-  :street.lane.install/name "in"
+  :lane/name "in"
   :street.lane.install/length 20
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
@@ -138,7 +138,7 @@
  {:intersection/of ["10th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
   :street/tag "west"
-  :street.lane.install/name "out"
+  :lane/name "out"
   :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
@@ -151,7 +151,7 @@
  {:intersection/of ["10th Street" "Market Street"]
   :street/name "10th Street"
   :street/tag "north"
-  :street.lane.install/name "in"
+  :lane/name "in"
   :street.lane.install/length 200
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
@@ -164,7 +164,7 @@
  {:intersection/of ["10th Street" "Market Street"]
   :street/name "10th Street"
   :street/tag "north"
-  :street.lane.install/name "out"
+  :lane/name "out"
   :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
@@ -172,7 +172,7 @@
  {:intersection/of ["10th Street" "Market Street"]
   :street/name "Market Street"
   :street/tag "east"
-  :street.lane.install/name "in"
+  :lane/name "in"
   :street.lane.install/length 20
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
@@ -185,7 +185,7 @@
  {:intersection/of ["10th Street" "Market Street"]
   :street/name "Market Street"
   :street/tag "east"
-  :street.lane.install/name "out"
+  :lane/name "out"
   :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
@@ -193,7 +193,7 @@
  {:intersection/of ["10th Street" "Market Street"]
   :street/name "10th Street"
   :street/tag "south"
-  :street.lane.install/name "in"
+  :lane/name "in"
   :street.lane.install/length 30
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
@@ -206,7 +206,7 @@
  {:intersection/of ["10th Street" "Market Street"]
   :street/name "10th Street"
   :street/tag "south"
-  :street.lane.install/name "out"
+  :lane/name "out"
   :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
@@ -214,7 +214,7 @@
  {:intersection/of ["10th Street" "Market Street"]
   :street/name "Market Street"
   :street/tag "west"
-  :street.lane.install/name "in"
+  :lane/name "in"
   :street.lane.install/length 20
   :street.lane.install/type :ingress
   :street.lane.install/rules :shamrock
@@ -227,7 +227,7 @@
  {:intersection/of ["10th Street" "Market Street"]
   :street/name "Market Street"
   :street/tag "west"
-  :street.lane.install/name "out"
+  :lane/name "out"
   :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}]
