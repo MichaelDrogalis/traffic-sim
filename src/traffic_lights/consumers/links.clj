@@ -11,15 +11,9 @@
   (POST "/rush-hour/api/reverse-links/edn" {:keys [body]}
         (let [quad (read-string (slurp body))]
           (pr-str {:srcs (p/reverse-links storage quad)})))
-  (POST "/rush-hour/api/lengths/edn" {:keys [body]}
+  (POST "/rush-hour/api/expand-quad/edn" {:keys [body]}
         (let [quads (:quads (read-string (slurp body)))]
-          (pr-str
-           {:quads
-            (into {}
-                  (map
-                   (fn [x]
-                     {x (p/find-lane storage x)})
-                   quads))}))))
+          (pr-str {:quads (map (fn [x] {x (p/find-lane storage x)}) quads)}))))
 
 (def app (wrap-params #'routes))
 
