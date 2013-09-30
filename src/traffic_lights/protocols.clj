@@ -11,7 +11,8 @@
 (defprotocol ILane
   (lanes [this])
   (ingress-lanes [this])
-  (egress-lanes [this]))
+  (egress-lanes [this])
+  (find-lane [this quad]))
 
 (defprotocol IResolve
   (resolve-rules [this lane-id]))
@@ -32,6 +33,7 @@
   (lanes [this] (m/lane-index schema))
   (ingress-lanes [this] (m/ingress-lane-index schema))
   (egress-lanes [this] (m/egress-lane-index schema))
+  (find-lane [this quad] (m/find-lane schema quad))
   
   IResolve
   (resolve-rules [this lane-id] (m/resolve-all-rules schema lane-id))

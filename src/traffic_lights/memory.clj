@@ -29,7 +29,7 @@
   (:street/tag lane))
 
 (defn resolve-lane-name [lane]
-  (:street.lane.install/name lane))
+  (:lane/name lane))
 
 (defn resolve-rule-set-name [lane]
   (:street.lane.install/rules lane))
