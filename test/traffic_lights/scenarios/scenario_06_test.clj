@@ -50,7 +50,7 @@
     {:intersection/of ["Maple Street" "Leaf Street"]
      :street/name "Maple Street"
      :street/tag "south"
-     :street.lane.install/name "in"
+     :lane/name "in"
      :street.lane.install/ident ?a
      :street.lane.install/rules :right-only
      :street.lane.install/type :ingress
@@ -63,7 +63,7 @@
     {:intersection/of ["Maple Street" "Leaf Street"]
      :street/name "Leaf Street"
      :street/tag "west"
-     :street.lane.install/name "in"
+     :lane/name "in"
      :street.lane.install/ident ?c
      :street.lane.install/rules :no-turns
      :street.lane.install/type :ingress
@@ -75,7 +75,7 @@
     {:intersection/of ["Maple Street" "Leaf Street"]
      :street/name "Leaf Street"
      :street/tag "east"
-     :street.lane.install/name "out"
+     :lane/name "out"
      :street.lane.install/ident ?B
      :street.lane.install/type :egress
      :street.lane.install/length 5}])
@@ -89,7 +89,7 @@
    {:intersection/of ["Maple Street" "Leaf Street"]
     :street/name "Leaf Street"
     :street/tag "east"
-    :street.lane.install/name "out"}))
+    :lane/name "out"}))
 
 (def t-fn (transform-world-fn dir-fn safety-fn))
 
@@ -105,19 +105,19 @@
   {:intersection/of ["Maple Street" "Leaf Street"]
    :street/name "Maple Street"
    :street/tag "south"
-   :street.lane.install/name "in"})
+   :lane/name "in"})
 
 (def west-in
   {:intersection/of ["Maple Street" "Leaf Street"]
    :street/name "Leaf Street"
    :street/tag "west"
-   :street.lane.install/name "in"})
+   :lane/name "in"})
 
 (def east-out
   {:intersection/of ["Maple Street" "Leaf Street"]
    :street/name "Leaf Street"
    :street/tag "east"
-   :street.lane.install/name "out"})
+   :lane/name "out"})
 
 (q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
 
