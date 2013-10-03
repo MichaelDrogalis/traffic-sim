@@ -4,3 +4,5 @@
             [traffic-lights.consumers.socket]
             [traffic-lights.consumers.links]))
 
+(defn -main [& args])
+

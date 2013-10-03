@@ -11,5 +11,6 @@
                  [dire "0.4.4"]]
   :plugins [[lein-midje "3.1.1"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
-  :alias {"midje" ["with-profile" "dev" "midje"]})
+  :alias {"midje" ["with-profile" "dev" "midje"]}
+  :main traffic-lights.init)
 

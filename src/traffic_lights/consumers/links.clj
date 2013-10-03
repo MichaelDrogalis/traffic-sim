@@ -12,8 +12,8 @@
         (let [quad (read-string (slurp body))]
           (pr-str {:srcs (p/reverse-links storage quad)})))
   (POST "/rush-hour/api/expand-quad/edn" {:keys [body]}
-        (let [quads (:quads (read-string (slurp body)))]
-          (pr-str {:quads (map (fn [x] {x (p/find-lane storage x)}) quads)}))))
+        (let [quad (read-string (slurp body))]
+          (pr-str {:quad (p/find-lane storage quad)}))))
 
 (def app (wrap-params #'routes))
 
