@@ -2,7 +2,8 @@
   (:require [traffic-lights.util :refer [only quad]]))
 
 (defn matching-driver? [driver candidate]
-  (= (:directions/for candidate) driver))
+ ; (= (:directions/for candidate) driver)
+  true)
 
 (defn matching-src? [src candidate]
   (= (:directions/src candidate) src))
