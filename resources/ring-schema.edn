@@ -28,7 +28,7 @@
   :street/name "10th Street"
   :street/tag "north"
   :lane/name "in"
-  :street.lane.install/length 86
+  :street.lane.install/length 80
   :street.lane.install/type :ingress
   :street.lane.install/rules :left-only
   :street.lane.install/ident ?a
@@ -39,7 +39,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out"
-  :street.lane.install/length 68
+  :street.lane.install/length 60
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -52,7 +52,7 @@
   :street/name "Chestnut Street"
   :street/tag "west"
   :lane/name "in"
-  :street.lane.install/length 68
+  :street.lane.install/length 60
   :street.lane.install/type :ingress
   :street.lane.install/rules :left-only
   :street.lane.install/ident ?a
@@ -63,7 +63,7 @@
   :street/name "9th Street"
   :street/tag "north"
   :lane/name "out"
-  :street.lane.install/length 86
+  :street.lane.install/length 80
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -76,7 +76,7 @@
   :street/name "9th Street"
   :street/tag "south"
   :lane/name "in"
-  :street.lane.install/length 86
+  :street.lane.install/length 80
   :street.lane.install/type :ingress
   :street.lane.install/rules :left-only
   :street.lane.install/ident ?a
@@ -87,7 +87,7 @@
   :street/name "Market Street"
   :street/tag "west"
   :lane/name "out"
-  :street.lane.install/length 68
+  :street.lane.install/length 60
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -100,7 +100,7 @@
   :street/name "Market Street"
   :street/tag "east"
   :lane/name "in"
-  :street.lane.install/length 68
+  :street.lane.install/length 60
   :street.lane.install/type :ingress
   :street.lane.install/rules :left-only
   :street.lane.install/ident ?a
@@ -111,7 +111,7 @@
   :street/name "10th Street"
   :street/tag "south"
   :lane/name "out"
-  :street.lane.install/length 86
+  :street.lane.install/length 80
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}]
 

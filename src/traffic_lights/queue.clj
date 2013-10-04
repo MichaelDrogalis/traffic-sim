@@ -49,7 +49,7 @@
                            :dst (d-fn id lane))))))
 
 (defn advance-cars-in-lane [{:keys [state] :as entity}]
-  (assoc entity :state (r/reduce (partial advance 10 state) [] state)))
+  (assoc entity :state (r/reduce (partial advance 5 state) [] state)))
 
 (defn ch->lane [{:keys [channel state] :as entity} d-fn]
   (if-not (zero? (.size channel))
