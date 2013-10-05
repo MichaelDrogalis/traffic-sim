@@ -6,7 +6,7 @@
   (:import [java.util.concurrent LinkedBlockingQueue]))
 
 (defn boot-lane [id]
-  {:lane id :state [] :channel (LinkedBlockingQueue. 1)})
+  {:lane id :state [] :channel (LinkedBlockingQueue.)})
 
 (defn light-init-state [storage intx]
   {:diff (p/initial-light storage intx)

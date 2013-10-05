@@ -14,7 +14,7 @@
   (+ (:front car) (:len car)))
 
 (defn drive-forward [car speed]
-  (assert (>= (:front car) 0))
+;  (assert(>= (:front car) 0))
   (let [new-front (- (:front car) speed)]
     (assoc car :front (max new-front 0))))
 
@@ -34,11 +34,11 @@
     {:state (f state) :fns (conj (vec more) f)}))
 
 (defn put-into-ch [channel car]
-  (assert (zero? (.size channel)))
+;  (assert (zero? (.size channel)))
   (.put channel car))
 
 (defn take-from-channel [channel]
-  (assert (<= (.size channel) 1))
+;  (assert (<= (.size channel) 1))
   (.take channel))
 
 (defn add-to-lane [{:keys [lane state] :as entity} {:keys [id len] :as car} d-fn]

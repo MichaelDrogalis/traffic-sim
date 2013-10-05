@@ -58,12 +58,12 @@
    :lane/name "out"})
 
 (traffic-lights.queue/put-into-ch
-   (:channel (get ingress-lanes chestnut-10-north-in))
-   {:id "Mike" :len 1 :buf 0})
+ (:channel (get ingress-lanes chestnut-10-north-in))
+ {:id "Mike" :len 1 :buf 0})
 
 (traffic-lights.queue/put-into-ch
-   (:channel (get egress-lanes chestnut-10-east-out))
-   {:id "Dorrene" :len 1 :buf 0})
+ (:channel (get egress-lanes chestnut-10-east-out))
+ {:id "Dorrene" :len 1 :buf 0})
 
 (future (genesis! starting-state transform-world queue))
 
