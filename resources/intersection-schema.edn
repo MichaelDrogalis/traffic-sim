@@ -2,233 +2,99 @@
   :light-face/halt [:red]
   :light-face/proceed [:yellow :green]
   :light-face/init [:red]}
+  
+ {:rule/ident :left-only
+  :src ?origini
+  :dst ?lefte
+  :light [:green :yellow]}
 
- {:schedule/ident :shamrock-schedule
-  :schedule/substitute {?w :standard ?x :standard ?y :standard ?z :standard}
-  :schedule/sequence [{:state-diff {?x [:green] ?z [:green]} :ticks 8}
-                      {:state-diff {?x [:yellow] ?z [:yellow]} :ticks 3}
-                      {:state-diff {?x [:red] ?z [:red]} :ticks 3}
-                      {:state-diff {?w [:green]  ?y [:green]} :ticks 8}
-                      {:state-diff {?w [:yellow] ?y [:yellow]} :ticks 3}
-                      {:state-diff {?w [:red] ?y [:red]} :ticks 3}]}
-
- {:rule/ident :straight
+ {:rule/ident :straight-only
   :src ?origini
   :dst ?straighte
   :light [:green :yellow]}
 
- {:rule/ident :left
-  :src ?origini
-  :dst ?lefte
-  :yield [[?straighti]]
-  :light [:green :yellow]}
+ {:lane.rules/ident :left-only-set
+  :lane.rules/vars [?origini ?lefte]}
 
- {:rule/ident :right
-  :src ?origini
-  :dst ?righte
-  :light [:green :yellow]}
+ {:lane.rules/of :left-only-set
+  :lane.rules/register :left-only
+  :lane.rules/substitute {?origini ?origini ?lefte ?lefte}}
 
- {:rule/ident :right-on-red
-  :src ?origini
-  :dst ?righte
-  :yield [[?lefti ?righte]]
-  :light [:red]}
+ {:lane.rules/ident :straight-only-set
+  :lane.rules/vars [?origini ?straighte]}
 
- {:lane.rules/ident :shamrock
-  :lane.rules/vars [?origini ?origine ?lefti ?lefte ?righte ?straighte ?straighti]}
-
- {:lane.rules/of :shamrock
-  :lane.rules/register :straight
+ {:lane.rules/of :straight-only-set
+  :lane.rules/register :straight-only
   :lane.rules/substitute {?origini ?origini ?straighte ?straighte}}
+ 
+ ;;; Juniper and Walnut
 
- {:lane.rules/of :shamrock
-  :lane.rules/register :left
-  :lane.rules/substitute {?origini ?origini ?lefte ?lefte
-                          ?straighti ?straighti ?origine ?origine}}
+ {:schedule/ident :juniper-and-walnut
+  :schedule/substitute {?x :standard}
+  :schedule/sequence [{:state-diff {?x [:green]} :ticks 30}
+                      {:state-diff {?x [:yellow]} :ticks 3}
+                      {:state-diff {?x [:red]} :ticks 3}
+                      {:state-diff {?y [:green]} :ticks 20}
+                      {:state-diff {?y [:yellow]} :ticks 3}
+                      {:state-diff {?y [:red]} :ticks 3}]}
+  
+ {:intersection/ident ["Juniper Street" "Walnut Street"]
+  :intersection.install/schedule :juniper-and-walnut}
 
- {:lane.rules/of :shamrock
-  :lane.rules/register :right
-  :lane.rules/substitute {?origini ?origini ?righte ?righte}}
-
- {:lane.rules/of :shamrock
-  :lane.rules/register :right-on-red
-  :lane.rules/substitute {?origini ?origini ?righte ?righte ?lefti ?lefti}}
-
- ;;; 10th & Chestnut
-
- {:intersection/ident ["10th Street" "Chestnut Street"]
-  :intersection.install/schedule :shamrock-schedule}
-
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
-  :street/tag "north"
-  :lane/name "in"
-  :street.lane.install/length 200
-  :street.lane.install/type :ingress
-  :street.lane.install/rules :shamrock
-  :street.lane.install/ident ?a
-  :street.lane.install/light ?w
-  :street.lane.install/substitute {?origini ?a ?origine ?A
-                                   ?lefti ?b ?lefte ?B ?righte ?D
-                                   ?straighte ?C ?straighti ?c}}
-
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
-  :street/tag "north"
-  :lane/name "out"
-  :street.lane.install/length 20
-  :street.lane.install/type :egress
-  :street.lane.install/ident ?A}
-
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "Chestnut Street"
+ {:intersection/of ["Juniper Street" "Walnut Street"]
+  :street/name "Walnut Street"
   :street/tag "east"
-  :lane/name "in"
-  :street.lane.install/length 20
+  :lane/name "in-1"
+  :street.lane.install/length 35
   :street.lane.install/type :ingress
-  :street.lane.install/rules :shamrock
+  :street.lane.install/rules :left-only-set
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {}}
+
+ {:intersection/of ["Juniper Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "east"
+  :lane/name "in-2"
+  :street.lane.install/length 35
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?b
   :street.lane.install/light ?x
-  :street.lane.install/substitute {?origini ?b ?origine ?B
-                                   ?lefti ?c ?lefte ?C ?righte ?A
-                                   ?straighte ?D ?straighti ?d}}
+  :street.lane.install/substitute {}}
 
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "Chestnut Street"
+ {:intersection/of ["Juniper Street" "Walnut Street"]
+  :street/name "Walnut Street"
   :street/tag "east"
+  :lane/name "in-3"
+  :street.lane.install/length 35
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?c
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {}}
+
+ {:intersection/of ["Juniper Street" "Walnut Street"]
+  :street/name "Juniper Street"
+  :street/tag "south"
   :lane/name "out"
-  :street.lane.install/length 20
+  :street.lane.install/length 90
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?A}
+ 
+ {:intersection/of ["Juniper Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "west"
+  :lane/name "out-2"
+  :street.lane.install/length 50
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
-  :street/tag "south"
-  :lane/name "in"
-  :street.lane.install/length 30
-  :street.lane.install/type :ingress
-  :street.lane.install/rules :shamrock
-  :street.lane.install/ident ?c
-  :street.lane.install/light ?y
-  :street.lane.install/substitute {?origini ?c ?origine ?C
-                                   ?lefti ?d ?lefte ?D ?righte ?B
-                                   ?straighte ?A ?straighti ?a}}
-
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "10th Street"
-  :street/tag "south"
-  :lane/name "out"
-  :street.lane.install/length 20
-  :street.lane.install/type :egress
-  :street.lane.install/ident ?C}
-
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "Chestnut Street"
+ {:intersection/of ["Juniper Street" "Walnut Street"]
+  :street/name "Walnut Street"
   :street/tag "west"
-  :lane/name "in"
-  :street.lane.install/length 20
-  :street.lane.install/type :ingress
-  :street.lane.install/rules :shamrock
-  :street.lane.install/ident ?d
-  :street.lane.install/light ?z
-  :street.lane.install/substitute {?origini ?d ?origine ?D
-                                   ?lefti ?a ?lefte ?A ?righte ?C
-                                   ?straighte ?B ?straighti ?b}}
-
- {:intersection/of ["10th Street" "Chestnut Street"]
-  :street/name "Chestnut Street"
-  :street/tag "west"
-  :lane/name "out"
-  :street.lane.install/length 20
+  :lane/name "out-3"
+  :street.lane.install/length 50
   :street.lane.install/type :egress
-  :street.lane.install/ident ?D}
-
- ;;; 10th & Market
-
- {:intersection/ident ["10th Street" "Market Street"]
-  :intersection.install/schedule :shamrock-schedule}
-
- {:intersection/of ["10th Street" "Market Street"]
-  :street/name "10th Street"
-  :street/tag "north"
-  :lane/name "in"
-  :street.lane.install/length 200
-  :street.lane.install/type :ingress
-  :street.lane.install/rules :shamrock
-  :street.lane.install/ident ?a
-  :street.lane.install/light ?w
-  :street.lane.install/substitute {?origini ?a ?origine ?A
-                                   ?lefti ?b ?lefte ?B ?righte ?D
-                                   ?straighte ?C ?straighti ?c}}
-
- {:intersection/of ["10th Street" "Market Street"]
-  :street/name "10th Street"
-  :street/tag "north"
-  :lane/name "out"
-  :street.lane.install/length 20
-  :street.lane.install/type :egress
-  :street.lane.install/ident ?A}
-
- {:intersection/of ["10th Street" "Market Street"]
-  :street/name "Market Street"
-  :street/tag "east"
-  :lane/name "in"
-  :street.lane.install/length 20
-  :street.lane.install/type :ingress
-  :street.lane.install/rules :shamrock
-  :street.lane.install/ident ?b
-  :street.lane.install/light ?x
-  :street.lane.install/substitute {?origini ?b ?origine ?B
-                                   ?lefti ?c ?lefte ?C ?righte ?A
-                                   ?straighte ?D ?straighti ?d}}
- 
- {:intersection/of ["10th Street" "Market Street"]
-  :street/name "Market Street"
-  :street/tag "east"
-  :lane/name "out"
-  :street.lane.install/length 20
-  :street.lane.install/type :egress
-  :street.lane.install/ident ?B}
-
- {:intersection/of ["10th Street" "Market Street"]
-  :street/name "10th Street"
-  :street/tag "south"
-  :lane/name "in"
-  :street.lane.install/length 30
-  :street.lane.install/type :ingress
-  :street.lane.install/rules :shamrock
-  :street.lane.install/ident ?c
-  :street.lane.install/light ?y
-  :street.lane.install/substitute {?origini ?c ?origine ?C
-                                   ?lefti ?d ?lefte ?D ?righte ?B
-                                   ?straighte ?A ?straighti ?a}}
-
- {:intersection/of ["10th Street" "Market Street"]
-  :street/name "10th Street"
-  :street/tag "south"
-  :lane/name "out"
-  :street.lane.install/length 20
-  :street.lane.install/type :egress
-  :street.lane.install/ident ?C}
-
- {:intersection/of ["10th Street" "Market Street"]
-  :street/name "Market Street"
-  :street/tag "west"
-  :lane/name "in"
-  :street.lane.install/length 20
-  :street.lane.install/type :ingress
-  :street.lane.install/rules :shamrock
-  :street.lane.install/ident ?d
-  :street.lane.install/light ?z
-  :street.lane.install/substitute {?origini ?d ?origine ?D
-                                   ?lefti ?a ?lefte ?A ?righte ?C
-                                   ?straighte ?B ?straighti ?b}}
- 
- {:intersection/of ["10th Street" "Market Street"]
-  :street/name "Market Street"
-  :street/tag "west"
-  :lane/name "out"
-  :street.lane.install/length 20
-  :street.lane.install/type :egress
-  :street.lane.install/ident ?D}]
+  :street.lane.install/ident ?C}]
 
