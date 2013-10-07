@@ -34,7 +34,7 @@
   :lane.rules/register :left
   :lane.rules/substitute {?origini ?origini ?lefte ?lefte}}
 
-  {:lane.rules/ident :right-only-set
+ {:lane.rules/ident :right-only-set
   :lane.rules/vars [?origini ?righte]}
 
  {:lane.rules/of :right-only-set
@@ -69,7 +69,7 @@
 
 
  ;;; Juniper and Walnut
-  
+ 
  {:intersection/ident ["Juniper Street" "Walnut Street"]
   :intersection.install/schedule :walnut}
 
@@ -142,7 +142,7 @@
   :street.lane.install/ident ?C}
 
  ;;; 13th and Walnut
-  
+ 
  {:intersection/ident ["13th Street" "Walnut Street"]
   :intersection.install/schedule :walnut}
 
@@ -188,7 +188,7 @@
   :street.lane.install/rules :straight-or-left-set
   :street.lane.install/ident ?d
   :street.lane.install/light ?y
-  :street.lane.install/substitute {?origini ?a ?straighte ?C ?lefte ?A}}
+  :street.lane.install/substitute {?origini ?d ?straighte ?C ?lefte ?A}}
 
  {:intersection/of ["13th Street" "Walnut Street"]
   :street/name "13th Street"
@@ -199,7 +199,7 @@
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?e
   :street.lane.install/light ?y
-  :street.lane.install/substitute {?origini ?b ?straighte ?D}}
+  :street.lane.install/substitute {?origini ?e ?straighte ?D}}
  
  {:intersection/of ["13th Street" "Walnut Street"]
   :street/name "Walnut Street"
@@ -231,5 +231,101 @@
   :lane/name "out-2"
   :street.lane.install/length 74
   :street.lane.install/type :egress
-  :street.lane.install/ident ?D}]
+  :street.lane.install/ident ?D}
+
+ ;;; 12th and Walnut
+ 
+ {:intersection/ident ["12th Street" "Walnut Street"]
+  :intersection.install/schedule :walnut}
+
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "east"
+  :lane/name "in-1"
+  :street.lane.install/length 60
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :left-only-set
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?a ?lefte ?C}}
+
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "east"
+  :lane/name "in-2"
+  :street.lane.install/length 60
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?b
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?b ?straighte ?A}}
+
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "east"
+  :lane/name "in-3"
+  :street.lane.install/length 60
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?c
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?c ?straighte ?B}}
+
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "12th Street"
+  :street/tag "north"
+  :lane/name "in-1"
+  :street.lane.install/length 75
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set 
+  :street.lane.install/ident ?d
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?d ?straighte ?C}}
+
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "12th Street"
+  :street/tag "north"
+  :lane/name "in-2"
+  :street.lane.install/length 75
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-right-set
+  :street.lane.install/ident ?e
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?e ?straighte ?D ?righte ?B}}
+ 
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "west"
+  :lane/name "out-1"
+  :street.lane.install/length 95
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?A}
+
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "west"
+  :lane/name "out-2"
+  :street.lane.install/length 95
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+ 
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "12th Street"
+  :street/tag "south"
+  :lane/name "out-1"
+  :street.lane.install/lengt 65
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?C}
+ 
+ {:intersection/of ["12th Street" "Walnut Street"]
+  :street/name "12th Street"
+  :street/tag "south"
+  :lane/name "out-2"
+  :street.lane.install/length 65
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?D}
+
+
+
+ ]
 
