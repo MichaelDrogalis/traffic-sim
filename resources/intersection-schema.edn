@@ -2,31 +2,47 @@
   :light-face/halt [:red]
   :light-face/proceed [:yellow :green]
   :light-face/init [:red]}
-  
- {:rule/ident :left-only
+
+ {:rule/ident :straight
+  :src ?origini
+  :dst ?straighte
+  :light [:green :yellow]}
+
+ {:rule/ident :left
   :src ?origini
   :dst ?lefte
   :light [:green :yellow]}
-
- {:rule/ident :straight-only
+ 
+ {:rule/ident :right
   :src ?origini
-  :dst ?straighte
+  :dst ?righte
   :light [:green :yellow]}
 
  {:lane.rules/ident :left-only-set
   :lane.rules/vars [?origini ?lefte]}
 
  {:lane.rules/of :left-only-set
-  :lane.rules/register :left-only
+  :lane.rules/register :left
   :lane.rules/substitute {?origini ?origini ?lefte ?lefte}}
 
  {:lane.rules/ident :straight-only-set
   :lane.rules/vars [?origini ?straighte]}
 
  {:lane.rules/of :straight-only-set
-  :lane.rules/register :straight-only
+  :lane.rules/register :straight
   :lane.rules/substitute {?origini ?origini ?straighte ?straighte}}
- 
+
+ {:lane.rules/ident :straight-or-right-set
+  :lane.rules/vars [?origini ?straighte ?righte]}
+
+ {:lane.rules/of :straight-or-right-set
+  :lane.rules/register :straight
+  :lane.rules/substitute {?origini ?origini ?straighte ?straighte}}
+
+ {:lane.rules/of :straight-or-right-set
+  :lane.rules/register :right
+  :lane.rules/substitute {?origini ?origini ?righte ?righte}}
+
  ;;; Juniper and Walnut
 
  {:schedule/ident :juniper-and-walnut
@@ -50,7 +66,7 @@
   :street.lane.install/rules :left-only-set
   :street.lane.install/ident ?a
   :street.lane.install/light ?x
-  :street.lane.install/substitute {}}
+  :street.lane.install/substitute {?origini ?a ?lefte ?A}}
 
  {:intersection/of ["Juniper Street" "Walnut Street"]
   :street/name "Walnut Street"
@@ -61,7 +77,7 @@
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?b
   :street.lane.install/light ?x
-  :street.lane.install/substitute {}}
+  :street.lane.install/substitute {?origini ?b ?straighte ?B}}
 
  {:intersection/of ["Juniper Street" "Walnut Street"]
   :street/name "Walnut Street"
@@ -72,7 +88,18 @@
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?c
   :street.lane.install/light ?x
-  :street.lane.install/substitute {}}
+  :street.lane.install/substitute {?origini ?c ?straighte ?C}}
+
+ {:intersection/of ["Juniper Street" "Walnut Street"]
+  :street/name "Juniper Street"
+  :street/tag "north"
+  :lane/name "in"
+  :street.lane.install/length 74
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-right-set
+  :street.lane.install/ident ?d
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?d ?righte ?C}}
 
  {:intersection/of ["Juniper Street" "Walnut Street"]
   :street/name "Juniper Street"
