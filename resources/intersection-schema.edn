@@ -21,6 +21,15 @@
                       {:state-diff {?y [:yellow]} :ticks 3}
                       {:state-diff {?y [:red]} :ticks 3}]}
 
+ {:schedule/ident :walnut-and-broad
+  :schedule/substitute {?x :standard ?y :standard}
+  :schedule/sequence [{:state-diff {?x [:green]} :ticks 28}
+                      {:state-diff {?x [:yellow]} :ticks 3}
+                      {:state-diff {?x [:red]} :ticks 3}
+                      {:state-diff {?y [:green]} :ticks 20}
+                      {:state-diff {?y [:yellow]} :ticks 3}
+                      {:state-diff {?y [:red]} :ticks 3}]}
+
  {:rule/ident :straight
   :src ?origini
   :dst ?straighte
@@ -75,7 +84,6 @@
  {:lane.rules/of :straight-or-left-set
   :lane.rules/register :left
   :lane.rules/substitute {?origini ?origini ?lefte ?lefte}}
-
 
  ;;; Juniper and Walnut
  
@@ -424,5 +432,166 @@
   :lane/name "out-2"
   :street.lane.install/length 75
   :street.lane.install/type :egress
-  :street.lane.install/ident ?D}]
+  :street.lane.install/ident ?D}
+
+ ;;; Broad and Walnut
+ 
+ {:intersection/ident ["Broad Street" "Walnut Street"]
+  :intersection.install/schedule :walnut-and-broad}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "east"
+  :lane/name "in-1"
+  :street.lane.install/length 40
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?a ?straighte ?A}}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "east"
+  :lane/name "in-2"
+  :street.lane.install/length 40
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-right-set
+  :street.lane.install/ident ?b
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?b ?straighte ?A ?righte ?H}}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "north"
+  :lane/name "in-1"
+  :street.lane.install/length 70
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?c
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?c ?straighte ?C}}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "north"
+  :lane/name "in-2"
+  :street.lane.install/length 70
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?d
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?d ?straighte ?D}}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "north"
+  :lane/name "in-3"
+  :street.lane.install/length 70
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-right-set
+  :street.lane.install/ident ?e
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?e ?straighte ?E ?righte ?B}}
+ 
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "south"
+  :lane/name "in-1"
+  :street.lane.install/length 50
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?f
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?f ?straighte ?F}}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "south"
+  :lane/name "in-2"
+  :street.lane.install/length 50
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?g
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?g ?straighte ?G}}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "south"
+  :lane/name "in-3"
+  :street.lane.install/length 50
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?h
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?h ?straighte ?H}}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "west"
+  :lane/name "out-1"
+  :street.lane.install/length 100
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?A}
+ 
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Walnut Street"
+  :street/tag "west"
+  :lane/name "out-2"
+  :street.lane.install/length 100
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+ 
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "south"
+  :lane/name "out-1"
+  :street.lane.install/length 50
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?C}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "south"
+  :lane/name "out-2"
+  :street.lane.install/length 50
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?D}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "south"
+  :lane/name "out-3"
+  :street.lane.install/length 50
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?E}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "north"
+  :lane/name "out-1"
+  :street.lane.install/length 70
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?F}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "north"
+  :lane/name "out-2"
+  :street.lane.install/length 70
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?G}
+
+ {:intersection/of ["Broad Street" "Walnut Street"]
+  :street/name "Broad Street"
+  :street/tag "north"
+  :lane/name "out-3"
+  :street.lane.install/length 70
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?H}
+
+
+
+ ]
 
