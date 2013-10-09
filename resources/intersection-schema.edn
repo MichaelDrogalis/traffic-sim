@@ -1183,6 +1183,67 @@
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
 
+ ;;; 11th and Sansom
 
+ {:intersection/ident ["11th Street" "Sansom Street"]
+  :intersection.install/schedule :balanced-schedule}
+ 
+ {:intersection/of ["11th Street" "Sansom Street"]
+  :street/name "Sansom Street"
+  :street/tag "west"
+  :lane/name "in"
+  :street.lane.install/length 30
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-right-set
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?a ?straighte ?A ?righte}}
+
+ {:intersection/of ["11th Street" "Sansom Street"]
+  :street/name "11th Street"
+  :street/tag "south"
+  :lane/name "in-1"
+  :street.lane.install/length 30
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-left-set
+  :street.lane.install/ident ?b
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?b ?straighte ?B ?lefte ?A}}
+
+ {:intersection/of ["11th Street" "Sansom Street"]
+  :street/name "11th Street"
+  :street/tag "south"
+  :lane/name "in-2"
+  :street.lane.install/length 30
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?c
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?c ?straighte ?C}}
+
+ {:intersection/of ["11th Street" "Chestnut Street"]
+  :street/name "Sansom Street"
+  :street/tag "west"
+  :lane/name "out"
+  :street.lane.install/length 30
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?A}
+
+ {:intersection/of ["11th Street" "Chestnut Street"]
+  :street/name "11th Street"
+  :street/tag "north"
+  :lane/name "out-1"
+  :street.lane.install/length 62
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+
+ {:intersection/of ["11th Street" "Chestnut Street"]
+  :street/name "11th Street"
+  :street/tag "north"
+  :lane/name "out-2"
+  :street.lane.install/length 62
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?C}
+ 
  ]
 
