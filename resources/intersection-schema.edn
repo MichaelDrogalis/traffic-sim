@@ -3,6 +3,11 @@
   :light-face/proceed [:yellow :green]
   :light-face/init [:red]}
 
+ {:light-face/ident :stop-sign
+  :light-face/halt [:red]
+  :light-face/proceed [:green]
+  :light-face/init [:red]}
+
  {:schedule/ident :walnut
   :schedule/substitute {?x :standard ?y :standard}
   :schedule/sequence [{:state-diff {?x [:green]} :ticks 30}
@@ -29,6 +34,11 @@
                       {:state-diff {?y [:green]} :ticks 20}
                       {:state-diff {?y [:yellow]} :ticks 3}
                       {:state-diff {?y [:red]} :ticks 3}]}
+
+ {:schedule/ident :stop-sign
+  :schedule/substitute {?x :stop-sign ?y :stop-sign}
+  :schedule/sequence [{:state-diff {?x [:green] ?y [:red]} :ticks 1}
+                      {:state-diff {?x [:red] ?y [:green]} :ticks 1}]}
 
  {:rule/ident :straight
   :src ?origini
