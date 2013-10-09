@@ -21,7 +21,7 @@
                       {:state-diff {?y [:yellow]} :ticks 3}
                       {:state-diff {?y [:red]} :ticks 3}]}
 
- {:schedule/ident :broad
+ {:schedule/ident :east-west-biased
   :schedule/substitute {?x :standard ?y :standard}
   :schedule/sequence [{:state-diff {?x [:green]} :ticks 28}
                       {:state-diff {?x [:yellow]} :ticks 3}
@@ -437,7 +437,7 @@
  ;;; Broad and Walnut
  
  {:intersection/ident ["Broad Street" "Walnut Street"]
-  :intersection.install/schedule :broad}
+  :intersection.install/schedule :east-west-biased}
 
  {:intersection/of ["Broad Street" "Walnut Street"]
   :street/name "Walnut Street"
@@ -594,7 +594,7 @@
  ;;; Broad and Sansom
  
  {:intersection/ident ["Broad Street" "Sansom Street"]
-  :intersection.install/schedule :broad}
+  :intersection.install/schedule :east-west-biased}
 
  {:intersection/of ["Broad Street" "Sansom Street"]
   :street/name "Sansom Street"
@@ -732,7 +732,7 @@
  ;;; Broad and Chestnut
  
  {:intersection/ident ["Broad Street" "Chestnut Street"]
-  :intersection.install/schedule :broad}
+  :intersection.install/schedule :east-west-biased}
 
  {:intersection/of ["Broad Street" "Chestnut Street"]
   :street/name "Chestnut Street"
@@ -1197,7 +1197,7 @@
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?a
   :street.lane.install/light ?x
-  :street.lane.install/substitute {?origini ?a ?straighte ?A ?righte}}
+  :street.lane.install/substitute {?origini ?a ?straighte ?A ?righte ?C}}
 
  {:intersection/of ["11th Street" "Sansom Street"]
   :street/name "11th Street"
@@ -1221,7 +1221,7 @@
   :street.lane.install/light ?y
   :street.lane.install/substitute {?origini ?c ?straighte ?C}}
 
- {:intersection/of ["11th Street" "Chestnut Street"]
+ {:intersection/of ["11th Street" "Sansom Street"]
   :street/name "Sansom Street"
   :street/tag "west"
   :lane/name "out"
@@ -1229,7 +1229,7 @@
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
- {:intersection/of ["11th Street" "Chestnut Street"]
+ {:intersection/of ["11th Street" "Sansom Street"]
   :street/name "11th Street"
   :street/tag "north"
   :lane/name "out-1"
@@ -1237,13 +1237,76 @@
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
- {:intersection/of ["11th Street" "Chestnut Street"]
+ {:intersection/of ["11th Street" "Sansom Street"]
   :street/name "11th Street"
   :street/tag "north"
   :lane/name "out-2"
   :street.lane.install/length 62
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
+
+ ;;; 12th and Sansom
+
+ {:intersection/ident ["12th Street" "Sansom Street"]
+  :intersection.install/schedule :east-west-biased}
+
+ {:intersection/of ["12th Street" "Sansom Street"]
+  :street/name "Sansom Street"
+  :street/tag "west"
+  :lane/name "in"
+  :street.lane.install/length 95
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-left-set
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?a ?straighte ?A ?righte}}
+
+ {:intersection/of ["12th Street" "Sansom Street"]
+  :street/name "12th Street"
+  :street/tag "north"
+  :lane/name "in-1"
+  :street.lane.install/length 50
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set 
+  :street.lane.install/ident ?b
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?b ?straighte ?B}}
+
+ {:intersection/of ["12th Street" "Sansom Street"]
+  :street/name "12th Street"
+  :street/tag "north"
+  :lane/name "in-2"
+  :street.lane.install/length 50
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-right-set
+  :street.lane.install/ident ?c
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?c ?straighte ?C ?righte ?A}}
+
+ {:intersection/of ["12th Street" "Sansom Street"]
+  :street/name "Sansom Street"
+  :street/tag "west"
+  :lane/name "out"
+  :street.lane.install/length 30
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?A}
+
+ {:intersection/of ["12th Street" "Sansom Street"]
+  :street/name "12th Street"
+  :street/tag "south"
+  :lane/name "out-1"
+  :street.lane.install/length 30
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+
+ {:intersection/of ["12th Street" "Sansom Street"]
+  :street/name "12th Street"
+  :street/tag "south"
+  :lane/name "out-2"
+  :street.lane.install/length 30
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?C}
+
  
  ]
 
