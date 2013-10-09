@@ -946,5 +946,78 @@
   :lane/name "out"
   :street.lane.install/length 100
   :street.lane.install/type :egress
+  :street.lane.install/ident ?C}
+
+ ;;; 13th and Chestnut
+
+ {:intersection/ident ["13th Street" "Chestnut Street"]
+  :intersection.install/schedule :balanced-schedule}
+
+ {:intersection/of ["13th Street" "Chestnut Street"]
+  :street/name "Chestnut Street"
+  :street/tag "west"
+  :lane/name "in-1"
+  :street.lane.install/length 45
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-or-left-set
+  :street.lane.install/ident ?a
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?a ?straighte ?A ?lefte ?C}}
+
+ {:intersection/of ["13th Street" "Chestnut Street"]
+  :street/name "Chestnut Street"
+  :street/tag "west"
+  :lane/name "in-2"
+  :street.lane.install/length 45
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set 
+  :street.lane.install/ident ?b
+  :street.lane.install/light ?x
+  :street.lane.install/substitute {?origini ?b ?straighte ?B}}
+ 
+ {:intersection/of ["13th Street" "Chestnut Street"]
+  :street/name "13th Street"
+  :street/tag "south"
+  :lane/name "in-1"
+  :street.lane.install/length 20
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :straight-only-set
+  :street.lane.install/ident ?c
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?c ?straighte ?C}}
+ 
+ {:intersection/of ["13th Street" "Chestnut Street"]
+  :street/name "13th Street"
+  :street/tag "south"
+  :lane/name "in-2"
+  :street.lane.install/length 20
+  :street.lane.install/type :ingress
+  :street.lane.install/rules :right-only-set
+  :street.lane.install/ident ?d
+  :street.lane.install/light ?y
+  :street.lane.install/substitute {?origini ?d ?righte ?B}}
+  
+ {:intersection/of ["13th Street" "Chestnut Street"]
+  :street/name "Chestnut Street"
+  :street/tag "east"
+  :lane/name "out-1"
+  :street.lane.install/length 30
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?A}
+
+ {:intersection/of ["13th Street" "Chestnut Street"]
+  :street/name "Chestnut Street"
+  :street/tag "east"
+  :lane/name "out-2"
+  :street.lane.install/length 30
+  :street.lane.install/type :egress
+  :street.lane.install/ident ?B}
+ 
+ {:intersection/of ["13th Street" "Chestnut Street"]
+  :street/name "13th Street"
+  :street/tag "north"
+  :lane/name "out"
+  :street.lane.install/length 30
+  :street.lane.install/type :egress
   :street.lane.install/ident ?C}]
 
