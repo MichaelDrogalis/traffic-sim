@@ -6,11 +6,11 @@
             [traffic-lights.core :refer [storage]]))
 
 (defroutes routes
-  (GET "/rush-hour/api/links/edn" {:keys [body]}
-       (pr-str {:dsts (p/links storage (read-string (slurp body)))}))
-  (POST "/rush-hour/api/reverse-links/edn" {:keys [body]}
+  (GET "/rush-hour/api/external-links/edn" {:keys [body]}
+       (pr-str {:dsts (p/external-links storage (read-string (slurp body)))}))
+  (POST "/rush-hour/api/external-reverse-links/edn" {:keys [body]}
         (let [quad (read-string (slurp body))]
-          (pr-str {:srcs (p/reverse-links storage quad)})))
+          (pr-str {:srcs (p/external-reverse-links storage quad)})))
   (POST "/rush-hour/api/expand-quad/edn" {:keys [body]}
         (let [quad (read-string (slurp body))]
           (pr-str {:quad (p/find-lane storage quad)}))))

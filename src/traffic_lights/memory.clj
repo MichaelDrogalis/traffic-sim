@@ -2,7 +2,7 @@
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [clojure.set :refer [subset?]]
             [clojure.pprint :refer [pprint]]
-            [traffic-lights.util :refer [getx only]]))
+            [traffic-lights.util :refer [getx only quad]]))
 
 (defn resolve-schedule [intersection]
   (:intersection.install/schedule intersection))
@@ -64,6 +64,9 @@
 
 (defn resolve-binders [binders vtable]
   (map (partial resolve-binder vtable) binders))
+
+(defn egress-only [lanes]
+  (filter #(= (:street.lane.install/type %) :egress) lanes))
 
 (defn intersection-registration-index [schema]
   (filter #(contains? % :intersection/ident) schema))
@@ -140,11 +143,14 @@
 (defn match-rules [rules binders]
   (map #(find-rule rules (:lane.rules/register %)) binders))
 
-(defn match-links [schema quad]
+(defn match-internal-links [schema lane]
+  (map quad (egress-only (vals (var->lane-index schema (resolve-intersection (find-lane schema lane)))))))
+
+(defn match-external-links [schema quad]
   (let [links (links-index schema)]
     (map :connection/dst (filter #(= quad (:connection/src %)) links))))
 
-(defn match-reverse-links [schema quad]
+(defn match-external-reverse-links [schema quad]
   (let [links (links-index schema)]
     (map :connection/src (filter #(= quad (:connection/dst %)) links))))
 

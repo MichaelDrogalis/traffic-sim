@@ -17,9 +17,12 @@
 (defprotocol IResolve
   (resolve-rules [this lane-id]))
 
-(defprotocol ILink
-  (links [this quad])
-  (reverse-links [this quad]))
+(defprotocol IInternalLink
+  (internal-links [this quad]))
+
+(defprotocol IExternalLink
+  (external-links [this quad])
+  (external-reverse-links [this quad]))
 
 (deftype MemoryStorage [schema]
   ILight
@@ -38,9 +41,12 @@
   IResolve
   (resolve-rules [this lane-id] (m/resolve-all-rules schema lane-id))
 
-  ILink
-  (links [this quad] (m/match-links schema quad))
-  (reverse-links [this quad] (m/match-reverse-links schema quad)))
+  IInternalLink
+  (internal-links [this quad] (m/match-internal-links schema quad))
+  
+  IExternalLink
+  (external-links [this quad] (m/match-external-links schema quad))
+  (external-reverse-links [this quad] (m/match-external-reverse-links schema quad)))
 
 (defn memory-storage [schema]
   (MemoryStorage. schema))
