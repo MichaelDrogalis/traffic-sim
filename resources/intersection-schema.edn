@@ -1269,7 +1269,7 @@
   :street.lane.install/rules :straight-or-left-set
   :street.lane.install/ident ?a
   :street.lane.install/light ?x
-  :street.lane.install/substitute {?origini ?a ?straighte ?A ?righte}}
+  :street.lane.install/substitute {?origini ?a ?straighte ?A ?lefte ?B}}
 
  {:intersection/of ["12th Street" "Sansom Street"]
   :street/name "12th Street"
