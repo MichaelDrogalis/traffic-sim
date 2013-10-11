@@ -43,5 +43,15 @@
     (Thread/sleep 500)
     (recur successor t-fn queue)))
 
-;(genesis! starting-state transform-world queue)
+(def walnut-11-east-in
+  {:intersection/of ["11th Street" "Walnut Street"]
+   :street/name "Walnut Street"
+   :street/tag "east"
+   :lane/name "in-2"})
+
+(traffic-lights.queue/put-into-ch
+ (:channel (get ingress-lanes walnut-11-east-in))
+ {:id "Mike" :len 1 :buf 0})
+
+(future (genesis! starting-state transform-world queue))
 
