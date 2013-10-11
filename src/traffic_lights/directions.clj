@@ -8,18 +8,6 @@
 (defn weight-quad [lane-id]
   {(dissoc lane-id :lane/weight) (:lane/weight lane-id)})
 
-(defn find-weights [d-catalog lane-id]
-  (let [match-fn (partial matching-quad? lane-id)]
-    (only (filter match-fn d-catalog))))
-
-(defn weighted-directions [storage weights]
-  (fn [_ lane-id]
-    (weighted-rand-nth
-     (apply merge
-            (map weight-quad
-                 (map (partial find-weights weights)
-                      (p/internal-links storage lane-id)))))))
-
 (defn matching-driver? [driver candidate]
   (= (:directions/for candidate) driver))
 
@@ -37,4 +25,16 @@
   (fn [id src]
     (let [match-fn (partial matching-candidate? id (quad src))]
       (:directions/dst (only (filter match-fn d-catalog))))))
+
+(defn find-weights [d-catalog lane-id]
+  (let [match-fn (partial matching-quad? lane-id)]
+    (only (filter match-fn d-catalog))))
+
+(defn weighted-directions [storage weights]
+  (fn [_ lane-id]
+    (weighted-rand-nth
+     (apply merge
+            (map weight-quad
+                 (map (partial find-weights weights)
+                      (p/internal-links storage lane-id)))))))
 
