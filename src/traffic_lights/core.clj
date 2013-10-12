@@ -38,7 +38,6 @@
 
 (defn genesis! [snapshot t-fn queue]
   (let [successor (t-fn snapshot)]
-    (pprint successor)
     (send-off queue (constantly successor))
     (Thread/sleep 500)
     (recur successor t-fn queue)))
