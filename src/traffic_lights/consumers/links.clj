@@ -17,5 +17,6 @@
 
 (def app (wrap-params #'routes))
 
-(defonce jetty (run-jetty #'app {:port 9091 :join? false}))
+; (defonce jetty (run-jetty #'app {:port 9091 :join? false}))
+
 

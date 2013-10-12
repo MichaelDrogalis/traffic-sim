@@ -52,5 +52,6 @@
  (:channel (get ingress-lanes walnut-11-east-in))
  {:id "Mike" :len 1 :buf 0})
 
-(future (genesis! starting-state transform-world queue))
+;; (def go (future (genesis! starting-state transform-world queue)))
+
 
