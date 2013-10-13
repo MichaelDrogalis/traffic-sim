@@ -1,5 +1,5 @@
 (ns traffic-lights.scenarios.scenario-07-test
-  "Driving one car up east 11th and down Walnut heading west."
+  "Driving one car up east on 11th and Walnut and over to Broad."
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
@@ -31,8 +31,8 @@
    :street/tag "west"
    :lane/name "out-2"})
 
-(def dir-fn
-  (constantly walnut-11-west-out))
+(defn dir-fn [_ src]
+  (cond (= (u/quad src) walnut-11-east-in) walnut-11-west-out))
 
 (def t-fn (transform-world-fn dir-fn safety-fn))
 
@@ -92,5 +92,5 @@
       => [])
 
 (fact (:state (nth egress-west-iterations 62))
-      => [{:id "Mike" :len 1 :buf 0 :front 72 :dst walnut-11-west-out}])
+      => [{:id "Mike" :len 1 :buf 0 :front 72 :dst nil}])
 
