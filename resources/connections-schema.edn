@@ -47,6 +47,15 @@
   :connection/dst {:intersection/of ["13th Street" "Walnut Street"]
                    :street/name "Walnut Street"
                    :street/tag "east"
+                   :lane/name "in-1"}}
+ 
+ {:connection/src {:intersection/of ["12th Street" "Walnut Street"]
+                   :street/name "Walnut Street"
+                   :street/tag "west"
+                   :lane/name "out-1"}
+  :connection/dst {:intersection/of ["13th Street" "Walnut Street"]
+                   :street/name "Walnut Street"
+                   :street/tag "east"
                    :lane/name "in-2"}}
 
  {:connection/src {:intersection/of ["12th Street" "Walnut Street"]
