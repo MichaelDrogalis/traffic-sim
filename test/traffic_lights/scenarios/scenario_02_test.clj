@@ -1,6 +1,7 @@
 (ns traffic-lights.scenarios.scenario-02-test
   "Driving one car up south street, halting for a red light & no other traffic."
-  (:require [midje.sweet :refer :all]
+  (:require [clojure.algo.generic.functor :refer [fmap]]
+            [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
@@ -127,7 +128,7 @@
   (map (comp (partial u/find-lane north-out) vals) (map :egress iterations)))
 
 (def light-iterations
-  (map (comp :state first vals) (map :lights iterations)))
+  (map (fn [x] (fmap :state x)) (map :lights iterations)))
 
 (fact (:state (nth ingress-iterations 1))
       => [{:id "Mike" :len 1 :buf 0 :front 9 :dst north-out}])
