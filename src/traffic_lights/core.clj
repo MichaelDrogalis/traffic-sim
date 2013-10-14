@@ -42,3 +42,6 @@
     (Thread/sleep 500)
     (recur successor t-fn queue)))
 
+(defn start-sim []
+  (future (genesis! starting-state transform-world queue)))
+

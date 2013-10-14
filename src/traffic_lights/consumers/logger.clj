@@ -7,7 +7,6 @@
   (pprint (maph :state idx)))
 
 (defn log-snapshot [snapshot]
-;  (log! (:lights snapshot))
   (log! (:ingress snapshot))
   (log! (:egress snapshot)))
 

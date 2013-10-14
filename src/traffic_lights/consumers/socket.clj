@@ -20,11 +20,12 @@
    (prn listeners)
    (push-to-clients snapshot)))
 
-#_(doto (WebServers/createWebServer 9090)
+(defn start-socket-server []
+  (doto (WebServers/createWebServer 9090)
     (.add "/rush-hour/streaming/edn"
           (proxy [WebSocketHandler] []
             (onOpen [chan] (swap! listeners conj chan))
             (onClose [chan] (swap! listeners disj chan))
             (onMessage [_])))
-    (.start))
+    (.start)))
 

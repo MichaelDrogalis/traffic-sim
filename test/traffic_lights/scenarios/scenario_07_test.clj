@@ -130,4 +130,3 @@
 (fact (:state (nth ingress-12-east-iterations 135))
       => [{:id "Mike" :len 1 :buf 0 :front 59 :dst walnut-12-west-out}])
 
-

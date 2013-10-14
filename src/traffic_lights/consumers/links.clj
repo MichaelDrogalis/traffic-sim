@@ -12,11 +12,12 @@
         (let [quad (read-string (slurp body))]
           (pr-str {:srcs (p/external-reverse-links storage quad)})))
   (POST "/rush-hour/api/expand-quad/edn" {:keys [body]}
+        (prn "Body is: " body)
         (let [quad (read-string (slurp body))]
           (pr-str {:quad (p/find-lane storage quad)}))))
 
 (def app (wrap-params #'routes))
 
-; (defonce jetty (run-jetty #'app {:port 9091 :join? false}))
-
+(defn start-jetty []
+  (defonce jetty (run-jetty #'app {:port 9091 :join? false})))
 
