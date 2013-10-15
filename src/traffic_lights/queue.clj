@@ -46,7 +46,7 @@
                            :dst (d-fn id lane))))))
 
 (defn advance-cars-in-lane [{:keys [state] :as entity}]
-  (assoc entity :state (r/reduce (partial advance 1 state) [] state)))
+  (assoc entity :state (r/reduce (partial advance 10 state) [] state)))
 
 (defn ch->lane [{:keys [channel state] :as entity} d-fn]
   (if-not (zero? (.size channel))
@@ -67,8 +67,8 @@
 (defn harvest-ingress-lane [{:keys [lane state] :as entity} d-fn elane-snapshot safe?]
   (let [[head-car & more] state
         id (quad lane)]
-    (if (and (:ripe? head-car) (safe? id (d-fn (:id head-car) id)))
-      (let [out-lane (d-fn (:id head-car) id)
+    (if (and (:ripe? head-car) (safe? id (:dst head-car)))
+      (let [out-lane (:dst head-car)
             ch (:channel (elane-snapshot out-lane))]
         (when-not (nil? ch)
           (put-into-ch ch (dissoc head-car :ripe? :front :dst)))
@@ -79,7 +79,7 @@
   (let [[head-car & more] state]
     (if (:ripe? head-car)
       (let [id (quad lane)
-            in-lane (d-fn (:id head-car) id)]
+            in-lane (:dst head-car)]
         (if (room-in-lane? in-lane head-car)
           (let [ch (:channel (ilane-snapshot in-lane))]
             (if-not (nil? ch)

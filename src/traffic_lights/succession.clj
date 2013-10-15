@@ -18,14 +18,14 @@
   (->> old-lights
        (maph q/next-light-state)))
 
-(defn transform-world-fn [d-fn s-fn]
+(defn transform-world-fn [internal-fn external-fn s-fn]
   (fn [{:keys [lights egress ingress]}]
-    (let [pulled-ingress (future (transform-ingress-lanes ingress egress d-fn (partial s-fn ingress lights)))
-          pulled-egress (future (transform-egress-lanes egress ingress d-fn))
+    (let [pulled-ingress (future (transform-ingress-lanes ingress egress internal-fn (partial s-fn ingress lights)))
+          pulled-egress (future (transform-egress-lanes egress ingress external-fn))
           new-lights (future (transform-lights lights))
           new-ingress @pulled-ingress
           new-egress @pulled-egress]
       {:lights  @new-lights
-       :ingress (maph #(q/ch->lane % d-fn) new-ingress)
-       :egress  (maph #(q/ch->lane % d-fn) new-egress)})))
+       :ingress (maph #(q/ch->lane % internal-fn) new-ingress)
+       :egress  (maph #(q/ch->lane % external-fn) new-egress)})))
 

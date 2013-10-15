@@ -30,11 +30,18 @@
   (let [match-fn (partial matching-quad? lane-id)]
     (only (filter match-fn d-catalog))))
 
-(defn weighted-directions [storage weights]
+(defn weighted-directions [weights links]
+  (weighted-rand-nth
+   (apply merge
+          (map weight-quad
+               (map (partial find-weights weights)
+                    links)))))
+
+(defn weighted-internal-directions [storage weights]
   (fn [_ lane-id]
-    (weighted-rand-nth
-     (apply merge
-            (map weight-quad
-                 (map (partial find-weights weights)
-                      (p/internal-links storage lane-id)))))))
+    (weighted-directions weights (p/internal-links storage lane-id))))
+
+(defn weighted-external-directions [storage weights]
+  (fn [_ lane-id]
+    (weighted-directions weights (p/external-links storage lane-id))))
 

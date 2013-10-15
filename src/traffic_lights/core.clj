@@ -21,11 +21,13 @@
 
 (def storage (p/memory-storage schema))
 
-(def dir-fn (d/weighted-directions storage weights))
+(def internal-fn (d/weighted-internal-directions storage weights))
+
+(def external-fn (d/weighted-external-directions storage weights))
 
 (def safety-fn (r/safe-to-go? storage))
 
-(def transform-world (s/transform-world-fn dir-fn safety-fn))
+(def transform-world (s/transform-world-fn internal-fn external-fn safety-fn))
 
 (def lights (b/lights storage))
 
@@ -40,7 +42,7 @@
 (defn genesis! [snapshot t-fn queue]
   (let [successor (t-fn snapshot)]
     (send-off queue (constantly successor))
-    (Thread/sleep 10000)
+    (Thread/sleep 3000)
     (recur successor t-fn queue)))
 
 (def walnut-11-east-in
