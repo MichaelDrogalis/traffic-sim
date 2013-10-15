@@ -8,7 +8,8 @@
                  [org.clojars.dsabanin/webbit "0.4.16"]
                  [ring/ring-jetty-adapter "1.2.0"]
                  [compojure "1.1.5"]
-                 [dire "0.4.4"]]
+                 [dire "0.4.4"]
+                 [rhizome "0.1.9"]]
   :plugins [[lein-midje "3.1.1"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
   :alias {"midje" ["with-profile" "dev" "midje"]}

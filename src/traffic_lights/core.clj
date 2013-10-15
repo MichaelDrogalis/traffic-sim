@@ -5,6 +5,7 @@
             [traffic-lights.protocols :as p]
             [traffic-lights.rules :as r]
             [traffic-lights.directions :as d]
+            [traffic-lights.queue :as q]
             [traffic-lights.util :refer [maph index-by-quad] :as u]))
 
 (def intersections
@@ -39,8 +40,17 @@
 (defn genesis! [snapshot t-fn queue]
   (let [successor (t-fn snapshot)]
     (send-off queue (constantly successor))
-    (Thread/sleep 500)
+    (Thread/sleep 10000)
     (recur successor t-fn queue)))
+
+(def walnut-11-east-in
+  {:intersection/of ["11th Street" "Walnut Street"]
+   :street/name "Walnut Street"
+   :street/tag "east"
+   :lane/name "in-2"})
+
+(q/put-into-ch (:channel (ingress-lanes walnut-11-east-in))
+               {:id "Mike" :buf 0 :len 1})
 
 (defn start-sim []
   (future (genesis! starting-state transform-world queue)))
