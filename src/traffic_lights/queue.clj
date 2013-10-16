@@ -83,8 +83,7 @@
         (if (room-in-lane? in-lane head-car)
           (let [ch (:channel (ilane-snapshot in-lane))]
             (if-not (nil? ch)
-              (put-into-ch ch (dissoc head-car :ripe?))
-              (prn head-car "is done driving."))
+              (put-into-ch ch (dissoc head-car :ripe?)))
             (assoc entity :state (or more [])))
           entity))
       entity)))
