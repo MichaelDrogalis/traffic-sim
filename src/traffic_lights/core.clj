@@ -51,9 +51,8 @@
    :street/tag "east"
    :lane/name "in-2"})
 
-(q/put-into-ch (:channel (ingress-lanes walnut-11-east-in))
-               {:id "Mike" :buf 0 :len 1})
-
 (defn start-sim []
+  (q/put-into-ch (:channel (ingress-lanes walnut-11-east-in))
+                 {:id "Mike" :buf 0 :len 1})
   (future (genesis! starting-state transform-world queue)))
 

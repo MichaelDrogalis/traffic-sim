@@ -43,7 +43,7 @@
     (assoc entity
       :state (conj state (assoc car
                            :front (- street-len len)
-                           :dst (d-fn id lane))))))
+                           :dst (d-fn id (quad lane)))))))
 
 (defn advance-cars-in-lane [{:keys [state] :as entity}]
   (assoc entity :state (r/reduce (partial advance 10 state) [] state)))
