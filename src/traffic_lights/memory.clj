@@ -144,7 +144,9 @@
   (map #(find-rule rules (:lane.rules/register %)) binders))
 
 (defn match-internal-links [schema lane]
-  (map quad (egress-only (vals (var->lane-index schema (resolve-intersection (find-lane schema lane)))))))
+  (let [lane-vars (vals (:street.lane.install/substitute (find-lane schema lane)))
+        all-vars (var->lane-index schema (resolve-intersection (find-lane schema lane)))]
+    (map quad (egress-only (vals (select-keys all-vars lane-vars))))))
 
 (defn match-external-links [schema quad]
   (let [links (links-index schema)]
