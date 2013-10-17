@@ -41,7 +41,7 @@
   :connection/dst {:intersection/of ["13th Street" "Sansom Street"]
                    :street/name "13th Street"
                    :street/tag "south"
-                   :lane/name "in-1"}}
+                   :lane/name "in"}}
 
  {:connection/src {:intersection/of ["13th Street" "Walnut Street"]
                    :street/name "13th Street"
@@ -50,7 +50,7 @@
   :connection/dst {:intersection/of ["13th Street" "Sansom Street"]
                    :street/name "13th Street"
                    :street/tag "south"
-                   :lane/name "in-2"}}
+                   :lane/name "in"}}
 
  {:connection/src {:intersection/of ["12th Street" "Walnut Street"]
                    :street/name "Walnut Street"

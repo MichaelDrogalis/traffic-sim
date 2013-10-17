@@ -609,12 +609,7 @@
   :street/name "Sansom Street"
   :intersection/of ["13th Street" "Sansom Street"]}
  {:lane/weight 2
-  :lane/name "in-1"
-  :street/tag "south"
-  :street/name "13th Street"
-  :intersection/of ["13th Street" "Sansom Street"]}
- {:lane/weight 2
-  :lane/name "in-2"
+  :lane/name "in"
   :street/tag "south"
   :street/name "13th Street"
   :intersection/of ["13th Street" "Sansom Street"]}
