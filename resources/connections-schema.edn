@@ -1,26 +1,20 @@
 [{:connection/src {:intersection/of ["Juniper Street" "Walnut Street"]
                    :street/name "Walnut Street"
                    :street/tag "west"
-                   :lane/name "out-2"
-                   :street.lane.install/length 50
-                   :street.lane.install/type :egress
-                   :street.lane.install/ident ?B}
-  :connection/dst {:intersection/of ["13th Street" "Walnut Street"]
+                   :lane/name "out-2"}
+  :connection/dst {:intersection/of ["Broad Street" "Walnut Street"]
                    :street/name "Walnut Street"
-                   :street/tag "west"
-                   :lane/name "out-1"}}
+                   :street/tag "east"
+                   :lane/name "in-1"}}
 
  {:connection/src {:intersection/of ["Juniper Street" "Walnut Street"]
                    :street/name "Walnut Street"
                    :street/tag "west"
-                   :lane/name "out-3"
-                   :street.lane.install/length 50
-                   :street.lane.install/type :egress
-                   :street.lane.install/ident ?C}
-  :connection/dst {:intersection/of ["13th Street" "Walnut Street"]
+                   :lane/name "out-3"}
+  :connection/dst {:intersection/of ["Broad Street" "Walnut Street"]
                    :street/name "Walnut Street"
-                   :street/tag "west"
-                   :lane/name "out-2"}}
+                   :street/tag "east"
+                   :lane/name "in-2"}}
 
  {:connection/src {:intersection/of ["13th Street" "Walnut Street"]
                    :street/name "Walnut Street"
@@ -38,6 +32,24 @@
   :connection/dst {:intersection/of ["Juniper Street" "Walnut Street"]
                    :street/name "Walnut Street"
                    :street/tag "east"
+                   :lane/name "in-2"}}
+
+ {:connection/src {:intersection/of ["13th Street" "Walnut Street"]
+                   :street/name "13th Street"
+                   :street/tag "north"
+                   :lane/name "out-1"}
+  :connection/dst {:intersection/of ["13th Street" "Sansom Street"]
+                   :street/name "13th Street"
+                   :street/tag "south"
+                   :lane/name "in-1"}}
+
+ {:connection/src {:intersection/of ["13th Street" "Walnut Street"]
+                   :street/name "13th Street"
+                   :street/tag "north"
+                   :lane/name "out-2"}
+  :connection/dst {:intersection/of ["13th Street" "Sansom Street"]
+                   :street/name "13th Street"
+                   :street/tag "south"
                    :lane/name "in-2"}}
 
  {:connection/src {:intersection/of ["12th Street" "Walnut Street"]
@@ -227,7 +239,7 @@
   :connection/dst {:intersection/of ["12th Street" "Sansom Street"]
                    :street/name "12th Street"
                    :street/tag "north"
-                   :lane/name "out-1"}}
+                   :lane/name "in-1"}}
 
  {:connection/src {:intersection/of ["11th Street" "Sansom Street"]
                    :street/name "11th Street"
