@@ -19,7 +19,7 @@
        (matching-src? src candidate)))
 
 (defn matching-quad? [id candidate]
-  (= id (quad candidate)))
+  (= (quad id) (quad candidate)))
 
 (defn find-dst [d-catalog]
   (fn [id src]

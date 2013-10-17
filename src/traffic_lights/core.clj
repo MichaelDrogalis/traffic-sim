@@ -42,7 +42,7 @@
 (defn genesis! [snapshot t-fn queue]
   (let [successor (t-fn snapshot)]
     (send-off queue (constantly successor))
-    (Thread/sleep 3000)
+    (Thread/sleep 500)
     (recur successor t-fn queue)))
 
 (def walnut-11-east-in

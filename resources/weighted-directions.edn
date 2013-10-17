@@ -357,7 +357,7 @@
   :lane/name "in-3"
   :street/tag "south"
   :street/name "Broad Street"
-  :intersection/of ["Broad Street" "Chestnut St reet"]}
+  :intersection/of ["Broad Street" "Chestnut Street"]}
  {:lane/weight 0
   :lane/name "out-1"
   :street/tag "east"

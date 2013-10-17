@@ -12,7 +12,6 @@
         (let [quad (read-string (slurp body))]
           (pr-str {:srcs (p/external-reverse-links storage quad)})))
   (POST "/rush-hour/api/expand-quad/edn" {:keys [body]}
-        (prn "Body is: " body)
         (let [quad (read-string (slurp body))]
           (pr-str {:quad (p/find-lane storage quad)}))))
 
