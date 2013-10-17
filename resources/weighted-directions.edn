@@ -358,12 +358,12 @@
   :street/tag "south"
   :street/name "Broad Street"
   :intersection/of ["Broad Street" "Chestnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "out-1"
   :street/tag "east"
   :street/name "Chestnut Street"
   :intersection/of ["Broad Street" "Chestnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "out-2"
   :street/tag "east"
   :street/name "Chestnut Street"
@@ -383,17 +383,17 @@
   :street/tag "south"
   :street/name "Broad Street"
   :intersection/of ["Broad Street" "Chestnut Street"]}
- {:lane/weight 5
+ {:lane/weight 0
   :lane/name "out-1"
   :street/tag "north"
   :street/name "Broad Street"
   :intersection/of ["Broad Street" "Chestnut Street"]}
- {:lane/weight 5
+ {:lane/weight 0
   :lane/name "out-2"
   :street/tag "north"
   :street/name "Broad Street"
   :intersection/of ["Broad Street" "Chestnut Street"]}
- {:lane/weight 5
+ {:lane/weight 0
   :lane/name "out-3"
   :street/tag "north"
   :street/name "Broad Street"
