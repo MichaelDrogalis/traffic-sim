@@ -142,7 +142,7 @@
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?d
   :street.lane.install/light ?y
-  :street.lane.install/substitute {?origini ?d ?righte ?C}}
+  :street.lane.install/substitute {?origini ?d ?straighte ?A ?righte ?C}}
 
  {:intersection/of ["Juniper Street" "Walnut Street"]
   :street/name "Juniper Street"
@@ -1159,7 +1159,7 @@
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?d
   :street.lane.install/light ?y
-  :street.lane.install/substitute {?origini ?d ?straighte ?B}}
+  :street.lane.install/substitute {?origini ?d ?straighte ?D ?righte ?B}}
 
  {:intersection/of ["11th Street" "Chestnut Street"]
   :street/name "Chestnut Street"
