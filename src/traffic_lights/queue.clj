@@ -39,11 +39,11 @@
   (.take channel))
 
 (defn add-to-lane [{:keys [lane state] :as entity} {:keys [id len] :as car} d-fn]
-  (let [street-len (:street.lane.install/length lane)]
-    (assoc entity
-      :state (conj state (assoc car
-                           :front (- street-len len)
-                           :dst (d-fn id (quad lane)))))))
+  (let [street-len (:street.lane.install/length lane)
+        dst (d-fn id (quad lane))]
+    (if dst
+      (assoc entity :state (conj state (assoc car :front (- street-len len) :dst dst)))
+      entity)))
 
 (defn advance-cars-in-lane [{:keys [state] :as entity}]
   (assoc entity :state (r/reduce (partial advance 10 state) [] state)))

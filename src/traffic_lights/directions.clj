@@ -31,12 +31,11 @@
     (only (filter match-fn d-catalog))))
 
 (defn weighted-directions [weights links]
-  (when-not (empty? links)
-    (weighted-rand-nth
-     (apply merge
-            (map weight-quad
-                 (map (partial find-weights weights)
-                      links))))))
+  (if (not (empty? links))
+    (let [resolved-lanes (map (partial find-weights weights) links)]
+      (weighted-rand-nth
+       (apply merge (map weight-quad resolved-lanes))))
+    nil))
 
 (defn weighted-internal-directions [storage weights]
   (fn [_ lane-id]
