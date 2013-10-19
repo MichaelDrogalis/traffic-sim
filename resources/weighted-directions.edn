@@ -23,6 +23,11 @@
   :street/tag "south"
   :street/name "Juniper Street"
   :intersection/of ["Juniper Street" "Walnut Street"]}
+ {:lane/weight 0
+  :lane/name "out"
+  :street/tag "north"
+  :street/name "Juniper Street"
+  :intersection/of ["Juniper Street" "Walnut Street"]}
  {:lane/weight 5
   :lane/name "out-2"
   :street/tag "west"
@@ -413,12 +418,12 @@
   :street/tag "north"
   :street/name "Juniper Street"
   :intersection/of ["Juniper Street" "Chestnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "out-1"
   :street/tag "east"
   :street/name "Chestnut Street"
   :intersection/of ["Juniper Street" "Chestnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "out-2"
   :street/tag "east"
   :street/name "Chestnut Street"
@@ -528,7 +533,7 @@
   :street/tag "east"
   :street/name "Chestnut Street"
   :intersection/of ["11th Street" "Chestnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "out-2"
   :street/tag "east"
   :street/name "Chestnut Street"
