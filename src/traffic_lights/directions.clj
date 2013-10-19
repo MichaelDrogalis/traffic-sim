@@ -31,17 +31,22 @@
     (only (filter match-fn d-catalog))))
 
 (defn weighted-directions [weights links]
-  (weighted-rand-nth
-   (apply merge
-          (map weight-quad
-               (map (partial find-weights weights)
-                    links)))))
+  (when-not (empty? links)
+    (weighted-rand-nth
+     (apply merge
+            (map weight-quad
+                 (map (partial find-weights weights)
+                      links))))))
 
 (defn weighted-internal-directions [storage weights]
   (fn [_ lane-id]
-    (weighted-directions weights (p/internal-links storage lane-id))))
+    (prn "Invoking intern")
+    (let [links (p/internal-links storage lane-id)]
+      (weighted-directions weights links))))
 
 (defn weighted-external-directions [storage weights]
   (fn [_ lane-id]
-    (weighted-directions weights (p/external-links storage lane-id))))
+    (prn "Invoking extern")
+    (let [links (p/external-links storage lane-id)]
+      (weighted-directions weights links))))
 
