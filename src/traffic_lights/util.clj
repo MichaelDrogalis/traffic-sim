@@ -18,7 +18,7 @@
     (throw (ex-info "Element size in collection not = 1" {:coll coll}))))
 
 (defn maph [f coll & args]
-  (into {} (reduce (fn [a [k v]] (conj a {k (apply f v args)})) [] coll)))
+  (into {} (r/reduce (fn [a [k v]] (conj a {k (apply f v args)})) [] coll)))
 
 (defn quad [lane]
   (select-keys lane [:intersection/of :street/name :street/tag :lane/name]))
