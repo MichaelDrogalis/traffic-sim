@@ -241,6 +241,15 @@
                    :street/tag "north"
                    :lane/name "in-1"}}
 
+ {:connection/src {:intersection/of ["12th Street" "Chestnut Street"]
+                   :street/name "12th Street"
+                   :street/tag "south"
+                   :lane/name "out-2"}
+  :connection/dst {:intersection/of ["12th Street" "Sansom Street"]
+                   :street/name "12th Street"
+                   :street/tag "north"
+                   :lane/name "in-2"}}
+
  {:connection/src {:intersection/of ["11th Street" "Sansom Street"]
                    :street/name "11th Street"
                    :street/tag "north"

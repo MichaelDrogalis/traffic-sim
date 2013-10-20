@@ -23,11 +23,6 @@
   :street/tag "south"
   :street/name "Juniper Street"
   :intersection/of ["Juniper Street" "Walnut Street"]}
- {:lane/weight 0
-  :lane/name "out"
-  :street/tag "north"
-  :street/name "Juniper Street"
-  :intersection/of ["Juniper Street" "Walnut Street"]}
  {:lane/weight 5
   :lane/name "out-2"
   :street/tag "west"
@@ -53,12 +48,12 @@
   :street/tag "east"
   :street/name "Walnut Street"
   :intersection/of ["13th Street" "Walnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "in-1"
   :street/tag "south"
   :street/name "13th Street"
   :intersection/of ["13th Street" "Walnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "in-2"
   :street/tag "south"
   :street/name "13th Street"
@@ -143,12 +138,12 @@
   :street/tag "east"
   :street/name "Walnut Street"
   :intersection/of ["11th Street" "Walnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "in-1"
   :street/tag "south"
   :street/name "11th Street"
   :intersection/of ["11th Street" "Walnut Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "in-2"
   :street/tag "south"
   :street/name "11th Street"
@@ -468,7 +463,7 @@
   :street/tag "north"
   :street/name "13th Street"
   :intersection/of ["13th Street" "Chestnut Street"]}
- {:lane/weight 5
+ {:lane/weight 1
   :lane/name "in-1"
   :street/tag "west"
   :street/name "Chestnut Street"
@@ -488,7 +483,7 @@
   :street/tag "north"
   :street/name "12th Street"
   :intersection/of ["12th Street" "Chestnut Street"]}
- {:lane/weight 5
+ {:lane/weight 1
   :lane/name "out-1"
   :street/tag "east"
   :street/name "Chestnut Street"
@@ -498,12 +493,12 @@
   :street/tag "east"
   :street/name "Chestnut Street"
   :intersection/of ["12th Street" "Chestnut Street"]}
- {:lane/weight 2
+ {:lane/weight 20
   :lane/name "out-1"
   :street/tag "south"
   :street/name "12th Street"
   :intersection/of ["12th Street" "Chestnut Street"]}
- {:lane/weight 2
+ {:lane/weight 20
   :lane/name "out-2"
   :street/tag "south"
   :street/name "12th Street"
@@ -583,12 +578,12 @@
   :street/tag "east"
   :street/name "Sansom Street"
   :intersection/of ["12th Street" "Sansom Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "in-1"
   :street/tag "north"
   :street/name "12th Street"
   :intersection/of ["12th Street" "Sansom Street"]}
- {:lane/weight 0
+ {:lane/weight 5
   :lane/name "in-2"
   :street/tag "north"
   :street/name "12th Street"
