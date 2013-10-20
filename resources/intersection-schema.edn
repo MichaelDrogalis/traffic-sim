@@ -148,7 +148,7 @@
   :street/name "Juniper Street"
   :street/tag "south"
   :lane/name "out"
-  :street.lane.install/length 45
+  :street.lane.install/length 35
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
  
@@ -156,7 +156,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-2"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -164,7 +164,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-3"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -232,7 +232,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-1"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -240,7 +240,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-2"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
  
@@ -248,7 +248,7 @@
   :street/name "13th Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 74
+  :street.lane.install/length 64
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
  
@@ -256,7 +256,7 @@
   :street/name "13th Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 74
+  :street.lane.install/length 64
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
 
@@ -324,7 +324,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-1"
-  :street.lane.install/length 95
+  :street.lane.install/length 85
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -332,7 +332,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-2"
-  :street.lane.install/length 95
+  :street.lane.install/length 85
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
  
@@ -340,7 +340,7 @@
   :street/name "12th Street"
   :street/tag "south"
   :lane/name "out-1"
-  :street.lane.install/lengt 65
+  :street.lane.install/lengt 55
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
  
@@ -348,7 +348,7 @@
   :street/name "12th Street"
   :street/tag "south"
   :lane/name "out-2"
-  :street.lane.install/length 65
+  :street.lane.install/length 55
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
 
@@ -416,7 +416,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-1"
-  :street.lane.install/length 73
+  :street.lane.install/length 63
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -424,7 +424,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-2"
-  :street.lane.install/length 73
+  :street.lane.install/length 63
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
  
@@ -432,7 +432,7 @@
   :street/name "11th Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 75
+  :street.lane.install/length 65
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
  
@@ -440,7 +440,7 @@
   :street/name "11th Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 75
+  :street.lane.install/length 65
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
 
@@ -541,7 +541,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-1"
-  :street.lane.install/length 100
+  :street.lane.install/length 90
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
  
@@ -549,7 +549,7 @@
   :street/name "Walnut Street"
   :street/tag "west"
   :lane/name "out-2"
-  :street.lane.install/length 100
+  :street.lane.install/length 90
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
  
@@ -557,7 +557,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "out-1"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -565,7 +565,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "out-2"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
 
@@ -573,7 +573,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "out-3"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?E}
 
@@ -581,7 +581,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 69
+  :street.lane.install/length 59
   :street.lane.install/type :egress
   :street.lane.install/ident ?F}
 
@@ -589,7 +589,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 69
+  :street.lane.install/length 59
   :street.lane.install/type :egress
   :street.lane.install/ident ?G}
 
@@ -597,7 +597,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-3"
-  :street.lane.install/length 69
+  :street.lane.install/length 59
   :street.lane.install/type :egress
   :street.lane.install/ident ?H}
 
@@ -621,7 +621,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "in-1"
-  :street.lane.install/length 40
+  :street.lane.install/length 50
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?c
@@ -632,7 +632,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "in-2"
-  :street.lane.install/length 40
+  :street.lane.install/length 50
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?d
@@ -643,7 +643,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "in-3"
-  :street.lane.install/length 40
+  :street.lane.install/length 50
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?e
@@ -687,7 +687,7 @@
   :street/name "Sansom Street"
   :street/tag "west"
   :lane/name "out"
-  :street.lane.install/length 100
+  :street.lane.install/length 90
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
  
@@ -719,7 +719,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 43
+  :street.lane.install/length 33
   :street.lane.install/type :egress
   :street.lane.install/ident ?F}
 
@@ -727,7 +727,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 43
+  :street.lane.install/length 33
   :street.lane.install/type :egress
   :street.lane.install/ident ?G}
 
@@ -735,7 +735,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-3"
-  :street.lane.install/length 43
+  :street.lane.install/length 33
   :street.lane.install/type :egress
   :street.lane.install/ident ?H}
 
@@ -836,7 +836,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-1"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
  
@@ -844,7 +844,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-2"
-  :street.lane.install/length 50
+  :street.lane.install/length 40
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
  
@@ -852,7 +852,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "out-1"
-  :street.lane.install/length 45
+  :street.lane.install/length 35
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -860,7 +860,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "out-2"
-  :street.lane.install/length 45
+  :street.lane.install/length 35
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
 
@@ -868,7 +868,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "out-3"
-  :street.lane.install/length 45
+  :street.lane.install/length 35
   :street.lane.install/type :egress
   :street.lane.install/ident ?E}
 
@@ -876,7 +876,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 150
+  :street.lane.install/length 140
   :street.lane.install/type :egress
   :street.lane.install/ident ?F}
 
@@ -884,7 +884,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 150
+  :street.lane.install/length 140
   :street.lane.install/type :egress
   :street.lane.install/ident ?G}
 
@@ -892,7 +892,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-3"
-  :street.lane.install/length 150
+  :street.lane.install/length 140
   :street.lane.install/type :egress
   :street.lane.install/ident ?H}
 
@@ -938,7 +938,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-1"
-  :street.lane.install/length 45
+  :street.lane.install/length 35
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -946,7 +946,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-2"
-  :street.lane.install/length 45
+  :street.lane.install/length 35
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -954,7 +954,7 @@
   :street/name "Juniper Street"
   :street/tag "south"
   :lane/name "out"
-  :street.lane.install/length 45
+  :street.lane.install/length 35
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -1011,7 +1011,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-1"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -1019,7 +1019,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-2"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
  
@@ -1027,7 +1027,7 @@
   :street/name "13th Street"
   :street/tag "north"
   :lane/name "out"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -1084,7 +1084,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-1"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -1092,7 +1092,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-2"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -1100,7 +1100,7 @@
   :street/name "12th Street"
   :street/tag "south"
   :lane/name "out-1"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -1108,7 +1108,7 @@
   :street/name "12th Street"
   :street/tag "south"
   :lane/name "out-2"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
 
@@ -1165,7 +1165,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-1"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -1173,7 +1173,7 @@
   :street/name "Chestnut Street"
   :street/tag "east"
   :lane/name "out-2"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -1181,7 +1181,7 @@
   :street/name "11th Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -1189,7 +1189,7 @@
   :street/name "11th Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?D}
 
@@ -1235,7 +1235,7 @@
   :street/name "Sansom Street"
   :street/tag "west"
   :lane/name "out"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -1243,7 +1243,7 @@
   :street/name "11th Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 62
+  :street.lane.install/length 52
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -1251,7 +1251,7 @@
   :street/name "11th Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 62
+  :street.lane.install/length 52
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -1297,7 +1297,7 @@
   :street/name "Sansom Street"
   :street/tag "west"
   :lane/name "out"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -1305,7 +1305,7 @@
   :street/name "12th Street"
   :street/tag "south"
   :lane/name "out-1"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -1313,7 +1313,7 @@
   :street/name "12th Street"
   :street/tag "south"
   :lane/name "out-2"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -1348,7 +1348,7 @@
   :street/name "Sansom Street"
   :street/tag "west"
   :lane/name "out"
-  :street.lane.install/length 30
+  :street.lane.install/length 20
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -1356,7 +1356,7 @@
   :street/name "13th Street"
   :street/tag "north"
   :lane/name "out"
-  :street.lane.install/length 64
+  :street.lane.install/length 54
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}
 
@@ -1391,7 +1391,7 @@
   :street/name "Sansom Street"
   :street/tag "west"
   :lane/name "out"
-  :street.lane.install/length 40
+  :street.lane.install/length 30
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
 
@@ -1399,7 +1399,7 @@
   :street/name "Juniper Street"
   :street/tag "south"
   :lane/name "out"
-  :street.lane.install/length 40
+  :street.lane.install/length 30
   :street.lane.install/type :egress
   :street.lane.install/ident ?B}]
 
