@@ -137,7 +137,7 @@
   :street/name "Juniper Street"
   :street/tag "north"
   :lane/name "in"
-  :street.lane.install/length 74
+  :street.lane.install/length 45
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?d
@@ -148,7 +148,7 @@
   :street/name "Juniper Street"
   :street/tag "south"
   :lane/name "out"
-  :street.lane.install/length 40
+  :street.lane.install/length 45
   :street.lane.install/type :egress
   :street.lane.install/ident ?A}
  
@@ -475,7 +475,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "in-1"
-  :street.lane.install/length 70
+  :street.lane.install/length 69
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?c
@@ -486,7 +486,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "in-2"
-  :street.lane.install/length 70
+  :street.lane.install/length 69
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?d
@@ -497,7 +497,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "in-3"
-  :street.lane.install/length 70
+  :street.lane.install/length 69
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?e
@@ -581,7 +581,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 70
+  :street.lane.install/length 69
   :street.lane.install/type :egress
   :street.lane.install/ident ?F}
 
@@ -589,7 +589,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 70
+  :street.lane.install/length 69
   :street.lane.install/type :egress
   :street.lane.install/ident ?G}
 
@@ -597,7 +597,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-3"
-  :street.lane.install/length 70
+  :street.lane.install/length 69
   :street.lane.install/type :egress
   :street.lane.install/ident ?H}
 
@@ -719,7 +719,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-1"
-  :street.lane.install/length 44
+  :street.lane.install/length 43
   :street.lane.install/type :egress
   :street.lane.install/ident ?F}
 
@@ -727,7 +727,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-2"
-  :street.lane.install/length 44
+  :street.lane.install/length 43
   :street.lane.install/type :egress
   :street.lane.install/ident ?G}
 
@@ -735,7 +735,7 @@
   :street/name "Broad Street"
   :street/tag "north"
   :lane/name "out-3"
-  :street.lane.install/length 44
+  :street.lane.install/length 43
   :street.lane.install/type :egress
   :street.lane.install/ident ?H}
 
@@ -803,7 +803,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "in-1"
-  :street.lane.install/length 45
+  :street.lane.install/length 43
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?f
@@ -814,7 +814,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "in-2"
-  :street.lane.install/length 45
+  :street.lane.install/length 43
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-only-set
   :street.lane.install/ident ?g
@@ -825,7 +825,7 @@
   :street/name "Broad Street"
   :street/tag "south"
   :lane/name "in-3"
-  :street.lane.install/length 45
+  :street.lane.install/length 43
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?h
@@ -954,7 +954,7 @@
   :street/name "Juniper Street"
   :street/tag "south"
   :lane/name "out"
-  :street.lane.install/length 50
+  :street.lane.install/length 45
   :street.lane.install/type :egress
   :street.lane.install/ident ?C}
 
@@ -1380,7 +1380,7 @@
   :street/name "Juniper Street"
   :street/tag "north"
   :lane/name "in"
-  :street.lane.install/length 30
+  :street.lane.install/length 40
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?b
