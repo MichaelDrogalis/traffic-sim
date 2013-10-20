@@ -39,13 +39,11 @@
 
 (defn weighted-internal-directions [storage weights]
   (fn [_ lane-id]
-    (prn "Invoking intern")
     (let [links (p/internal-links storage lane-id)]
       (weighted-directions weights links))))
 
 (defn weighted-external-directions [storage weights]
   (fn [_ lane-id]
-    (prn "Invoking extern")
     (let [links (p/external-links storage lane-id)]
       (weighted-directions weights links))))
 
