@@ -42,17 +42,18 @@
 (defn genesis! [snapshot t-fn queue]
   (let [successor (t-fn snapshot)]
     (send-off queue (constantly successor))
-    (Thread/sleep 500)
+    (Thread/sleep 400)
     (recur successor t-fn queue)))
 
-(def walnut-11-east-in
-  {:intersection/of ["11th Street" "Walnut Street"]
-   :street/name "Walnut Street"
-   :street/tag "east"
-   :lane/name "in-2"})
+(def walnut-juniper-north-in
+  {:intersection/of ["Juniper Street" "Walnut Street"]
+   :street/name "Juniper Street"
+   :street/tag "north"
+   :lane/name "in"})
 
 (defn start-sim []
-  (q/put-into-ch (:channel (ingress-lanes walnut-11-east-in))
-                 {:id "Mike" :buf 0 :len 1})
+  (doseq [n (range 10)]
+    (q/put-into-ch (:channel (ingress-lanes walnut-juniper-north-in))
+                   {:id (str n) :buf 5 :len 1}))
   (future (genesis! starting-state transform-world queue)))
 
