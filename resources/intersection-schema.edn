@@ -302,7 +302,7 @@
   :street/name "12th Street"
   :street/tag "north"
   :lane/name "in-1"
-  :street.lane.install/length 75
+  :street.lane.install/length 56
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-only-set 
   :street.lane.install/ident ?d
@@ -313,7 +313,7 @@
   :street/name "12th Street"
   :street/tag "north"
   :lane/name "in-2"
-  :street.lane.install/length 75
+  :street.lane.install/length 56
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-or-right-set
   :street.lane.install/ident ?e
@@ -1369,7 +1369,7 @@
   :street/name "Sansom Street"
   :street/tag "east"
   :lane/name "in"
-  :street.lane.install/length 60
+  :street.lane.install/length 57
   :street.lane.install/type :ingress
   :street.lane.install/rules :straight-or-left-set
   :street.lane.install/ident ?a
