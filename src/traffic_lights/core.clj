@@ -51,9 +51,20 @@
    :street/tag "north"
    :lane/name "in"})
 
+(def chestnut-13-west-in
+  {:intersection/of ["13th Street" "Chestnut Street"]
+   :street/name "Chestnut Street"
+   :street/tag "west"
+   :lane/name "in-2"})
+
+(defn inject-traffic-load! [lane n]
+  (doseq [_ (range n)]
+    (q/put-into-ch
+     (:channel (ingress-lanes lane))
+     {:id (str (java.util.UUID/randomUUID)) :buf 5 :len 5})))
+
 (defn start-sim []
-  (doseq [n (range 10)]
-    (q/put-into-ch (:channel (ingress-lanes walnut-juniper-north-in))
-                   {:id (str n) :buf 5 :len 1}))
+  (inject-traffic-load! walnut-juniper-north-in 10)
+  (inject-traffic-load! chestnut-13-west-in 15)
   (future (genesis! starting-state transform-world queue)))
 
