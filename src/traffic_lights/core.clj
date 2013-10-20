@@ -64,7 +64,7 @@
      {:id (str (java.util.UUID/randomUUID)) :buf 5 :len 5})))
 
 (defn start-sim []
-  (inject-traffic-load! walnut-juniper-north-in 10)
-  (inject-traffic-load! chestnut-13-west-in 15)
+  (inject-traffic-load! walnut-juniper-north-in 15)
+  (inject-traffic-load! chestnut-13-west-in 35)
   (future (genesis! starting-state transform-world queue)))
 
