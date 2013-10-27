@@ -1,13 +1,13 @@
-(ns traffic-lights.scenarios.scenario-07-test
+(ns traffic-sim.scenarios.scenario-07-test
   "Driving one car up east on 11th and Walnut and straight to Broad."
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [midje.sweet :refer :all]
-            [traffic-lights.boot :as b]
-            [traffic-lights.protocols :as p]
-            [traffic-lights.rules :as r]
-            [traffic-lights.queue :as q]
-            [traffic-lights.util :as u]
-            [traffic-lights.succession :refer :all]))
+            [traffic-sim.boot :as b]
+            [traffic-sim.protocols :as p]
+            [traffic-sim.rules :as r]
+            [traffic-sim.queue :as q]
+            [traffic-sim.util :as u]
+            [traffic-sim.succession :refer :all]))
 
 (def intersections
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))

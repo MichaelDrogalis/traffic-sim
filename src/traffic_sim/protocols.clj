@@ -1,5 +1,5 @@
-(ns traffic-lights.protocols
-  (:require [traffic-lights.memory :as m]))
+(ns traffic-sim.protocols
+  (:require [traffic-sim.memory :as m]))
 
 (defprotocol ILight
   (initial-light [this intx])

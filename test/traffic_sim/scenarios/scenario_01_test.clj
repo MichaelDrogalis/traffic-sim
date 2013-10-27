@@ -1,13 +1,12 @@
-(ns traffic-lights.scenarios.scenario-02-test
-  "Driving one car up south street, halting for a red light & no other traffic."
-  (:require [clojure.algo.generic.functor :refer [fmap]]
-            [midje.sweet :refer :all]
-            [traffic-lights.boot :as b]
-            [traffic-lights.protocols :as p]
-            [traffic-lights.rules :as r]
-            [traffic-lights.queue :as q]
-            [traffic-lights.util :as u]
-            [traffic-lights.succession :refer :all]))
+(ns traffic-sim.scenarios.scenario-01-test
+  "Scenario driving one car up south street with no other traffic."
+  (:require [midje.sweet :refer :all]
+            [traffic-sim.boot :as b]
+            [traffic-sim.protocols :as p]
+            [traffic-sim.rules :as r]
+            [traffic-sim.queue :as q]
+            [traffic-sim.util :as u]
+            [traffic-sim.succession :refer :all]))
 
 (def schema
   '[{:light-face/ident :standard
@@ -17,7 +16,7 @@
     
     {:schedule/ident :intx-schedule
      :schedule/substitute {?x :standard ?y :standard}
-     :schedule/sequence [{:state-diff {?x [:green]} :ticks 15}
+     :schedule/sequence [{:state-diff {?x [:green]} :ticks 1}
                          {:state-diff {?x [:yellow]} :ticks 1}
                          {:state-diff {?x [:red]} :ticks 1}
                          {:state-diff {?y [:green]} :ticks 1}
@@ -75,8 +74,8 @@
      :lane/name "out"
      :street.lane.install/ident ?A
      :street.lane.install/type :egress
-     :street.lane.install/length 10
-     :street.lane.install/speed-limit 1}
+     :street.lane.install/speed-limit 1
+     :street.lane.install/length 10}
     
     {:intersection/of ["Maple Street"]
      :street/name "Maple Street"
@@ -84,8 +83,8 @@
      :lane/name "out"
      :street.lane.install/ident ?B
      :street.lane.install/type :egress
-     :street.lane.install/length 10
-     :street.lane.install/speed-limit 1}])
+     :street.lane.install/speed-limit 1
+     :street.lane.install/length 10}])
 
 (def storage (p/memory-storage schema))
 
@@ -123,7 +122,7 @@
 (q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
 
 (def iterations
-  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 19)))
+  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 21)))
 
 (def ingress-iterations
   (map (comp (partial u/find-lane south-in) vals) (map :ingress iterations)))
@@ -132,42 +131,70 @@
   (map (comp (partial u/find-lane north-out) vals) (map :egress iterations)))
 
 (def light-iterations
-  (map (fn [x] (fmap :state x)) (map :lights iterations)))
+  (map (comp :state first vals) (map :lights iterations)))
 
 (fact (:state (nth ingress-iterations 1))
-      => [{:id "Mike" :len 1 :buf 0 :front 9 :dst north-out}])
+      => [{:id "Mike" :len 1 :buf 0 :dst north-out :front 9}])
 
-(fact ('?y (get (nth light-iterations 10)
-                (:intersection/of south-in)))
-      => [:red])
+(fact (:state (nth ingress-iterations 2))
+      => [{:id "Mike" :len 1 :buf 0 :front 8 :dst north-out :ripe? false}])
+
+(fact (:state (nth ingress-iterations 3))
+      => [{:id "Mike" :len 1 :buf 0 :front 7 :dst north-out :ripe? false}])
+
+(fact (:state (nth ingress-iterations 4))
+      => [{:id "Mike" :len 1 :buf 0 :front 6 :dst north-out :ripe? false}])
+
+(fact (:state (nth ingress-iterations 5))
+      => [{:id "Mike" :len 1 :buf 0 :front 5 :dst north-out :ripe? false}])
+
+(fact (:state (nth ingress-iterations 6))
+      => [{:id "Mike" :len 1 :buf 0 :front 4 :dst north-out :ripe? false}])
+
+(fact (:state (nth ingress-iterations 7))
+      => [{:id "Mike" :len 1 :buf 0 :front 3 :dst north-out :ripe? false}])
+
+(fact (:state (nth ingress-iterations 8))
+      => [{:id "Mike" :len 1 :buf 0 :front 2 :dst north-out :ripe? false}])
+
+(fact (:state (nth ingress-iterations 9))
+      => [{:id "Mike" :len 1 :buf 0 :front 1 :dst north-out :ripe? false}])
 
 (fact (:state (nth ingress-iterations 10))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
 
-(fact ('?y (get (nth light-iterations 11)
-                (:intersection/of south-in))) => [:red])
+(fact ('?y (nth light-iterations 10)) => [:green])
 
 (fact (:state (nth ingress-iterations 11))
- => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
-
-(fact ('?y (get (nth light-iterations 17)
-                (:intersection/of south-in))) => [:red])
-
-(fact (:state (nth ingress-iterations 17))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
-
-(fact ('?y (get (nth light-iterations 18)
-                (:intersection/of south-in))) => [:green])
-
-(fact (:state (nth ingress-iterations 18))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
-
-(fact ('?y (get (nth light-iterations 19)
-                (:intersection/of south-in))) => [:yellow])
-
-(fact (:state (nth ingress-iterations 19))
       => [])
 
+(fact (:state (nth egress-iterations 11))
+      => [{:id "Mike" :len 1 :buf 0 :front 9 :dst north-out}])
+
+(fact (:state (nth egress-iterations 12))
+      => [{:id "Mike" :len 1 :buf 0 :front 8 :dst north-out :ripe? false}])
+
+(fact (:state (nth egress-iterations 13))
+      => [{:id "Mike" :len 1 :buf 0 :front 7 :dst north-out :ripe? false}])
+
+(fact (:state (nth egress-iterations 14))
+      => [{:id "Mike" :len 1 :buf 0 :front 6 :dst north-out :ripe? false}])
+
+(fact (:state (nth egress-iterations 15))
+      => [{:id "Mike" :len 1 :buf 0 :front 5 :dst north-out :ripe? false}])
+
+(fact (:state (nth egress-iterations 16))
+      => [{:id "Mike" :len 1 :buf 0 :front 4 :dst north-out :ripe? false}])
+
+(fact (:state (nth egress-iterations 17))
+      => [{:id "Mike" :len 1 :buf 0 :front 3 :dst north-out :ripe? false}])
+
+(fact (:state (nth egress-iterations 18))
+      => [{:id "Mike" :len 1 :buf 0 :front 2 :dst north-out :ripe? false}])
+
 (fact (:state (nth egress-iterations 19))
-      => [{:id "Mike" :len 1 :buf 0 :dst north-out :front 9}])
+      => [{:id "Mike" :len 1 :buf 0 :front 1 :dst north-out :ripe? false}])
+
+(fact (:state (nth egress-iterations 20))
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
 

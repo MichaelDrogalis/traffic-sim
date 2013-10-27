@@ -1,6 +1,6 @@
-(ns traffic-lights.directions
-  (:require [traffic-lights.protocols :as p]
-            [traffic-lights.util :refer [only quad]]))
+(ns traffic-sim.directions
+  (:require [traffic-sim.protocols :as p]
+            [traffic-sim.util :refer [only quad]]))
 
 (defn weighted-rand-nth [weights]
   (rand-nth (mapcat (fn [[k v]] (take v (repeat k))) weights)))

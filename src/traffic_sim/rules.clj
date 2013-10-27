@@ -1,7 +1,7 @@
-(ns traffic-lights.rules
+(ns traffic-sim.rules
   (:require [clojure.set :refer [subset?]]
-            [traffic-lights.protocols :as p]
-            [traffic-lights.util :refer [getx quad] :as u]))
+            [traffic-sim.protocols :as p]
+            [traffic-sim.util :refer [getx quad] :as u]))
 
 (defn lane-clear?
   ([lane-idx src]

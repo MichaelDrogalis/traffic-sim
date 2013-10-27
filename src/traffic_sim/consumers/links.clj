@@ -1,9 +1,9 @@
-(ns traffic-lights.consumers.links
+(ns traffic-sim.consumers.links
   (:require [compojure.core :refer [defroutes GET POST]]
             [ring.adapter.jetty :refer [run-jetty]]
             [ring.middleware.params :refer [wrap-params]]
-            [traffic-lights.protocols :as p]
-            [traffic-lights.core :refer [storage]]))
+            [traffic-sim.protocols :as p]
+            [traffic-sim.core :refer [storage]]))
 
 (defroutes routes
   (GET "/rush-hour/api/external-links/edn" {:keys [body]}

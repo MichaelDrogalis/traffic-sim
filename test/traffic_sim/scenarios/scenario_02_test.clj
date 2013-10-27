@@ -1,13 +1,13 @@
-(ns traffic-lights.scenarios.scenario-03-test
-  "Driving one car up south street and one car down north street.
-   The light is constantly green, and symmetric to both streets."
-  (:require [midje.sweet :refer :all]
-            [traffic-lights.boot :as b]
-            [traffic-lights.protocols :as p]
-            [traffic-lights.rules :as r]
-            [traffic-lights.queue :as q]
-            [traffic-lights.util :as u]
-            [traffic-lights.succession :refer :all]))
+(ns traffic-sim.scenarios.scenario-02-test
+  "Driving one car up south street, halting for a red light & no other traffic."
+  (:require [clojure.algo.generic.functor :refer [fmap]]
+            [midje.sweet :refer :all]
+            [traffic-sim.boot :as b]
+            [traffic-sim.protocols :as p]
+            [traffic-sim.rules :as r]
+            [traffic-sim.queue :as q]
+            [traffic-sim.util :as u]
+            [traffic-sim.succession :refer :all]))
 
 (def schema
   '[{:light-face/ident :standard
@@ -17,7 +17,12 @@
     
     {:schedule/ident :intx-schedule
      :schedule/substitute {?x :standard ?y :standard}
-     :schedule/sequence [{:state-diff {?x [:green] ?y [:green]} :ticks 1}]}
+     :schedule/sequence [{:state-diff {?x [:green]} :ticks 15}
+                         {:state-diff {?x [:yellow]} :ticks 1}
+                         {:state-diff {?x [:red]} :ticks 1}
+                         {:state-diff {?y [:green]} :ticks 1}
+                         {:state-diff {?y [:yellow]} :ticks 1}
+                         {:state-diff {?y [:red]} :ticks 1}]}
     
     {:rule/ident :straight
      :src ?origini
@@ -86,16 +91,12 @@
 
 (def safety-fn (r/safe-to-go? storage))
 
-(defn dir-fn [id _]
-  (if (= id "Mike")
-    {:intersection/of ["Maple Street"]
-     :street/name "Maple Street"
-     :street/tag "north"
-     :lane/name "out"}
-    {:intersection/of ["Maple Street"]
-     :street/name "Maple Street"
-     :street/tag "south"
-     :lane/name "out"}))
+(def dir-fn
+  (constantly
+   {:intersection/of ["Maple Street"]
+    :street/name "Maple Street"
+    :street/tag "north"
+    :lane/name "out"}))
 
 (def t-fn (transform-world-fn dir-fn dir-fn safety-fn))
 
@@ -113,18 +114,6 @@
    :street/tag "south"
    :lane/name "in"})
 
-(def north-in
-  {:intersection/of ["Maple Street"]
-   :street/name "Maple Street"
-   :street/tag "north"
-   :lane/name "in"})
-
-(def south-out
-  {:intersection/of ["Maple Street"]
-   :street/name "Maple Street"
-   :street/tag "south"
-   :lane/name "out"})
-
 (def north-out
   {:intersection/of ["Maple Street"]
    :street/name "Maple Street"
@@ -132,59 +121,53 @@
    :lane/name "out"})
 
 (q/put-into-ch (:channel (get ingress-lanes south-in)) {:id "Mike" :len 1 :buf 0})
-(q/put-into-ch (:channel (get ingress-lanes north-in)) {:id "Kristen" :len 1 :buf 0})
 
 (def iterations
-  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 21)))
+  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 19)))
 
-(def ingress-south-iterations
+(def ingress-iterations
   (map (comp (partial u/find-lane south-in) vals) (map :ingress iterations)))
 
-(def ingress-north-iterations
-  (map (comp (partial u/find-lane north-in) vals) (map :ingress iterations)))
-
-(def egress-south-iterations
-  (map (comp (partial u/find-lane south-out) vals) (map :egress iterations)))
-
-(def egress-north-iterations
+(def egress-iterations
   (map (comp (partial u/find-lane north-out) vals) (map :egress iterations)))
 
 (def light-iterations
-  (map (comp :state first vals) (map :lights iterations)))
+  (map (fn [x] (fmap :state x)) (map :lights iterations)))
 
-(fact (:state (nth ingress-south-iterations 1))
-      => [{:id "Mike" :len 1 :buf 0 :dst north-out :front 9}])
-
-(fact (:state (nth ingress-north-iterations 1))
-      => [{:id "Kristen" :len 1 :buf 0 :dst south-out :front 9}])
-
-(fact (:state (nth ingress-south-iterations 9))
-      => [{:id "Mike" :len 1 :buf 0 :front 1 :dst north-out :ripe? false}])
-
-(fact (:state (nth ingress-north-iterations 9))
-      => [{:id "Kristen" :len 1 :buf 0 :front 1 :dst south-out :ripe? false}])
-
-(fact (:state (nth ingress-south-iterations 10))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
-
-(fact (:state (nth ingress-north-iterations 10))
-      => [{:id "Kristen" :len 1 :buf 0 :front 0 :dst south-out :ripe? false}])
-
-(fact (:state (nth ingress-south-iterations 11))
-      => [])
-
-(fact (:state (nth ingress-north-iterations 11))
-      => [])
-
-(fact (:state (nth egress-south-iterations 11))
-      => [{:id "Kristen" :len 1 :buf 0 :dst south-out :front 9}])
-
-(fact (:state (nth egress-north-iterations 11))
+(fact (:state (nth ingress-iterations 1))
       => [{:id "Mike" :len 1 :buf 0 :front 9 :dst north-out}])
 
-(fact (:state (nth egress-south-iterations 20))
-      => [{:id "Kristen" :len 1 :buf 0 :front 0 :dst south-out :ripe? false}])
+(fact ('?y (get (nth light-iterations 10)
+                (:intersection/of south-in)))
+      => [:red])
 
-(fact (:state (nth egress-north-iterations 20))
+(fact (:state (nth ingress-iterations 10))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
+
+(fact ('?y (get (nth light-iterations 11)
+                (:intersection/of south-in))) => [:red])
+
+(fact (:state (nth ingress-iterations 11))
+ => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
+
+(fact ('?y (get (nth light-iterations 17)
+                (:intersection/of south-in))) => [:red])
+
+(fact (:state (nth ingress-iterations 17))
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
+
+(fact ('?y (get (nth light-iterations 18)
+                (:intersection/of south-in))) => [:green])
+
+(fact (:state (nth ingress-iterations 18))
+      => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
+
+(fact ('?y (get (nth light-iterations 19)
+                (:intersection/of south-in))) => [:yellow])
+
+(fact (:state (nth ingress-iterations 19))
+      => [])
+
+(fact (:state (nth egress-iterations 19))
+      => [{:id "Mike" :len 1 :buf 0 :dst north-out :front 9}])
 

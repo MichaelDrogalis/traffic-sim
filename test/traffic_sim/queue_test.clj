@@ -1,6 +1,6 @@
-(ns traffic-lights.queue-test
+(ns traffic-sim.queue-test
   (:require [midje.sweet :refer :all]
-            [traffic-lights.queue :refer :all]))
+            [traffic-sim.queue :refer :all]))
 
 (let [lane [{:id "Mike"} {:id "Dorrene"} {:id "Kristen"}]]
   (fact (slot lane "Mike")      => 0)

@@ -1,7 +1,7 @@
-(ns traffic-lights.consumers.reload
-  (:require [traffic-lights.core :refer [queue] :as c]
-            [traffic-lights.util :refer [maph]]
-            [traffic-lights.queue :as q]))
+(ns traffic-sim.consumers.reload
+  (:require [traffic-sim.core :refer [queue] :as c]
+            [traffic-sim.util :refer [maph]]
+            [traffic-sim.queue :as q]))
 
 (def last-count (atom 0))
 

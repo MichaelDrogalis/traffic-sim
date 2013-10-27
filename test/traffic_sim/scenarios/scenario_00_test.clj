@@ -1,10 +1,10 @@
-(ns traffic-lights.scenarios.scenario-00-test
+(ns traffic-sim.scenarios.scenario-00-test
   "Sanity scenario of iterating a few times with no traffic."
   (:require [midje.sweet :refer :all]
-            [traffic-lights.boot :as b]
-            [traffic-lights.protocols :as p]
-            [traffic-lights.rules :as r]
-            [traffic-lights.succession :refer :all]))
+            [traffic-sim.boot :as b]
+            [traffic-sim.protocols :as p]
+            [traffic-sim.rules :as r]
+            [traffic-sim.succession :refer :all]))
 
 (def schema
   '[{:light-face/ident :standard

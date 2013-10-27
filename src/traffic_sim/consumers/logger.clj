@@ -1,7 +1,7 @@
-(ns traffic-lights.consumers.logger
+(ns traffic-sim.consumers.logger
   (:require [clojure.pprint :refer [pprint]]
-            [traffic-lights.core :refer [queue]]
-            [traffic-lights.util :refer [maph]]))
+            [traffic-sim.core :refer [queue]]
+            [traffic-sim.util :refer [maph]]))
 
 (defn log! [idx]
   (pprint (maph :state idx)))

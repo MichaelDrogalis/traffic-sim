@@ -1,6 +1,6 @@
-(ns traffic-lights.consumers.socket
-  (:require [traffic-lights.util :refer [maph]]
-            [traffic-lights.core :refer [queue]])
+(ns traffic-sim.consumers.socket
+  (:require [traffic-sim.util :refer [maph]]
+            [traffic-sim.core :refer [queue]])
   (:import [org.webbitserver WebServer WebServers WebSocketHandler]))
 
 (def listeners (atom #{}))

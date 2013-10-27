@@ -1,12 +1,12 @@
-(ns traffic-lights.scenarios.scenario-04-test
+(ns traffic-sim.scenarios.scenario-04-test
   "Driving one car up south street taking a left, no traffic."
   (:require [midje.sweet :refer :all]
-            [traffic-lights.boot :as b]
-            [traffic-lights.protocols :as p]
-            [traffic-lights.rules :as r]
-            [traffic-lights.queue :as q]
-            [traffic-lights.util :as u]
-            [traffic-lights.succession :refer :all]))
+            [traffic-sim.boot :as b]
+            [traffic-sim.protocols :as p]
+            [traffic-sim.rules :as r]
+            [traffic-sim.queue :as q]
+            [traffic-sim.util :as u]
+            [traffic-sim.succession :refer :all]))
 
 (def schema
   '[{:light-face/ident :standard

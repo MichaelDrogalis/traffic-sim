@@ -1,12 +1,12 @@
-(ns traffic-lights.core
+(ns traffic-sim.core
   (:require [clojure.pprint :refer [pprint]]
-            [traffic-lights.boot :as b]
-            [traffic-lights.succession :as s]
-            [traffic-lights.protocols :as p]
-            [traffic-lights.rules :as r]
-            [traffic-lights.directions :as d]
-            [traffic-lights.queue :as q]
-            [traffic-lights.util :refer [maph index-by-quad] :as u]))
+            [traffic-sim.boot :as b]
+            [traffic-sim.succession :as s]
+            [traffic-sim.protocols :as p]
+            [traffic-sim.rules :as r]
+            [traffic-sim.directions :as d]
+            [traffic-sim.queue :as q]
+            [traffic-sim.util :refer [maph index-by-quad] :as u]))
 
 (def intersections
   (read-string (slurp (clojure.java.io/resource "intersection-schema.edn"))))

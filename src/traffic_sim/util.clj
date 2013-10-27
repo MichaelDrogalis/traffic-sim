@@ -1,4 +1,4 @@
-(ns traffic-lights.util
+(ns traffic-sim.util
   (:require [clojure.core.reducers :as r]))
 
 (defn getx

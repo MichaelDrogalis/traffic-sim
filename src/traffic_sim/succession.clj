@@ -1,6 +1,6 @@
-(ns traffic-lights.succession
-  (:require [traffic-lights.queue :as q]
-            [traffic-lights.util :refer [maph]]))
+(ns traffic-sim.succession
+  (:require [traffic-sim.queue :as q]
+            [traffic-sim.util :refer [maph]]))
 
 (defn transform-ingress-lanes [old-i-lanes old-e-lanes d-fn s-fn]
   (->> old-i-lanes
