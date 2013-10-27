@@ -107,7 +107,7 @@
     :street/tag "west"
     :lane/name "out"}))
 
-(def t-fn (transform-world-fn dir-fn safety-fn))
+(def t-fn (transform-world-fn dir-fn dir-fn safety-fn))
 
 (def lights (b/lights storage))
 
