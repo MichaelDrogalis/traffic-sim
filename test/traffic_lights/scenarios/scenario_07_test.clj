@@ -1,5 +1,5 @@
 (ns traffic-lights.scenarios.scenario-07-test
-  "Driving one car up east on 11th and Walnut and over to Broad."
+  "Driving one car up east on 11th and Walnut and straight to Broad."
   (:require [clojure.algo.generic.functor :refer [fmap]]
             [midje.sweet :refer :all]
             [traffic-lights.boot :as b]
@@ -62,7 +62,7 @@
 (q/put-into-ch (:channel (get ingress-lanes walnut-11-east-in)) {:id "Mike" :len 1 :buf 0})
 
 (def iterations
-  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 200)))
+  (reduce (fn [world _] (conj world (t-fn (last world)))) [initial-world] (range 30)))
 
 (def ingress-11-east-iterations
   (map (comp (partial u/find-lane walnut-11-east-in) vals) (map :ingress iterations)))
@@ -82,51 +82,33 @@
 (fact (:state (nth ingress-11-east-iterations 1))
       => [{:id "Mike" :len 1 :buf 0 :front 49 :dst walnut-11-west-out}])
 
-(fact (:state (nth ingress-11-east-iterations 45))
-      => [{:id "Mike" :len 1 :buf 0 :front 5 :ripe? false :dst walnut-11-west-out}])
+(fact (:state (nth ingress-11-east-iterations 10))
+      => [{:id "Mike" :len 1 :buf 0 :front 4 :ripe? false :dst walnut-11-west-out}])
 
-(fact (:state (nth ingress-11-east-iterations 49))
-      => [{:id "Mike" :len 1 :buf 0 :front 1 :ripe? false :dst walnut-11-west-out}])
-
-(fact ('?x ((nth light-iterations 50) (:intersection/of walnut-11-east-in)))
-      => [:red])
-
-(fact (:state (nth ingress-11-east-iterations 50))
+(fact (:state (nth ingress-11-east-iterations 11))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false :dst walnut-11-west-out}])
 
-(fact (:state (nth ingress-11-east-iterations 51))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true :dst walnut-11-west-out}])
-
-(fact ('?x ((nth light-iterations 60) (:intersection/of walnut-11-east-in)))
-      => [:red])
-
-(fact (:state (nth ingress-11-east-iterations 60))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true :dst walnut-11-west-out}])
-
-(fact ('?x ((nth light-iterations 61) (:intersection/of walnut-11-east-in)))
+(fact ('?x ((nth light-iterations 11) (:intersection/of walnut-11-east-in)))
       => [:green])
 
-(fact (:state (nth ingress-11-east-iterations 61))
-      => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? true :dst walnut-11-west-out}])
-
-(fact (:state (nth ingress-11-east-iterations 62))
+(fact (:state (nth ingress-11-east-iterations 12))
       => [])
 
-(fact (:state (nth egress-11-west-iterations 62))
-      => [{:id "Mike" :len 1 :buf 0 :front 72 :dst walnut-12-east-in}])
+(fact (:state (nth egress-11-west-iterations 13))
+      => [{:id "Mike" :len 1 :buf 0 :front 57 :ripe? false :dst walnut-12-east-in}])
 
-(fact (:state (nth egress-11-west-iterations 130))
-      => [{:id "Mike" :len 1 :buf 0 :front 4 :ripe? false :dst walnut-12-east-in}])
+(fact (:state (nth egress-11-west-iterations 23))
+      => [{:id "Mike" :len 1 :buf 0 :front 7 :ripe? false :dst walnut-12-east-in}])
 
-(fact (:state (nth egress-11-west-iterations 133))
-      => [{:id "Mike" :len 1 :buf 0 :front 1 :ripe? false :dst walnut-12-east-in}])
+(fact (:state (nth egress-11-west-iterations 24))
+      => [{:id "Mike" :len 1 :buf 0 :front 2 :ripe? false :dst walnut-12-east-in}])
 
-(fact (:state (nth egress-11-west-iterations 134))
+(fact (:state (nth egress-11-west-iterations 25))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false :dst walnut-12-east-in}])
 
-(fact (:state (nth egress-11-west-iterations 135))
+(fact (:state (nth egress-11-west-iterations 26))
       => [])
 
-(fact (:state (nth ingress-12-east-iterations 135))
+(fact (:state (nth ingress-12-east-iterations 26))
       => [{:id "Mike" :len 1 :buf 0 :front 59 :dst walnut-12-west-out}])
 
