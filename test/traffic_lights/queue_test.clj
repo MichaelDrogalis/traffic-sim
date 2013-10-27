@@ -55,8 +55,10 @@
       => [{:id "Benti" :front 7 :len 1 :buf 1}])
 
 (fact (advance-cars-in-lane {:state []}) => {:state []})
-(fact (advance-cars-in-lane {:state [{:id "Mike" :front 10}]})
-      => {:state [{:id "Mike" :front 9}]})
+(fact (advance-cars-in-lane {:state [{:id "Mike" :front 10}]
+                             :lane {:street.lane.install/speed-limit 1}})
+      => {:state [{:id "Mike" :front 9}]
+          :lane {:street.lane.install/speed-limit 1}})
 
 (let [fns (light-transition->fns {:state-diff {:x [:green]} :ticks 1})]
   (fact (reductions #(%2 %1) {:x [:red]} fns)
