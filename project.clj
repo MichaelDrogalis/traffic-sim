@@ -1,6 +1,6 @@
-(defproject traffic-lights "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+(defproject traffic-sim "0.1.0-SNAPSHOT"
+  :description "Simulation component for the Rush Hour platform "
+  :url "https://github.com/MichaelDrogalis/traffic-sim"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
@@ -8,8 +8,7 @@
                  [org.clojars.dsabanin/webbit "0.4.16"]
                  [ring/ring-jetty-adapter "1.2.0"]
                  [compojure "1.1.5"]
-                 [dire "0.4.4"]
-                 [rhizome "0.1.9"]]
+                 [dire "0.4.4"]]
   :plugins [[lein-midje "3.1.1"]]
   :profiles {:dev {:dependencies [[midje "1.5.1"]]}}
   :alias {"midje" ["with-profile" "dev" "midje"]}
