@@ -34,6 +34,7 @@
 (defn dir-fn [_ src]
   (let [lane-id (u/quad src)]
     (cond (= lane-id walnut-13-east-in) walnut-13-north-out
+          (= lane-id walnut-13-north-out) walnut-13-east-in
           :else nil)))
 
 (def t-fn (transform-world-fn dir-fn dir-fn safety-fn))
@@ -64,26 +65,26 @@
       => [{:id "Mike" :len 1 :buf 0 :front 34 :dst walnut-13-north-out}])
 
 (fact (:state (nth ingress-13-east-iterations 2))
-      => [{:id "Mike" :len 1 :buf 0 :front 24 :ripe? false :dst walnut-13-north-out}])
+      => [{:id "Mike" :len 1 :buf 0 :front 29 :ripe? false :dst walnut-13-north-out}])
 
 (fact (:state (nth ingress-13-east-iterations 3))
-      => [{:id "Mike" :len 1 :buf 0 :front 14 :ripe? false :dst walnut-13-north-out}])
+      => [{:id "Mike" :len 1 :buf 0 :front 24 :ripe? false :dst walnut-13-north-out}])
 
-(fact (:state (nth ingress-13-east-iterations 4))
+(fact (:state (nth ingress-13-east-iterations 7))
       => [{:id "Mike" :len 1 :buf 0 :front 4 :ripe? false :dst walnut-13-north-out}])
 
-(fact (:state (nth ingress-13-east-iterations 5))
+(fact (:state (nth ingress-13-east-iterations 8))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :ripe? false :dst walnut-13-north-out}])
 
-(fact ('?x ((nth light-iterations 5) (:intersection/of walnut-13-east-in)))
+(fact ('?x ((nth light-iterations 8) (:intersection/of walnut-13-east-in)))
       => [:green])
 
-(fact (:state (nth ingress-13-east-iterations 6))
+(fact (:state (nth ingress-13-east-iterations 9))
       => [])
 
-(fact (:state (nth egress-13-north-iterations 6))
-      => [{:id "Mike" :len 1 :buf 0 :front 73 :dst nil}])
+(fact (:state (nth egress-13-north-iterations 9))
+      => [{:id "Mike" :len 1 :buf 0 :front 63 :dst walnut-13-east-in}])
 
-(fact (:state (nth egress-13-north-iterations 7))
-      => [{:id "Mike" :len 1 :buf 0 :front 63 :dst nil :ripe? false}])
+(fact (:state (nth egress-13-north-iterations 10))
+      => [{:id "Mike" :len 1 :buf 0 :front 58 :dst walnut-13-east-in :ripe? false}])
 
