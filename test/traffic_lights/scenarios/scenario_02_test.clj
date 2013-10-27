@@ -137,27 +137,33 @@
 (fact (:state (nth ingress-iterations 1))
       => [{:id "Mike" :len 1 :buf 0 :front 9 :dst north-out}])
 
-(fact ('?y (nth light-iterations 10)) => [:red])
+(fact ('?y (get (nth light-iterations 10)
+                (:intersection/of south-in)))
+      => [:red])
 
 (fact (:state (nth ingress-iterations 10))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? false}])
 
-(fact ('?y (nth light-iterations 11)) => [:red])
+(fact ('?y (get (nth light-iterations 11)
+                (:intersection/of south-in))) => [:red])
 
 (fact (:state (nth ingress-iterations 11))
  => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
 
-(fact ('?y (nth light-iterations 17)) => [:red])
+(fact ('?y (get (nth light-iterations 17)
+                (:intersection/of south-in))) => [:red])
 
 (fact (:state (nth ingress-iterations 17))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
 
-(fact ('?y (nth light-iterations 18)) => [:green])
+(fact ('?y (get (nth light-iterations 18)
+                (:intersection/of south-in))) => [:green])
 
 (fact (:state (nth ingress-iterations 18))
       => [{:id "Mike" :len 1 :buf 0 :front 0 :dst north-out :ripe? true}])
 
-(fact ('?y (nth light-iterations 19)) => [:yellow])
+(fact ('?y (get (nth light-iterations 19)
+                (:intersection/of south-in))) => [:yellow])
 
 (fact (:state (nth ingress-iterations 19))
       => [])
