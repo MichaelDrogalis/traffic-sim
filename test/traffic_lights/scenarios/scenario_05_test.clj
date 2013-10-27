@@ -55,6 +55,7 @@
      :street.lane.install/rules :no-turns
      :street.lane.install/type :ingress
      :street.lane.install/length 3
+     :street.lane.install/speed-limit 1
      :street.lane.install/light ?x
      :street.lane.install/substitute {?origini ?a
                                       ?straighte ?B}}
@@ -67,6 +68,7 @@
      :street.lane.install/rules :left-only
      :street.lane.install/type :ingress
      :street.lane.install/length 3
+     :street.lane.install/speed-limit 1
      :street.lane.install/light ?y
      :street.lane.install/substitute {?origini ?b
                                       ?straighti ?a
@@ -78,7 +80,8 @@
      :lane/name "out"
      :street.lane.install/ident ?A
      :street.lane.install/type :egress
-     :street.lane.install/length 3}
+     :street.lane.install/length 3
+     :street.lane.install/speed-limit 1}
     
     {:intersection/of ["Maple Street" "Leaf Street"]
      :street/name "Maple Street"
@@ -86,7 +89,8 @@
      :lane/name "out"
      :street.lane.install/ident ?B
      :street.lane.install/type :egress
-     :street.lane.install/length 3}
+     :street.lane.install/length 3
+     :street.lane.install/speed-limit 1}
 
     {:intersection/of ["Maple Street" "Leaf Street"]
      :street/name "Leaf Street"
@@ -94,7 +98,8 @@
      :lane/name "out"
      :street.lane.install/ident ?C
      :street.lane.install/type :egress
-     :street.lane.install/length 3}])
+     :street.lane.install/length 3
+     :street.lane.install/speed-limit 1}])
 
 (def storage (p/memory-storage schema))
 

@@ -45,8 +45,9 @@
       (assoc entity :state (conj state (assoc car :front (- street-len len) :dst dst)))
       entity)))
 
-(defn advance-cars-in-lane [{:keys [state] :as entity}]
-  (assoc entity :state (r/reduce (partial advance 10 state) [] state)))
+(defn advance-cars-in-lane [{:keys [lane state] :as entity}]
+  (let [speed (:street.lane.install/speed-limit lane)]
+    (assoc entity :state (r/reduce (partial advance speed state) [] state))))
 
 (defn ch->lane [{:keys [channel state] :as entity} d-fn]
   (if-not (zero? (.size channel))
